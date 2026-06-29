@@ -64,7 +64,7 @@ export function LoginForm() {
             src="/atmoonpe-logo.png"
             alt="AtMoonPe"
             width={80}
-            height={28}
+            height={80}
             className="object-contain"
           />
         </div>
@@ -175,7 +175,7 @@ export function LoginForm() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full h-14 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-lg font-semibold"
+            className="w-full h-14 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-md font-semibold"
           >
             {isLoading ? (
               <>
