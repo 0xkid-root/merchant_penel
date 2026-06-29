@@ -63,7 +63,7 @@ export function DashboardSidebar() {
           <div className="flex items-center justify-center w-8 h-8 bg-indigo-600 rounded-lg">
             <span className="text-white font-bold text-sm">⚡</span>
           </div>
-          <h1 className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '16px' }}>PayOutX</h1>
+          <h1 className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '16px' }}>AtMoonPe</h1>
         </div>
       </div>
 

@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+
 
 export function LoginForm() {
   const router = useRouter()
@@ -17,7 +19,7 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!email || !password) {
       toast.error('Please fill in all fields')
       return
@@ -32,16 +34,16 @@ export function LoginForm() {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       // Store auth data
       localStorage.setItem('isAuthenticated', 'true')
       localStorage.setItem('userEmail', email)
       if (rememberMe) {
         localStorage.setItem('rememberEmail', email)
       }
-      
+
       toast.success('Login successful! Welcome back.')
-      
+
       // Redirect to dashboard
       router.push('/dashboard')
     } catch (error) {
@@ -52,68 +54,88 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex flex-col h-full justify-between p-8 lg:p-12">
-      {/* Header */}
+    <div className="w-full max-w-[500px] px-12 py-10 flex flex-col justify-between h-full">
+      {/* Top Content */}
       <div>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">⚡</span>
-          </div>
+        {/* Logo */}
+        <div className="flex items-center gap-4 mb-14">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl ">
+          <Image
+            src="/atmoonpe-logo.png"
+            alt="AtMoonPe"
+            width={80}
+            height={80}
+            className="object-contain"
+          />
+        </div>
+
           <div>
-            <h1 className="font-bold text-xl text-slate-900">PayOutX</h1>
-            <p className="text-sm text-slate-600">Merchant Panel</p>
+            <h1 className="text-2xl font-bold text-slate-900">
+              AtMoonPe
+            </h1>
+
+            <p className="text-slate-600 text-lg">
+              Merchant Panel
+            </p>
           </div>
         </div>
 
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '32px' }}>Welcome Back! 👋</h2>
-          <p className="text-slate-600" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '15px' }}>
+        {/* Heading */}
+        <div className="mb-10">
+          <h2 className="text-[28px] font-bold text-slate-900 leading-none mb-4">
+            Welcome Back!
+          </h2>
+
+          <p className="text-slate-600 text-md leading-8">
             Login to access your merchant dashboard and manage payouts.
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Field */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-slate-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: '14px' }}>
+        <form onSubmit={handleSubmit} className="space-y-7">
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-900 mb-2">
               Email Address
             </label>
+
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+              <Mail className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
-                style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '14px' }}
+                placeholder="Enter your email address"
+                className="pl-12 h-14 rounded-xl border-slate-300"
               />
             </div>
           </div>
 
-          {/* Password Field */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-slate-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: '14px' }}>
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-900 mb-2">
               Password
             </label>
+
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+              <Lock className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
-                style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '14px' }}
+                placeholder="Enter your password"
+                className="pl-12 pr-12 h-14 rounded-xl border-slate-300"
               />
+
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                className="absolute right-4 top-4 text-slate-400"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5" />
@@ -124,49 +146,54 @@ export function LoginForm() {
             </div>
           </div>
 
-          {/* Remember Me & Forgot Password */}
+          {/* Remember */}
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer">
+
+            <label className="flex items-center gap-3">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 text-indigo-600 accent-indigo-600"
+                className="w-5 h-5 accent-indigo-600"
               />
-              <span className="text-slate-700" style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: '14px' }}>Remember me</span>
+
+              <span className="text-slate-700">
+                Remember me
+              </span>
             </label>
-            <a href="#" className="text-indigo-600 hover:text-indigo-700" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '14px' }}>
+
+            <button
+              type="button"
+              className="text-indigo-600 font-semibold hover:text-indigo-700"
+            >
               Forgot Password?
-            </a>
+            </button>
+
           </div>
 
-          {/* Login Button */}
+          {/* Button */}
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 h-11"
-            style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '14px' }}
+            className="w-full h-14 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-md font-semibold"
           >
             {isLoading ? (
-              <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                 Logging in...
-              </span>
+              </>
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                <Lock className="h-4 w-4" />
+              <>
+                <Lock className="mr-2 h-5 w-5" />
                 Login to Dashboard
-              </span>
+              </>
             )}
           </Button>
+
         </form>
       </div>
 
-      {/* Security Notice */}
-      <div className="flex items-center gap-3 pt-8 border-t border-slate-200">
-        <Shield className="h-5 w-5 text-slate-400" />
-        <p className="text-slate-600" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '14px' }}>Secure & Encrypted Connection</p>
-      </div>
+
     </div>
   )
 }

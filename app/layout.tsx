@@ -17,26 +17,10 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'PayOutX - Merchant Panel',
+  title: 'AtMoonPe - Merchant Panel',
   description: 'All Your Payouts. One Powerful Platform.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  generator: 'AtMoonPe.com',
+ 
 }
 
 export const viewport: Viewport = {
