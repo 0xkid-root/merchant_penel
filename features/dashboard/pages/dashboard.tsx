@@ -7,7 +7,6 @@ import DashboardStats from '../components/dashboard-stats'
 import PayoutChart from '../components/payout-chart'
 import RecentTransactions from '../components/recent-transactions'
 import RecentPayouts from '../components/recent-payouts'
-import DashboardFooter from '../components/dashboard-footer'
 
 import { RecentActivity } from '@/features/dashboard/components/recent-activity'
 
@@ -40,8 +39,7 @@ export default function DashboardPage() {
         <RecentPayouts />
       </div>
 
-      {/* Footer */}
-      <DashboardFooter />
+      
 
     </div>
   )
