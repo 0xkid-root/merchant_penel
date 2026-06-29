@@ -17,9 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'PayOutX - Merchant Panel',
+  title: 'AtMoonPe - Merchant Panel',
   description: 'All Your Payouts. One Powerful Platform.',
-  generator: 'v0.app',
+  generator: 'AtMoonPe.com',
   icons: {
     icon: [
       {

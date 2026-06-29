@@ -60,7 +60,7 @@ export function LoginForm() {
             <span className="text-white font-bold text-lg">⚡</span>
           </div>
           <div>
-            <h1 className="font-bold text-xl text-slate-900">PayOutX</h1>
+            <h1 className="font-bold text-xl text-slate-900">AtMoonPe</h1>
             <p className="text-sm text-slate-600">Merchant Panel</p>
           </div>
         </div>

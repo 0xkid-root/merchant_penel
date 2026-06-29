@@ -226,7 +226,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <div className="mt-8 text-center text-gray-500" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '14px' }}>
-        <p>© 2025 PayOutX. All rights reserved.</p>
+        <p>© 2025 AtMoonPe. All rights reserved.</p>
       </div>
     </div>
   )
