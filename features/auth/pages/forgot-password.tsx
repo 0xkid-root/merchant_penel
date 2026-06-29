@@ -69,7 +69,7 @@ return (
       placeholder="Enter your email address"
       value={email}
       onChange={(e)=>setEmail(e.target.value)}
-      className="pl-12 h-14 w-full rounded-xl border-slate-300"
+      className="pl-12 h-14 w-full rounded-xl border-slate-200"
     />
 
   </div>

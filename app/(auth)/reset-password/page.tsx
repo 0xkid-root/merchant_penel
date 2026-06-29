@@ -1,6 +1,3 @@
-
-
-
 import AuthLayout from '@/components/auth/AuthLayout'
 import ResetPasswordForm from '@/features/auth/pages/reset-password'
 
