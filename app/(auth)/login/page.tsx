@@ -1,5 +1,10 @@
-import { AuthLoginPage } from '@/features/auth/pages/login'
+import AuthLayout from '@/components/auth/AuthLayout'
+import LoginForm from '@/features/auth/components/login-form'
 
-export default function Page() {
-  return <AuthLoginPage />
+export default function LoginPage() {
+  return (
+    <AuthLayout>
+      <LoginForm />
+    </AuthLayout>
+  )
 }

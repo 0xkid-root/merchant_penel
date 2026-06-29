@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { InputField } from '@/components/form/input-field'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { resetPasswordAction } from '@/features/auth/server-actions'
@@ -49,54 +50,91 @@ export default function ResetPasswordPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '32px' }}>
-            Create New Password
-          </h1>
-          <p className="text-gray-600 mt-2" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '15px' }}>
-            Enter a strong password to secure your account
-          </p>
-        </div>
+ return (
+  <div className="w-full max-w-[520px] px-8 lg:px-12">
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <InputField
-            label="New Password"
-            placeholder="••••••••"
-            type="password"
-            value={passwords.new}
-            onChange={(val) => setPasswords(prev => ({ ...prev, new: val }))}
-            icon={Lock}
-            required
-          />
+    {/* Header */}
+    <div className="mb-10">
+      <h2 className="text-[32px] font-bold text-slate-900 leading-tight">
+        Create New Password
+      </h2>
 
-          <InputField
-            label="Confirm Password"
-            placeholder="••••••••"
-            type="password"
-            value={passwords.confirm}
-            onChange={(val) => setPasswords(prev => ({ ...prev, confirm: val }))}
-            icon={Lock}
-            required
-          />
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-blue-900 text-sm" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '13px' }}>
-              • At least 8 characters
-              <br />• Mix of uppercase and lowercase letters
-              <br />• At least one number
-            </p>
-          </div>
-
-          <PrimaryButton type="submit" isLoading={isLoading} className="w-full">
-            Reset Password
-          </PrimaryButton>
-        </form>
-      </div>
+      <p className="mt-3 text-[16px] leading-7 text-slate-600">
+        Enter a strong password to secure your account.
+      </p>
     </div>
-  )
+
+    {/* Form */}
+    <form onSubmit={handleSubmit} className="space-y-6">
+
+      {/* New Password */}
+      <div className="space-y-3">
+        <label className="block text-sm font-semibold text-slate-900">
+          New Password
+        </label>
+
+        <div className="relative">
+          <Lock className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+
+          <Input
+            type="password"
+            placeholder="Enter new password"
+            value={passwords.new}
+            onChange={(e) =>
+              setPasswords((prev) => ({
+                ...prev,
+                new: e.target.value,
+              }))
+            }
+            className="pl-12 h-14 rounded-xl border-slate-200"
+          />
+        </div>
+      </div>
+
+      {/* Confirm Password */}
+      <div className="space-y-3">
+        <label className="block text-sm font-semibold text-slate-900">
+          Confirm Password
+        </label>
+
+        <div className="relative">
+          <Lock className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+
+          <Input
+            type="password"
+            placeholder="Confirm password"
+            value={passwords.confirm}
+            onChange={(e) =>
+              setPasswords((prev) => ({
+                ...prev,
+                confirm: e.target.value,
+              }))
+            }
+            className="pl-12 h-14 rounded-xl border-slate-200"
+          />
+        </div>
+      </div>
+
+      {/* Password Rules */}
+      <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+        <ul className="space-y-1 text-sm text-slate-700">
+          <li>• Minimum 8 characters</li>
+          <li>• At least one uppercase letter</li>
+          <li>• At least one lowercase letter</li>
+          <li>• At least one number</li>
+        </ul>
+      </div>
+
+      {/* Button */}
+      <PrimaryButton
+        type="submit"
+        isLoading={isLoading}
+        className="w-full h-12"
+      >
+        Reset Password
+      </PrimaryButton>
+
+    </form>
+  </div>
+)
 }

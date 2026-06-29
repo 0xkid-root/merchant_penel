@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail } from 'lucide-react'
-import { InputField } from '@/components/form/input-field'
+import { Input } from '@/components/ui/input'
+
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 import { forgotPasswordAction } from '@/features/auth/server-actions'
@@ -35,46 +36,64 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md">
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '32px' }}>
-            Reset Password
-          </h1>
-          <p className="text-gray-600 mt-2" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '15px' }}>
-            Enter your email to receive password reset instructions
-          </p>
-        </div>
+return (
+  <div className="w-full max-w-[520px] px-8 lg:px-12">
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <InputField
-            label="Email Address"
-            placeholder="you@example.com"
-            type="email"
-            value={email}
-            onChange={setEmail}
-            icon={Mail}
-            required
-          />
+    {/* Header */}
+    <div className="mb-10">
+      <h2 className="text-[44px] font-bold text-slate-900 leading-tight">
+        Forgot Password?
+      </h2>
 
-          <PrimaryButton type="submit" isLoading={isLoading} className="w-full">
-            Send Reset Link
-          </PrimaryButton>
-
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="w-full flex items-center justify-center gap-2 text-indigo-600 hover:text-indigo-700"
-            style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '14px' }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Login
-          </button>
-        </form>
-      </div>
+      <p className="mt-3 text-[16px] leading-7 text-slate-600">
+        No worries! Enter your registered email address and we'll send you a
+        password reset link.
+      </p>
     </div>
-  )
+
+    {/* Form */}
+    <form onSubmit={handleSubmit} className="space-y-6">
+
+     <div className="space-y-3">
+
+  <label className="block text-sm font-semibold text-slate-900 mb-2">
+    Email Address
+  </label>
+
+  <div className="relative">
+
+    <Mail className="absolute left-4 top-4 h-5 w-5 text-slate-400" />
+
+    <Input
+      type="email"
+      placeholder="Enter your email address"
+      value={email}
+      onChange={(e)=>setEmail(e.target.value)}
+      className="pl-12 h-14 w-full rounded-xl border-slate-200"
+    />
+
+  </div>
+
+</div>
+      <PrimaryButton
+        type="submit"
+        isLoading={isLoading}
+        className="w-full h-12"
+      >
+        Send Reset Link
+      </PrimaryButton>
+
+      <button
+        type="button"
+        onClick={() => router.push('/login')}
+        className="flex items-center justify-center gap-2 w-full text-indigo-600 hover:text-indigo-700 font-medium"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Login
+      </button>
+
+    </form>
+
+  </div>
+)
 }

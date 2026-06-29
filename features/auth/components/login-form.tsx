@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 
-export function LoginForm() {
+export default function LoginForm() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -51,6 +51,14 @@ export function LoginForm() {
     } finally {
       setIsLoading(false)
     }
+  }
+  const forgotPage = ()=>{
+    try{
+      router.push('/forgot-password')
+    }catch(error){
+      console.error(error)
+    }
+
   }
 
   return (
@@ -163,6 +171,7 @@ export function LoginForm() {
             </label>
 
             <button
+              onClick={forgotPage}
               type="button"
               className="text-indigo-600 font-semibold hover:text-indigo-700"
             >
