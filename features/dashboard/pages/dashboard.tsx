@@ -9,6 +9,7 @@ import RecentTransactions from '../components/recent-transactions'
 import RecentPayouts from '../components/recent-payouts'
 
 import { RecentActivity } from '@/features/dashboard/components/recent-activity'
+import MerchantHeader from '@/components/layout/merchant-header'
 
 export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState('')
@@ -22,7 +23,10 @@ export default function DashboardPage() {
     <div className="p-8">
 
       {/* Header */}
-      <DashboardHeader userEmail={userEmail} />
+      <MerchantHeader
+    title="Dashboard"
+    subtitle="Welcome back. Here's what's happening with your account today."
+/>
 
       {/* Statistics */}
       <DashboardStats />
