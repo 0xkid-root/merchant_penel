@@ -29,9 +29,8 @@ const SIDEBAR_SECTIONS = [
     title: 'Wallet',
     items: [
       { icon: Wallet, label: 'Wallet', href: '/wallet' },
-      { icon: Plus, label: 'Add Funds', href: '/add-funds' },
-      { icon: ArrowUpRight, label: 'Withdrawal', href: '/withdrawal' },
-      { icon: CreditCard, label: 'Transactions', href: '/transactions' },
+
+      { icon: CreditCard, label: 'Wallet Transactions', href: '/transactions' },
     ],
   },
   {
