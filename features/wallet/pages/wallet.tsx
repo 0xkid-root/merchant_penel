@@ -17,6 +17,10 @@ export default function WalletPage() {
   const addfundsPage = ()=>{
     router.push('/add-funds')
   }
+
+  const withdrawPage = ()=>{
+    router.push('/withdrawal-request')
+  }
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', padding: '24px' }}>
       {/* Header */}
@@ -33,7 +37,9 @@ export default function WalletPage() {
               Add Funds
             </SecondaryButton>
 
-            <PrimaryButton>
+            <PrimaryButton
+              onClick={withdrawPage}
+            >
               <ArrowRight className="h-4 w-4" />
               Withdrawal Request
             </PrimaryButton>

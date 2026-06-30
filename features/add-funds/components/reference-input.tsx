@@ -14,7 +14,6 @@ export default function ReferenceInput({ control }: Props) {
       control={control}
       render={({ field, fieldState }) => (
         <div className="space-y-2">
-
           <label className="text-sm font-medium text-slate-900">
             UTR / Reference ID
             <span className="text-red-500">*</span>
@@ -24,7 +23,7 @@ export default function ReferenceInput({ control }: Props) {
             {...field}
             type="text"
             placeholder="Enter UTR / Transaction Reference Number"
-            className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
+            className={`h-14 w-full rounded-xl border px-4 text-sm outline-none transition ${
               fieldState.error
                 ? 'border-red-500'
                 : 'border-slate-300 focus:border-indigo-600'
@@ -36,7 +35,6 @@ export default function ReferenceInput({ control }: Props) {
               {fieldState.error.message}
             </p>
           )}
-
         </div>
       )}
     />
