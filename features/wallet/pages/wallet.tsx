@@ -8,31 +8,30 @@ import { BalanceCards } from '../components/balance-cards'
 import { BalanceTrendChart } from '../components/balance-trend-chart'
 import { BalanceBreakdown } from '../components/balance-breakdown'
 import { WalletTransactionsTable } from '../components/transactions-table'
+import PageHeader from '@/components/layout/page-header'
 
 export default function WalletPage() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', padding: '24px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '32px', margin: 0 }}>
-            Wallet Overview
-          </h1>
-          <p className="text-gray-600" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '15px', margin: '8px 0 0 0' }}>
-            Manage your wallet balance, funds and transactions
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <SecondaryButton>
-            <Plus className="w-4 h-4" />
-            Add Funds
-          </SecondaryButton>
-          <PrimaryButton>
-            <ArrowRight className="w-4 h-4" />
-            Withdrawal Request
-          </PrimaryButton>
-        </div>
-      </div>
+
+      <PageHeader
+        title="Wallet Overview"
+        subtitle="Manage your wallet balance, funds and transactions"
+        actions={
+          <>
+            <SecondaryButton>
+              <Plus className="h-4 w-4" />
+              Add Funds
+            </SecondaryButton>
+
+            <PrimaryButton>
+              <ArrowRight className="h-4 w-4" />
+              Withdrawal Request
+            </PrimaryButton>
+          </>
+        }
+      />
 
       {/* Balance Cards - Grid Layout */}
       <BalanceCards />
