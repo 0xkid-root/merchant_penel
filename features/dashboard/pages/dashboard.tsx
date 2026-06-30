@@ -24,9 +24,9 @@ export default function DashboardPage() {
 
       {/* Header */}
       <MerchantHeader
-    title="Dashboard"
-    subtitle="Welcome back. Here's what's happening with your account today."
-/>
+        title="Dashboard"
+        subtitle="Welcome back. Here's what's happening with your account today."
+      />
 
       {/* Statistics */}
       <DashboardStats />
@@ -43,7 +43,7 @@ export default function DashboardPage() {
         <RecentPayouts />
       </div>
 
-      
+
 
     </div>
   )

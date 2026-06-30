@@ -2,6 +2,8 @@
 
 import { Plus, ArrowRight } from 'lucide-react'
 import { PrimaryButton } from '@/components/buttons/primary-button'
+import { SecondaryButton } from '@/components/buttons/secondary-button'
+
 import { BalanceCards } from '../components/balance-cards'
 import { BalanceTrendChart } from '../components/balance-trend-chart'
 import { BalanceBreakdown } from '../components/balance-breakdown'
@@ -21,10 +23,10 @@ export default function WalletPage() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <PrimaryButton>
+          <SecondaryButton>
             <Plus className="w-4 h-4" />
             Add Funds
-          </PrimaryButton>
+          </SecondaryButton>
           <PrimaryButton>
             <ArrowRight className="w-4 h-4" />
             Withdrawal Request

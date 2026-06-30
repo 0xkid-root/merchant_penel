@@ -1,38 +1,43 @@
-import { Button } from '@/components/ui/button'
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SecondaryButtonProps {
-  children: ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  className?: string
-  type?: 'button' | 'submit' | 'reset'
-  size?: 'sm' | 'md' | 'lg'
+  children: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 export function SecondaryButton({
   children,
   onClick,
   disabled = false,
-  className = '',
-  type = 'button',
-  size = 'md',
+  className,
+  type = "button",
 }: SecondaryButtonProps) {
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
-  }
-
   return (
     <Button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-colors border border-gray-300 ${sizeClasses[size]} ${className}`}
-      style={{ fontFamily: 'var(--font-sans)', fontWeight: 600 }}
+      className={cn(
+        "inline-flex items-center justify-center",
+        "h-11 px-5 gap-2",
+        "rounded-xl",
+        "border border-slate-200",
+        "bg-white",
+        "text-sm font-semibold text-slate-900",
+        "shadow-sm",
+        "hover:bg-slate-50",
+        "hover:border-slate-300",
+        "transition-all duration-200",
+        "disabled:pointer-events-none disabled:opacity-50",
+        className
+      )}
     >
       {children}
     </Button>
-  )
+  );
 }
