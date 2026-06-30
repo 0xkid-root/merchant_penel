@@ -1,99 +1,101 @@
 'use client'
 
-import { Wallet, Lock, TrendingUp, TrendingDown } from 'lucide-react'
+import {
+  Wallet,
+  Lock,
+  TrendingUp,
+  TrendingDown,
+} from 'lucide-react'
 
 export function BalanceCards() {
   const cards = [
     {
-      label: 'Available Balance',
+      title: 'Available Balance',
       amount: '₹14,82,350.00',
-      sublabel: 'Withdrawable Balance',
-      subamount: '₹14,32,350.00',
+      subTitle: 'Withdrawable Balance',
+      subAmount: '₹14,32,350.00',
       icon: Wallet,
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-indigo-600',
     },
     {
-      label: 'Hold Balance',
+      title: 'Hold Balance',
       amount: '₹50,000.00',
-      sublabel: 'On Hold',
-      subamount: '₹50,000.00',
+      subTitle: 'Pending Amount',
+      subAmount: '₹50,000.00',
       icon: Lock,
-      iconBg: 'bg-orange-100',
+      iconBg: 'bg-orange-50',
       iconColor: 'text-orange-600',
     },
     {
-      label: 'Lifetime Credit',
+      title: 'Lifetime Credit',
       amount: '₹28,45,300.00',
-      sublabel: 'Total Credits',
-      subamount: '32',
+      subTitle: 'Successful Credit',
+      subAmount: '32',
       icon: TrendingUp,
-      iconBg: 'bg-green-100',
+      iconBg: 'bg-green-50',
       iconColor: 'text-green-600',
     },
     {
-      label: 'Lifetime Debit',
+      title: 'Lifetime Debit',
       amount: '₹13,62,950.00',
-      sublabel: 'Total Debits',
-      subamount: '48',
+      subTitle: 'Debit Transactions',
+      subAmount: '48',
       icon: TrendingDown,
-      iconBg: 'bg-red-100',
+      iconBg: 'bg-red-50',
       iconColor: 'text-red-600',
     },
   ]
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px' }}>
-      {cards.map((card, idx) => {
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
+      {cards.map((card, index) => {
         const Icon = card.icon
+
         return (
           <div
-            key={idx}
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '16px',
-              border: '1px solid #E5E7EB',
-              padding: '24px',
-              height: '170px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-            }}
+            key={index}
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md"
           >
-            {/* Top: Label + Icon */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: '14px', color: '#6B7280', margin: 0 }}>
-                {card.label}
-              </p>
-              <div
-                className={card.iconBg}
-                style={{
-                  padding: '8px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Icon className={`w-5 h-5 ${card.iconColor}`} />
+            {/* Top */}
+            <div className="flex items-start justify-between">
+
+              <div>
+
+                <p className="text-[15px] font-medium text-slate-600">
+                  {card.title}
+                </p>
+
+                <h3 className="mt-4 text-[24px] font-bold leading-none text-slate-900">
+                  {card.amount}
+                </h3>
+
               </div>
+
+              <div
+                className={`flex h-14 w-14 items-center justify-center rounded-xl ${card.iconBg}`}
+              >
+                <Icon className={`h-6 w-6 ${card.iconColor}`} />
+              </div>
+
             </div>
 
-            {/* Middle: Amount */}
-            <h3 style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '24px', color: '#111827', margin: 0, lineHeight: '1.2' }}>
-              {card.amount}
-            </h3>
+            {/* Divider */}
+            <div className="my-5 border-t border-slate-100" />
 
-            {/* Bottom: Divider + Sub Info */}
-            <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: '12px' }}>
-              <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '12px', color: '#6B7280', margin: '0 0 4px 0' }}>
-                {card.sublabel}
+            {/* Bottom */}
+            <div>
+
+              <p className="text-sm text-slate-500">
+                {card.subTitle}
               </p>
-              <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '14px', color: '#111827', margin: 0 }}>
-                {card.subamount}
+
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {card.subAmount}
               </p>
+
             </div>
+
           </div>
         )
       })}

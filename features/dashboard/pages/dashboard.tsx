@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 
-import DashboardHeader from '../components/dashboard-header'
+import PageHeader from '@/components/layout/page-header'
 import DashboardStats from '../components/dashboard-stats'
 import PayoutChart from '../components/payout-chart'
 import RecentTransactions from '../components/recent-transactions'
 import RecentPayouts from '../components/recent-payouts'
 
 import { RecentActivity } from '@/features/dashboard/components/recent-activity'
-import MerchantHeader from '@/components/layout/merchant-header'
+import MerchantHeader from '@/components/layout/app-header'
 
 export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState('')
@@ -23,10 +23,10 @@ export default function DashboardPage() {
     <div className="p-8">
 
       {/* Header */}
-      <MerchantHeader
-    title="Dashboard"
-    subtitle="Welcome back. Here's what's happening with your account today."
-/>
+      <PageHeader
+            title="Dashboard"
+            subtitle="Welcome back. Here's what's happening with your account today."
+      />
 
       {/* Statistics */}
       <DashboardStats />
@@ -43,7 +43,7 @@ export default function DashboardPage() {
         <RecentPayouts />
       </div>
 
-      
+
 
     </div>
   )
