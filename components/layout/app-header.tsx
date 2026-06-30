@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Bell, ChevronDown, Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import ProfileDropdown from './profile-dropdown'
 
 interface AppHeaderProps {
   merchantName?: string
@@ -10,6 +12,8 @@ interface AppHeaderProps {
 export default function AppHeader({
   merchantName = 'Demo Pvt. Ltd.',
 }: AppHeaderProps) {
+  const [open, setOpen] = useState(false)
+
   const pathname = usePathname()
 
   const pageTitles: Record<string, string> = {
@@ -18,8 +22,6 @@ export default function AppHeader({
     beneficiaries: 'Beneficiaries',
     payout: 'Payout',
     reports: 'Reports',
-    profile: 'Profile',
-    support: 'Support',
     notifications: 'Notifications',
     'wallet-whitelist': 'Wallet Whitelist',
   }
@@ -38,7 +40,7 @@ export default function AppHeader({
         </button>
 
         <h2 className="text-3xl font-bold text-slate-900">
-           {pageTitle} 
+          {pageTitle}
         </h2>
 
       </div>
@@ -57,28 +59,45 @@ export default function AppHeader({
 
         </button>
 
-        {/* Merchant */}
-        <button className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 transition-colors hover:bg-slate-50">
+        {/* Merchant Profile */}
+        <div className="relative">
 
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
-            D
-          </div>
+          <button
+            onClick={() => setOpen(!open)}
+            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 transition-colors hover:bg-slate-50"
+          >
 
-          <div className="text-left">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+              D
+            </div>
 
-            <p className="text-sm font-semibold text-slate-900">
-              {merchantName}
-            </p>
+            <div className="text-left">
 
-            <p className="text-xs text-slate-500">
-              MID : M123456
-            </p>
+              <p className="text-sm font-semibold text-slate-900">
+                {merchantName}
+              </p>
 
-          </div>
+              <p className="text-xs text-slate-500">
+                MID : M123456
+              </p>
 
-          <ChevronDown className="h-4 w-4 text-slate-500" />
+            </div>
 
-        </button>
+            <ChevronDown
+              className={`h-4 w-4 text-slate-500 transition-transform ${
+                open ? 'rotate-180' : ''
+              }`}
+            />
+
+          </button>
+
+          {open && (
+            <ProfileDropdown
+              onClose={() => setOpen(false)}
+            />
+          )}
+
+        </div>
 
       </div>
 

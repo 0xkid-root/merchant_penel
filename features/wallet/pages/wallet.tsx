@@ -5,8 +5,6 @@ import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 
 import { BalanceCards } from '../components/balance-cards'
-import { BalanceTrendChart } from '../components/balance-trend-chart'
-import { BalanceBreakdown } from '../components/balance-breakdown'
 import { WalletTransactionsTable } from '../components/wallet-transactions-table'
 import PageHeader from '@/components/layout/page-header'
 
