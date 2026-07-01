@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import BeneficiariesHeader from '../components/beneficiaries-header'
 import BeneficiariesFilters from '../components/beneficiaries-filters'
 import BeneficiariesTable from '../components/beneficiaries-table'
-import BeneficiariesPagination from '../components/beneficiaries-pagination'
+// import BeneficiariesPagination from '../components/beneficiaries-pagination'
 
 export default function BeneficiariesPage() {
   const router = useRouter()
