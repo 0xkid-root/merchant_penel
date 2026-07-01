@@ -19,6 +19,7 @@ export default function AppHeader({
   const pageTitles: Record<string, string> = {
     dashboard: 'Dashboard',
     wallet: 'Wallet',
+    'wallet-transactions': 'Wallet Transactions',
     beneficiaries: 'Beneficiaries',
     payout: 'Payout',
     reports: 'Reports',

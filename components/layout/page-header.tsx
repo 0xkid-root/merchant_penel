@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import { ChevronLeft } from 'lucide-react'
 
 interface PageHeaderProps {
-  title: string
+  title?: string
   subtitle?: string
   actions?: ReactNode
   backHref?: string
