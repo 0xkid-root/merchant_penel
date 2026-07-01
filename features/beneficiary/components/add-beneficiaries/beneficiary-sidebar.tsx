@@ -33,7 +33,7 @@ export default function BeneficiarySidebar() {
             </h4>
 
             <p className="mt-1 text-sm leading-6 text-slate-500">
-              Provide beneficiary name, account number and IFSC code.
+              Provide account number and IFSC code.
             </p>
 
           </div>
@@ -55,7 +55,7 @@ export default function BeneficiarySidebar() {
             </h4>
 
             <p className="mt-1 text-sm leading-6 text-slate-500">
-              Penny Drop instantly validates the beneficiary account.
+                We verify details using penny Droop Api 
             </p>
 
           </div>
@@ -110,22 +110,6 @@ export default function BeneficiarySidebar() {
 
       {/* Footer */}
 
-      <div className="mt-8 border-t border-slate-200 pt-6">
-
-        <p className="text-sm text-slate-500">
-          Need help?
-        </p>
-
-        <button
-          type="button"
-          className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
-        >
-          Contact Support
-
-          <ArrowRight className="h-4 w-4" />
-        </button>
-
-      </div>
 
     </div>
   )

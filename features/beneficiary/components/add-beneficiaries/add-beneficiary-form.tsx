@@ -3,25 +3,31 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 
 import {
   addBeneficiarySchema,
   AddBeneficiaryFormData,
 } from '../../schema/add-beneficiary.schema'
 
-import { BankDetails } from '../types'
-
 import BeneficiaryBasicDetails from './beneficiary-basic-details'
-import BeneficiaryVerificationCard from './beneficiary-verification-card'
+import BeneficiaryVerificationBanner from './beneficiary-verification-banner'
+import BeneficiaryBankDetails from './beneficiary-bank-details'
 import BeneficiaryOptionalDetails from './beneficiary-optional-details'
-import BeneficiaryNote from './beneficiary-note'
 import BeneficiaryActions from './beneficiary-actions'
 import BeneficiarySidebar from './beneficiary-sidebar'
 
-export default function AddBeneficiaryForm() {
+import { BankDetails } from '../types'
+
+interface Props {
+  onSuccess?: () => void
+}
+
+export default function AddBeneficiaryForm({
+  onSuccess,
+}: Props) {
   const methods = useForm<AddBeneficiaryFormData>({
     resolver: zodResolver(addBeneficiarySchema),
-    mode: 'onChange',
 
     defaultValues: {
       beneficiaryName: '',
@@ -32,75 +38,147 @@ export default function AddBeneficiaryForm() {
       emailId: '',
       remarks: '',
     },
+
+    mode: 'onBlur',
   })
 
   const [isVerifying, setIsVerifying] = useState(false)
 
-  const [isVerified, setIsVerified] = useState(false)
+  const [isVerified, setIsVerified] = useState(true)
 
-  const [bankDetails, setBankDetails] =
-    useState<BankDetails | null>(null)
+  const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
 
-  const handleVerifyAccount = async () => {
-    // API will come later
-    console.log('Verify Account')
+  //-----------------------------------
+  // Verify Account
+  //-----------------------------------
+
+  const handleVerify = async () => {
+    const isValid = await methods.trigger([
+      'beneficiaryName',
+      'accountNumber',
+      'confirmAccountNumber',
+      'ifscCode',
+    ])
+
+    if (!isValid) return
+
+    try {
+      setIsVerifying(true)
+
+      // --------------------------------
+      // Penny Drop API
+      // Replace later
+      // --------------------------------
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1500)
+      )
+
+      const response: BankDetails = {
+        accountHolderName: 'Rahul Sharma',
+
+        bankName: 'HDFC Bank',
+
+        branchName:
+          'Noida Sector 18, Uttar Pradesh',
+
+        accountType: 'Savings',
+
+        upiId: 'rahulsharma@okhdfcbank',
+
+        verificationStatus: 'Verified',
+      }
+
+      setBankDetails(response)
+
+      setIsVerified(true)
+
+      toast.success('Account Verified Successfully')
+    } catch (error) {
+      toast.error('Verification Failed')
+    } finally {
+      setIsVerifying(false)
+    }
   }
 
-  const handleSave = (data: AddBeneficiaryFormData) => {
+  //-----------------------------------
+  // Save Beneficiary
+  //-----------------------------------
+
+  const onSubmit = async (
+    data: AddBeneficiaryFormData
+  ) => {
+    if (!isVerified) {
+      toast.error('Please verify account first')
+      return
+    }
+
     console.log(data)
 
-    // Save API later
+    toast.success('Beneficiary Added Successfully')
+
+    onSuccess?.()
   }
+
+  //-----------------------------------
+  // Cancel
+  //-----------------------------------
 
   const handleCancel = () => {
     methods.reset()
 
+    setBankDetails(null)
+
     setIsVerified(false)
 
-    setBankDetails(null)
+    onSuccess?.()
   }
 
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={methods.handleSubmit(handleSave)}
-        className="flex gap-8"
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="grid grid-cols-12 gap-6"
       >
-        {/* Left Section */}
-        
+        {/* LEFT SIDE */}
 
-        <div className="flex-1 space-y-6">
+        {/* LEFT SIDE */}
 
+        <div className="col-span-12 xl:col-span-9">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-8">
 
-          <BeneficiaryBasicDetails
-            isVerifying={isVerifying}
-            isVerified={isVerified}
-            onVerify={handleVerifyAccount}
-          />
+            {/* Basic Details */}
+            <BeneficiaryBasicDetails />
 
-          {isVerified && bankDetails && (
-            <BeneficiaryVerificationCard
-              bankDetails={bankDetails}
-            />
-          )}
+            {/* Verification Result */}
+            {isVerified && bankDetails && (
+              <>
+                <BeneficiaryVerificationBanner />
 
-          {isVerified && (
+                <BeneficiaryBankDetails
+                  bankDetails={bankDetails}
+                />
+              </>
+            )}
+
+            {/* Always Visible */}
             <BeneficiaryOptionalDetails />
-          )}
 
-          <BeneficiaryNote />
 
-          <BeneficiaryActions
-            isVerified={isVerified}
-            onCancel={handleCancel}
-          />
+            {/* Footer Buttons */}
+            <BeneficiaryActions
+              isVerified={isVerified}
+              onCancel={handleCancel}
+            />
 
+          </div>
         </div>
 
-        {/* Right Sidebar */}
+        {/* RIGHT SIDE */}
 
-        <BeneficiarySidebar />
-
+        <div className="col-span-12 xl:col-span-3">
+          <BeneficiarySidebar />
+        </div>
       </form>
     </FormProvider>
   )

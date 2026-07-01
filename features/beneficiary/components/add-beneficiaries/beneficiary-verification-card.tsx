@@ -1,115 +1,131 @@
 'use client'
 
-import { CheckCircle } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 
 import { BankDetails } from '../types'
 
 interface Props {
-  bankDetails: BankDetails
+  isVerified: boolean
+  bankDetails: BankDetails | null
 }
 
 export default function BeneficiaryVerificationCard({
+  isVerified,
   bankDetails,
 }: Props) {
+  if (!isVerified || !bankDetails) return null
+
   return (
-    <div className="rounded-2xl border border-green-200 bg-green-50 p-6 shadow-sm">
+    <>
+      {/* Success Banner */}
 
-      {/* Header */}
+      <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-5">
 
-      <div className="mb-6 flex items-start justify-between">
+        <div className="flex items-center justify-between">
 
-        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
 
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500">
+              <CheckCircle2 className="h-6 w-6 text-white" />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-emerald-700">
+                Account Verified Successfully
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-600">
+                Bank details fetched and verified.
+              </p>
+            </div>
+
           </div>
 
-          <div>
-
-            <h3 className="text-base font-semibold text-green-700">
-              Account Verified Successfully
-            </h3>
-
-            <p className="mt-1 text-sm text-green-600">
-              Bank details fetched and verified successfully.
-            </p>
-
-          </div>
+          <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
+            Verified ✓
+          </span>
 
         </div>
-
-        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-          Verified
-        </span>
 
       </div>
 
       {/* Bank Details */}
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Account Holder
-          </p>
+        <div className="grid grid-cols-3 divide-x divide-slate-200">
 
-          <p className="mt-1 text-sm font-semibold text-slate-900">
-            {bankDetails.accountHolderName}
-          </p>
+          <div className="p-6">
+            <p className="mb-2 text-sm font-medium text-slate-700">
+              Account Holder Name
+            </p>
+
+            <p className="text-sm font-semibold text-slate-900">
+              {bankDetails.accountHolderName}
+            </p>
+          </div>
+
+          <div className="p-6">
+            <p className="mb-2 text-sm font-medium text-slate-700">
+              Bank Name
+            </p>
+
+            <p className="text-sm font-semibold text-slate-900">
+              {bankDetails.bankName}
+            </p>
+          </div>
+
+          <div className="p-6">
+            <p className="mb-2 text-sm font-medium text-slate-700">
+              Branch Name
+            </p>
+
+            <p className="text-sm font-semibold text-slate-900">
+              {bankDetails.branchName}
+            </p>
+          </div>
+
         </div>
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Bank Name
-          </p>
+        <div className="border-t border-slate-200">
 
-          <p className="mt-1 text-sm font-semibold text-slate-900">
-            {bankDetails.bankName}
-          </p>
-        </div>
+          <div className="grid grid-cols-3 divide-x divide-slate-200">
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Branch
-          </p>
+            <div className="p-6">
+              <p className="mb-2 text-sm font-medium text-slate-700">
+                Account Type
+              </p>
 
-          <p className="mt-1 text-sm font-semibold text-slate-900">
-            {bankDetails.branchName}
-          </p>
-        </div>
+              <p className="text-sm font-semibold text-slate-900">
+                {bankDetails.accountType}
+              </p>
+            </div>
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Account Type
-          </p>
+            <div className="p-6">
+              <p className="mb-2 text-sm font-medium text-slate-700">
+                UPI ID (if available)
+              </p>
 
-          <p className="mt-1 text-sm font-semibold text-slate-900">
-            {bankDetails.accountType}
-          </p>
-        </div>
+              <p className="text-sm font-semibold text-slate-900">
+                {bankDetails.upiId}
+              </p>
+            </div>
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            UPI ID
-          </p>
+            <div className="p-6">
+              <p className="mb-2 text-sm font-medium text-slate-700">
+                Verification Status
+              </p>
 
-          <p className="mt-1 text-sm font-semibold text-slate-900">
-            {bankDetails.upiId || '-'}
-          </p>
-        </div>
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                {bankDetails.verificationStatus} ✓
+              </span>
+            </div>
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Verification Status
-          </p>
+          </div>
 
-          <p className="mt-1 text-sm font-semibold text-green-600">
-            {bankDetails.verificationStatus}
-          </p>
         </div>
 
       </div>
-
-    </div>
+    </>
   )
 }
