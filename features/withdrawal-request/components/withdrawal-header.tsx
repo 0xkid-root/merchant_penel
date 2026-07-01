@@ -19,7 +19,7 @@ export default function WithdrawalHeader() {
       {/* Heading */}
       <div>
 
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-xl font-bold text-slate-900">
           Withdrawal Request
         </h1>
 

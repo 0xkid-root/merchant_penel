@@ -23,7 +23,7 @@ export default function WithdrawalRemarks({
 
           <textarea
             {...field}
-            rows={4}
+            rows={3}
             placeholder="Enter remarks (optional)"
             className={`w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition ${
               fieldState.error
