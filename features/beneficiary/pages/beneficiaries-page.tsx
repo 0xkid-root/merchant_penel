@@ -18,7 +18,7 @@ export default function BeneficiariesPage() {
   const [bank, setBank] = useState('All Banks')
 
   const handleAddBeneficiary = () => {
-    router.push('/beneficiaries/add')
+    router.push('/beneficiaries/add-beneficiaries')
   }
 
   const handleExport = () => {
