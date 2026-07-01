@@ -30,7 +30,7 @@ const SIDEBAR_SECTIONS = [
     items: [
       { icon: Wallet, label: 'Wallet', href: '/wallet' },
 
-      { icon: CreditCard, label: 'Wallet Transactions', href: '/transactions' },
+      { icon: CreditCard, label: 'Wallet Transactions', href: '/wallet-transactions' },
     ],
   },
   {
