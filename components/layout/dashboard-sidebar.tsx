@@ -45,8 +45,8 @@ const SIDEBAR_SECTIONS = [
   {
     title: 'Management',
     items: [
-      { icon: CheckCircle2, label: 'Whitelist', href: '/whitelist' },
-      { icon: FileText, label: 'Reports', href: '/reports' },
+      { icon: CheckCircle2, label: 'Whitelist', href: '/wallet-whitelist' },
+      // { icon: FileText, label: 'Reports', href: '/reports' },
       
     ],
   },
