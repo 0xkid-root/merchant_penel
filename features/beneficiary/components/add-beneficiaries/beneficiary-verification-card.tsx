@@ -2,7 +2,7 @@
 
 import { CheckCircle } from 'lucide-react'
 
-import { BankDetails } from './types'
+import { BankDetails } from '../types'
 
 interface Props {
   bankDetails: BankDetails

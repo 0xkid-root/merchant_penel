@@ -9,7 +9,7 @@ import {
   AddBeneficiaryFormData,
 } from '../../schema/add-beneficiary.schema'
 
-import { BankDetails } from './types'
+import { BankDetails } from '../types'
 
 import BeneficiaryBasicDetails from './beneficiary-basic-details'
 import BeneficiaryVerificationCard from './beneficiary-verification-card'
@@ -67,8 +67,10 @@ export default function AddBeneficiaryForm() {
         className="flex gap-8"
       >
         {/* Left Section */}
+        
 
         <div className="flex-1 space-y-6">
+
 
           <BeneficiaryBasicDetails
             isVerifying={isVerifying}
