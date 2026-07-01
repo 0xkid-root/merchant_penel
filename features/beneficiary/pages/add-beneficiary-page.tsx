@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { AddBeneficiaryForm } from '../../components/add-beneficiaries/add-beneficiary-form'
+import { AddBeneficiaryForm } from '../components/add-beneficiaries/add-beneficiary-form'
 
 export default function AddBeneficiaryPage() {
   const router = useRouter()
