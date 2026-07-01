@@ -22,7 +22,7 @@ export default function BeneficiariesTable({
   setCurrentPage,
 }: Props) {
 
-  
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'Verified':
@@ -178,41 +178,6 @@ export default function BeneficiariesTable({
 
       </div>
 
-      {/* Pagination */}
-
-      <div className="flex items-center justify-between border-t border-slate-200 px-6 py-4">
-
-        <p className="text-sm text-slate-500">
-          Showing 1 to {mockBeneficiaries.length} of {mockBeneficiaries.length} beneficiaries
-        </p>
-
-        <div className="flex items-center gap-2">
-
-          <button className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50">
-            Previous
-          </button>
-
-          {[1].map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`h-9 w-9 rounded-lg text-sm font-medium ${
-                page === currentPage
-                  ? 'bg-indigo-600 text-white'
-                  : 'border border-slate-300 hover:bg-slate-50'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-
-          <button className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50">
-            Next
-          </button>
-
-        </div>
-
-      </div>
 
     </div>
   )

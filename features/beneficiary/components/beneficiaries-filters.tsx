@@ -12,12 +12,6 @@ interface Props {
   bank: string
   setBank: (value: string) => void
 
-  fromDate: string
-  setFromDate: (value: string) => void
-
-  toDate: string
-  setToDate: (value: string) => void
-
   onReset: () => void
 }
 
@@ -28,10 +22,6 @@ export default function BeneficiariesFilters({
   setStatus,
   bank,
   setBank,
-  fromDate,
-  setFromDate,
-  toDate,
-  setToDate,
   onReset,
 }: Props) {
   return (
@@ -85,29 +75,8 @@ export default function BeneficiariesFilters({
           <option value="Axis">Axis Bank</option>
         </select>
 
-        {/* Date Range */}
 
-        <div className="flex items-center rounded-xl border border-slate-300 px-3">
 
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="w-full bg-transparent py-3 text-sm outline-none"
-          />
-
-          <span className="mx-2 text-slate-400">
-            —
-          </span>
-
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="w-full bg-transparent py-3 text-sm outline-none"
-          />
-
-        </div>
 
         {/* Reset */}
 
