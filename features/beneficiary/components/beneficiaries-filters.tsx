@@ -27,7 +27,7 @@ export default function BeneficiariesFilters({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
 
         {/* Search */}
 
