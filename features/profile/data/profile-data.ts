@@ -112,3 +112,11 @@ export const bankDetailsData: BankDetails = {
   verifiedBy: 'Admin User',
   remarks: 'Bank account details verified successfully.',
 }
+
+export const tabs = [
+  { id: 'business', label: 'Business Profile', icon: Building2 },
+  { id: 'kyc', label: 'KYC Documents', icon: FileText },
+  { id: 'bank', label: 'Bank Details', icon: MapPin },
+  { id: 'password', label: 'Change Password', icon: FileText },
+  { id: 'api', label: 'API Credentials', icon: Globe },
+]
