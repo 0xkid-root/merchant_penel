@@ -19,16 +19,10 @@ import {
   History,
 } from 'lucide-react'
 
-import { kycDocuments, mockData, bankDetailsData } from '@/features/profile/data/profile-data'
+import { kycDocuments, mockData, bankDetailsData,tabs } from '@/features/profile/data/profile-data'
 import { BankDetails, BusinessData, KYCDocument } from '../types/profile'
 
-const tabs = [
-  { id: 'business', label: 'Business Profile', icon: Building2 },
-  { id: 'kyc', label: 'KYC Documents', icon: FileText },
-  { id: 'bank', label: 'Bank Details', icon: MapPin },
-  { id: 'password', label: 'Change Password', icon: FileText },
-  { id: 'api', label: 'API Credentials', icon: Globe },
-]
+
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('business')
@@ -66,7 +60,7 @@ export default function ProfilePage() {
   const header = getHeaderContent()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">{header.title}</h1>
