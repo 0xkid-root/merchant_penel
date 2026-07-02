@@ -40,45 +40,49 @@ export default function ProfilePage() {
         headerContent[activeTab as keyof typeof headerContent] ??
         headerContent.business
 
-    return (<div className="space-y-6 p-6"> <div> <h1 className="text-2xl font-bold text-slate-900">
-        {header.title} </h1>
+    return (
+        <div className="space-y-6 p-6">
+            <div>
+                <h1 className="text-2xl font-bold text-slate-900">
+                    {header.title}
+                </h1>
 
 
-        <p className="mt-2 text-sm text-slate-500">
-            {header.description}
-        </p>
-    </div>
+                <p className="mt-2 text-sm text-slate-500">
+                    {header.description}
+                </p>
+            </div>
 
-        <ProfileTabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-        />
+            <ProfileTabs
+                tabs={tabs}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+            />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-            <main className="xl:col-span-8">
-                {activeTab === 'business' && (
-                    <BusinessProfileTab data={mockData} />
-                )}
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+                <main className="xl:col-span-8">
+                    {activeTab === 'business' && (
+                        <BusinessProfileTab data={mockData} />
+                    )}
 
-                {activeTab === 'kyc' && (
-                    <KYCDocumentsTab documents={kycDocuments} />
-                )}
+                    {activeTab === 'kyc' && (
+                        <KYCDocumentsTab documents={kycDocuments} />
+                    )}
 
-                {activeTab === 'bank' && (
-                    <BankDetailsTab data={bankDetailsData} />
-                )}
-            </main>
+                    {activeTab === 'bank' && (
+                        <BankDetailsTab data={bankDetailsData} />
+                    )}
+                </main>
 
-            <aside className="xl:col-span-4">
-                {activeTab === 'bank' ? (
-                    <BankStatusSidebar data={bankDetailsData} />
-                ) : (
-                    <ProfileStatusSidebar data={mockData} />
-                )}
-            </aside>
+                <aside className="xl:col-span-4">
+                    {activeTab === 'bank' ? (
+                        <BankStatusSidebar data={bankDetailsData} />
+                    ) : (
+                        <ProfileStatusSidebar data={mockData} />
+                    )}
+                </aside>
+            </div>
         </div>
-    </div>
 
 
     )
