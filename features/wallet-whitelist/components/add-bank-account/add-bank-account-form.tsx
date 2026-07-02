@@ -12,7 +12,6 @@ import {
 } from '../../schema/add-bank.schema'
 
 import BankAccountFields from './bank-account-fields'
-import BankAccountNotes from './bank-account-notes'
 import BankAccountUpload from './bank-account-upload'
 
 export default function AddBankAccountForm() {
@@ -65,8 +64,6 @@ export default function AddBankAccountForm() {
         className="space-y-6"
       >
         <BankAccountFields />
-
-        <BankAccountNotes />
 
         <BankAccountUpload />
 
