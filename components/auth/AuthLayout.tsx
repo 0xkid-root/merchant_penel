@@ -12,7 +12,7 @@ export default function AuthLayout({
   return (
     <main className="min-h-screen bg-[#F6F4FF] p-5">
 
-      <div className="h-[calc(100vh-40px)] overflow-hidden rounded-[28px] bg-white shadow-2xl">
+      <div className="h-[calc(100vh-40px)] overflow-hidden rounded-[22px] bg-white shadow-sm">
 
         <div className="grid h-full lg:grid-cols-[46%_54%]">
 
