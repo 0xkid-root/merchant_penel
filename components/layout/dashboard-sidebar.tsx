@@ -41,7 +41,7 @@ const SIDEBAR_SECTIONS = [
       { icon: ArrowUpRight, label: 'Direct Payout', href: '#' },
 
       { icon: LogOut, label: 'Bulk Payout', href: '/bulk-payout' },
-      { icon: FileText, label: 'Payout History', href: '/payout-history' },
+      { icon: FileText, label: 'Payout History', href: '/payout/payout-history' },
       { icon: Users2, label: 'Beneficiaries', href: '/beneficiaries' },
     ],
   },
