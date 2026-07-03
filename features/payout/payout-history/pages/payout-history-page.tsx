@@ -10,7 +10,7 @@ import {
   X,
 } from 'lucide-react'
 
-import PayoutHistoryTable from '../components/payout-history-table'
+import {PayoutHistoryTable} from '../components/payout-history-table'
 
 import { usePayoutHistory } from '../hooks/use-payout-history'
 

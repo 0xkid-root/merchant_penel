@@ -1,194 +1,193 @@
 'use client'
 
-import {
-  Building2,
-  ChevronRight,
-  MoreVertical,
-  UserRound,
-} from 'lucide-react'
+import { MoreVertical } from 'lucide-react'
 
-import PayoutStatusBadge from './payout-status-badge'
+import  PayoutStatusBadge  from './payout-status-badge'
 
 import type { PayoutHistoryItem } from '../types/payout-history.types'
 
 interface PayoutHistoryTableProps {
   payouts: PayoutHistoryItem[]
-  onViewDetails: (payout: PayoutHistoryItem) => void
+  currentPage: number
+  setCurrentPage: (page: number) => void
 }
 
-function formatIndianCurrency(amount: number) {
+const PAYOUT_TYPE_STYLES: Record<
+  PayoutHistoryItem['payoutType'],
+  string
+> = {
+  Single: 'bg-indigo-50 text-indigo-700',
+  Direct: 'bg-sky-50 text-sky-700',
+  Bulk: 'bg-violet-50 text-violet-700',
+}
+
+function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount)
 }
 
-function getPayoutTypeLabel(type: PayoutHistoryItem['payoutType']) {
-  if (type === 'single') return 'Single'
-  if (type === 'direct') return 'Direct'
-  return 'Bulk'
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-}
-
-export default function PayoutHistoryTable({ payouts, onViewDetails }: PayoutHistoryTableProps) {
-    
-  if (payouts.length === 0) {
-    return (
-      <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-          <Building2 className="h-5 w-5 text-slate-400" />
-        </div>
-
-        <h3 className="mt-4 text-base font-semibold text-slate-900">
-          No payouts found
-        </h3>
-
-        <p className="mt-1 text-sm text-slate-500">
-          Try changing your search or filter selection.
-        </p>
-      </div>
-    )
-  }
-
+export function PayoutHistoryTable({
+  payouts,
+  currentPage,
+  setCurrentPage,
+}: PayoutHistoryTableProps) {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-[1120px] w-full">
-        <thead className="border-y border-slate-200 bg-slate-50">
-          <tr>
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Payout ID
-            </th>
+    <div>
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <table className="w-full min-w-[1100px] border-collapse">
+          <thead>
+            <tr className="border-b border-slate-200 bg-slate-50">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Payout ID
+              </th>
 
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Type
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Type
+              </th>
 
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Beneficiary
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Beneficiary
+              </th>
 
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Bank Account
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Bank Account
+              </th>
 
-            <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Amount
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Amount
+              </th>
 
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Created At
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Created At
+              </th>
 
-            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Status
-            </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Status
+              </th>
 
-            <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Action
-            </th>
-          </tr>
-        </thead>
+              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Action
+              </th>
+            </tr>
+          </thead>
 
-        <tbody className="divide-y divide-slate-200 bg-white">
-          {payouts.map((payout) => (
-            <tr
-              key={payout.id}
-              className="transition hover:bg-slate-50/80"
-            >
-              <td className="px-5 py-4">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(payout)}
-                  className="text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
-                >
+          <tbody>
+            {payouts.map((payout) => (
+              <tr
+                key={payout.id}
+                className="border-b border-slate-200 transition hover:bg-slate-50"
+              >
+                <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-indigo-600">
                   {payout.payoutId}
-                </button>
-              </td>
+                </td>
 
-              <td className="px-5 py-4">
-                <span className="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                  {getPayoutTypeLabel(payout.payoutType)}
-                </span>
-              </td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`inline-flex rounded-md px-2 py-1 text-xs font-semibold ${
+                      PAYOUT_TYPE_STYLES[payout.payoutType]
+                    }`}
+                  >
+                    {payout.payoutType}
+                  </span>
+                </td>
 
-              <td className="px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
-                    {getInitials(payout.beneficiaryName)}
-                  </div>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                      {payout.beneficiaryName
+                        .split(' ')
+                        .slice(0, 2)
+                        .map((name) => name[0])
+                        .join('')
+                        .toUpperCase()}
+                    </div>
 
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <span className="whitespace-nowrap text-sm font-medium text-slate-900">
                       {payout.beneficiaryName}
-                    </p>
-
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {payout.accountHolderName}
-                    </p>
-                  </div>
-                </div>
-              </td>
-
-              <td className="px-5 py-4">
-                <div>
-                  <p className="flex items-center gap-1.5 text-sm font-medium text-slate-800">
-                    <Building2 className="h-4 w-4 text-slate-400" />
-                    {payout.bankName}
-                    <span className="text-slate-400">
-                      {payout.maskedAccountNumber}
                     </span>
-                  </p>
+                  </div>
+                </td>
+
+                <td className="px-4 py-3">
+                  <p className="whitespace-nowrap text-sm font-medium text-slate-900">
+                    {payout.bankName} •••• {payout.accountLastFour}
+                  </p>  
 
                   <p className="mt-1 text-xs text-slate-500">
                     IFSC: {payout.ifscCode}
                   </p>
-                </div>
-              </td>
+                </td>
 
-              <td className="px-5 py-4 text-right">
-                <p className="text-sm font-bold text-slate-900">
-                  {formatIndianCurrency(payout.amount)}
-                </p>
+                <td className="whitespace-nowrap px-4 py-3 text-sm font-semibold text-slate-900">
+                  {formatCurrency(payout.amount)}
+                </td>
 
-                <p className="mt-1 text-xs text-slate-500">
-                  Debit: {formatIndianCurrency(payout.totalDebit)}
-                </p>
-              </td>
-
-              <td className="px-5 py-4">
-                <p className="text-sm text-slate-600">
+                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-600">
                   {payout.createdAt}
-                </p>
-              </td>
+                </td>
 
-              <td className="px-5 py-4">
-                <PayoutStatusBadge status={payout.status} />
-              </td>
+                <td className="px-4 py-3">
+                  <PayoutStatusBadge status={payout.status} />
+                </td>
 
-              <td className="px-5 py-4 text-right">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(payout)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
-                  aria-label={`View ${payout.payoutId} details`}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </td>
-            </tr>
+                <td className="px-4 py-3 text-center">
+                  <button
+                    type="button"
+                    aria-label={`More actions for ${payout.payoutId}`}
+                    className="rounded-lg p-2 transition hover:bg-slate-100"
+                  >
+                    <MoreVertical className="h-4 w-4 text-slate-500" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-sm text-slate-500">
+          Showing {payouts.length} payout{payouts.length !== 1 ? 's' : ''}
+        </p>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            ←
+          </button>
+
+          {[1, 2, 3].map((page) => (
+            <button
+              key={page}
+              type="button"
+              onClick={() => setCurrentPage(page)}
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                page === currentPage
+                  ? 'bg-indigo-600 text-white'
+                  : 'border border-slate-200 bg-white text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              {page}
+            </button>
           ))}
-        </tbody>
-      </table>
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-500 transition hover:bg-slate-50"
+          >
+            →
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
