@@ -94,15 +94,7 @@ export default function PayoutHistoryPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p className="text-xs font-medium text-slate-500">
-              Total Transactions
-            </p>
-
-            <p className="mt-1 text-xl font-bold text-slate-900">
-              {payouts.length}
-            </p>
-          </div>
+    
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">

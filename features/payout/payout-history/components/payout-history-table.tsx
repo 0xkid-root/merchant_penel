@@ -1,10 +1,14 @@
 'use client'
 
-import { Building2, ChevronRight } from 'lucide-react'
+import { Building2, Check, ChevronRight, Copy } from 'lucide-react'
+import { useState } from 'react'
+
+import { getShortPayoutId, getPayoutTypeLabel, getInitials } from '../utils/payout-history.utils'
 
 import PayoutStatusBadge from './payout-status-badge'
 
 import type { PayoutHistoryItem } from '../types/payout-history.types'
+import { toast } from 'sonner'
 
 interface PayoutHistoryTableProps {
   payouts: PayoutHistoryItem[]
@@ -20,26 +24,34 @@ function formatIndianCurrency(amount: number) {
   }).format(amount)
 }
 
-function getPayoutTypeLabel(type: PayoutHistoryItem['payoutType']) {
-  if (type === 'single') return 'Single'
-  if (type === 'direct') return 'Direct'
-  return 'Bulk'
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word.charAt(0))
-    .join('')
-    .toUpperCase()
-}
-
 export default function PayoutHistoryTable({
   payouts,
   onViewDetails,
 }: PayoutHistoryTableProps) {
+
+  const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
+
+  const handleCopyPayoutId = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    payoutId: string,
+  ) => {
+    event.stopPropagation()
+
+    try {
+      await navigator.clipboard.writeText(payoutId)
+
+      setCopiedPayoutId(payoutId)
+
+      toast.success('Payout ID copied to clipboard')
+
+      window.setTimeout(() => {
+        setCopiedPayoutId(null)
+      }, 1800)
+    } catch {
+      toast.error('Unable to copy payout ID')
+    }
+  }
+
   if (payouts.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
@@ -98,90 +110,111 @@ export default function PayoutHistoryTable({
         </thead>
 
         <tbody>
-          {payouts.map((payout) => (
-            <tr
-              key={payout.id}
-              className="border-b border-slate-200 transition hover:bg-slate-50"
-            >
-              <td className="px-4 py-3">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(payout)}
-                  className="text-sm font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline"
-                >
-                  {payout.payoutId}
-                </button>
-              </td>
+          {payouts.map((payout) => {
+            const isCopied = copiedPayoutId === payout.payoutId
 
-              <td className="px-4 py-3">
-                <span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-                  {getPayoutTypeLabel(payout.payoutType)}
-                </span>
-              </td>
+            return (
+              <tr
+                key={payout.id}
+                className="border-b border-slate-200 transition hover:bg-slate-50"
+              >
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onViewDetails(payout)}
+                      className="text-sm font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline"
+                      title={payout.payoutId}
+                    >
+                      {getShortPayoutId(payout.payoutId)}
+                    </button>
 
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
-                    {getInitials(payout.beneficiaryName)}
+                    <button
+                      type="button"
+                      onClick={(event) =>
+                        handleCopyPayoutId(event, payout.payoutId)
+                      }
+                      aria-label={`Copy ${payout.payoutId}`}
+                      title={isCopied ? 'Copied' : 'Copy payout ID'}
+                      className="rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
+                    >
+                      {isCopied ? (
+                        <Check className="h-3.5 w-3.5 text-green-600" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </button>
                   </div>
+                </td>
 
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">
+                <td className="px-4 py-3">
+                  <span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                    {getPayoutTypeLabel(payout.payoutType)}
+                  </span>
+                </td>
+
+                <td className="w-[250px] px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    {/* <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                      {getInitials(payout.beneficiaryName)}
+                    </div> */}
+
+                    <p
+                      title={payout.beneficiaryName}
+                      className="max-w-[190px] truncate text-sm font-medium text-slate-900"
+                    >
                       {payout.beneficiaryName}
                     </p>
-
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      {payout.accountHolderName}
-                    </p>
                   </div>
-                </div>
-              </td>
+                </td>
+                <td className="px-4 py-3">
+                  <p className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-slate-900">
+                    {/* <Building2 className="h-4 w-4 shrink-0 text-slate-400" /> */}
+                    {payout.bankName}
+                    <span className="text-slate-400">
+                      {payout.maskedAccountNumber}
+                    </span>
+                  </p>
 
-              <td className="px-4 py-3">
-                <p className="flex items-center gap-1.5 text-sm font-medium text-slate-900">
-                  <Building2 className="h-4 w-4 shrink-0 text-slate-400" />
-                  {payout.bankName}
-                  <span className="text-slate-400">
-                    {payout.maskedAccountNumber}
-                  </span>
-                </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    IFSC: {payout.ifscCode}
+                  </p>
+                </td>
 
-                <p className="mt-1 text-xs text-slate-500">
-                  IFSC: {payout.ifscCode}
-                </p>
-              </td>
+                <td className="px-4 py-3">
+                  <p className="whitespace-nowrap text-sm font-semibold text-slate-900">
+                    {formatIndianCurrency(payout.amount)}
+                  </p>
 
-              <td className="px-4 py-3">
-                <p className="whitespace-nowrap text-sm font-semibold text-slate-900">
-                  {formatIndianCurrency(payout.amount)}
-                </p>
+                  <p className="mt-1 whitespace-nowrap text-xs text-slate-500">
+                    Debit: {formatIndianCurrency(payout.totalDebit)}
+                  </p>
+                </td>
 
-                <p className="mt-1 whitespace-nowrap text-xs text-slate-500">
-                  Debit: {formatIndianCurrency(payout.totalDebit)}
-                </p>
-              </td>
+                <td className="px-4 py-3">
+                  <p className="whitespace-nowrap text-sm text-slate-600">
+                    {payout.createdAt}
+                  </p>
+                </td>
 
-              <td className="px-4 py-3 text-sm text-slate-600">
-                {payout.createdAt}
-              </td>
+                <td className="px-4 py-3">
+                  <PayoutStatusBadge status={payout.status} />
+                </td>
 
-              <td className="px-4 py-3">
-                <PayoutStatusBadge status={payout.status} />
-              </td>
-
-              <td className="px-4 py-3 text-center">
-                <button
-                  type="button"
-                  onClick={() => onViewDetails(payout)}
-                  aria-label={`View details for ${payout.payoutId}`}
-                  title="View payout details"
-                  className="rounded-lg p-2 transition hover:bg-slate-100"
-                >
-                  <ChevronRight className="h-4 w-4 text-slate-500" />
-                </button>
-              </td>
-            </tr>
-          ))}
+                <td className="px-4 py-3 text-center">
+                  <button
+                    type="button"
+                    onClick={() => onViewDetails(payout)}
+                    aria-label={`View details for ${payout.payoutId}`}
+                    title="View payout details"
+                    className="rounded-lg p-2 transition hover:bg-slate-100"
+                  >
+                    <ChevronRight className="h-4 w-4 text-slate-500" />
+                  </button>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
