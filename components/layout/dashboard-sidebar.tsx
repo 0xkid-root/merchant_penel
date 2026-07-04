@@ -38,7 +38,7 @@ const SIDEBAR_SECTIONS = [
     title: 'Payouts',
     items: [
       { icon: Zap, label: 'Single Payout', href: '/payout/single' },
-      { icon: ArrowUpRight, label: 'Direct Payout', href: '#' },
+      { icon: ArrowUpRight, label: 'Direct Payout', href: '/payout/direct' },
 
       { icon: LogOut, label: 'Bulk Payout', href: '/bulk-payout' },
       { icon: FileText, label: 'Payout History', href: '/payout/payout-history' },

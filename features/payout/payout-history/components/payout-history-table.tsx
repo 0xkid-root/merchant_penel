@@ -147,6 +147,8 @@ export default function PayoutHistoryTable({
                   </div>
                 </td>
 
+                
+
                 <td className="px-4 py-3">
                   <span className="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
                     {getPayoutTypeLabel(payout.payoutType)}
