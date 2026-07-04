@@ -89,7 +89,7 @@ export default function DirectPayoutCreatePage() {
                         values={formValues}
                         payoutId="DP-20260704-001"
                         onCreateAnother={() => {
-                            setFormValues(initialFormValues)
+                            setFormValues(INITIAL_FORM_VALUES)
                             setStep('form')
                         }}
                     />
