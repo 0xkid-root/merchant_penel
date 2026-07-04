@@ -12,11 +12,12 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import DirectPayoutTable from './direct-payout-table'
+import DirectPayoutDetailsModal from './direct-payout-details-modal'
 
 import {
-  formatIndianCurrency,
-  getDirectPayoutStatusLabel,
-  getDirectPayoutStatusStyles,
+    formatIndianCurrency,
+    getDirectPayoutStatusLabel,
+    getDirectPayoutStatusStyles,
 } from '../utils/direct-payout.utils'
 
 
@@ -24,7 +25,7 @@ import PageHeader from '@/components/layout/page-header'
 
 import { DIRECT_PAYOUTS } from '../data/direct-payout-data'
 
-import type {DirectPayoutItem,  DirectPayoutStatus,} from '../types/direct-payout.types'
+import type { DirectPayoutItem, DirectPayoutStatus, } from '../types/direct-payout.types'
 
 const STATUS_OPTIONS: Array<{
     value: 'all' | DirectPayoutStatus
@@ -38,7 +39,7 @@ const STATUS_OPTIONS: Array<{
 
 export default function DirectPayoutList() {
     const [search, setSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState<'all' | DirectPayoutStatus >('all')
+    const [statusFilter, setStatusFilter] = useState<'all' | DirectPayoutStatus>('all')
 
     const [selectedPayout, setSelectedPayout] = useState<DirectPayoutItem | null>(null)
     const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
@@ -209,145 +210,10 @@ export default function DirectPayoutList() {
                         />
                     )}
                 </div>
-
-                {selectedPayout ? (
-                    <div className="fixed inset-0 z-50 flex items-end bg-slate-950/40 p-4 sm:items-center sm:justify-center">
-                        <div className="w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-2xl">
-                            <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                                        Direct Payout Details
-                                    </p>
-
-                                    <h3 className="mt-1 text-lg font-bold text-slate-900">
-                                        {selectedPayout.payoutId}
-                                    </h3>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedPayout(null)}
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                                    aria-label="Close direct payout details"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-
-                            <div className="space-y-5 px-6 py-5">
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Account Holder
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                                            {selectedPayout.accountHolderName}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Payout Status
-                                        </p>
-
-                                        <div className="mt-1">
-                                            <span
-                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getDirectPayoutStatusStyles(
-                                                    selectedPayout.status,
-                                                )}`}
-                                            >
-                                                {getDirectPayoutStatusLabel(selectedPayout.status)}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Bank Name
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                                            {selectedPayout.bankName}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Bank Account
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                                            {selectedPayout.maskedAccountNumber}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            IFSC Code
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                                            {selectedPayout.ifscCode}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Created At
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                                            {selectedPayout.createdAt}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Payout Amount
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-bold text-slate-900">
-                                            {formatIndianCurrency(selectedPayout.amount)}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Total Debit
-                                        </p>
-
-                                        <p className="mt-1 text-sm font-bold text-indigo-600">
-                                            {formatIndianCurrency(selectedPayout.totalDebit)}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {selectedPayout.remarks ? (
-                                    <div className="rounded-xl bg-slate-50 p-4">
-                                        <p className="text-xs font-medium text-slate-500">
-                                            Remarks
-                                        </p>
-
-                                        <p className="mt-1 text-sm text-slate-700">
-                                            {selectedPayout.remarks}
-                                        </p>
-                                    </div>
-                                ) : null}
-                            </div>
-
-                            <div className="flex justify-end border-t border-slate-200 px-6 py-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setSelectedPayout(null)}
-                                    className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
+                <DirectPayoutDetailsModal
+                    payout={selectedPayout}
+                    onClose={() => setSelectedPayout(null)}
+                />
             </div>
         </div>
     )
