@@ -8,9 +8,11 @@ import {
   Search,
   SlidersHorizontal,
   X,
-} from 'lucide-react'
 
-import  PayoutHistoryTable  from '../components/payout-history-table'
+} from 'lucide-react'
+import PageHeader from '@/components/layout/page-header'
+
+import PayoutHistoryTable from '../components/payout-history-table'
 
 import { usePayoutHistory } from '../hooks/use-payout-history'
 
@@ -23,21 +25,21 @@ const PAYOUT_TYPE_OPTIONS: Array<{
   value: 'all' | PayoutType
   label: string
 }> = [
-  { value: 'all', label: 'All Types' },
-  { value: 'single', label: 'Single Payout' },
-  { value: 'direct', label: 'Direct Payout' },
-  { value: 'bulk', label: 'Bulk Payout' },
-]
+    { value: 'all', label: 'All Types' },
+    { value: 'single', label: 'Single Payout' },
+    { value: 'direct', label: 'Direct Payout' },
+    { value: 'bulk', label: 'Bulk Payout' },
+  ]
 
 const PAYOUT_STATUS_OPTIONS: Array<{
   value: 'all' | PayoutStatus
   label: string
 }> = [
-  { value: 'all', label: 'All Status' },
-  { value: 'success', label: 'Success' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'failed', label: 'Failed' },
-]
+    { value: 'all', label: 'All Status' },
+    { value: 'success', label: 'Success' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'failed', label: 'Failed' },
+  ]
 
 export default function PayoutHistoryPage() {
   const {
@@ -74,38 +76,13 @@ export default function PayoutHistoryPage() {
   return (
     <div className="min-h-full bg-slate-50 px-4 py-5 lg:px-6">
       <div className="mx-auto max-w-[1440px]">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100">
-                <History className="h-5 w-5 text-indigo-600" />
-              </div>
 
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                  Payout History
-                </h1>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  View and track all single, direct, and bulk payout
-                  transactions.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p className="text-xs font-medium text-slate-500">
-              Total Transactions
-            </p>
-
-            <p className="mt-1 text-xl font-bold text-slate-900">
-              {payouts.length}
-            </p>
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <PageHeader
+          title="Payout History"
+          subtitle="View and track all single, direct, and bulk payout transactions."
+          
+        />
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
           <div className="border-b border-slate-200 px-5 py-5 lg:px-6">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
@@ -209,7 +186,7 @@ export default function PayoutHistoryPage() {
 
           <PayoutHistoryTable
             payouts={payouts}
-            onViewDetails={(payout:any) => setSelectedPayout(payout)}
+            onViewDetails={(payout: any) => setSelectedPayout(payout)}
           />
         </div>
 
