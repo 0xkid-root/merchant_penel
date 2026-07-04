@@ -3,11 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
-    Building2,
-    Check,
     ChevronDown,
-    Copy,
-    Eye,
     Filter,
     Plus,
     Search,
@@ -15,16 +11,20 @@ import {
     X,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import DirectPayoutTable from './direct-payout-table'
+
+import {
+  formatIndianCurrency,
+  getDirectPayoutStatusLabel,
+  getDirectPayoutStatusStyles,
+} from '../utils/direct-payout.utils'
 
 
 import PageHeader from '@/components/layout/page-header'
 
 import { DIRECT_PAYOUTS } from '../data/direct-payout-data'
 
-import type {
-    DirectPayoutItem,
-    DirectPayoutStatus,
-} from '../types/direct-payout.types'
+import type {DirectPayoutItem,  DirectPayoutStatus,} from '../types/direct-payout.types'
 
 const STATUS_OPTIONS: Array<{
     value: 'all' | DirectPayoutStatus
@@ -36,61 +36,12 @@ const STATUS_OPTIONS: Array<{
         { value: 'failed', label: 'Failed' },
     ]
 
-function formatIndianCurrency(amount: number) {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(amount)
-}
-
-function getStatusStyles(status: DirectPayoutStatus) {
-    if (status === 'success') {
-        return 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-    }
-
-    if (status === 'pending') {
-        return 'border border-amber-200 bg-amber-50 text-amber-700'
-    }
-
-    return 'border border-red-200 bg-red-50 text-red-700'
-}
-
-function getStatusLabel(status: DirectPayoutStatus) {
-    if (status === 'success') return 'Success'
-    if (status === 'pending') return 'Pending'
-    return 'Failed'
-}
-
-function getInitials(name: string) {
-    return name
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((word) => word.charAt(0))
-        .join('')
-        .toUpperCase()
-}
-
 export default function DirectPayoutList() {
     const [search, setSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState<
-        'all' | DirectPayoutStatus
-    >('all')
+    const [statusFilter, setStatusFilter] = useState<'all' | DirectPayoutStatus >('all')
 
     const [selectedPayout, setSelectedPayout] = useState<DirectPayoutItem | null>(null)
     const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
-
-
-    function getShortPayoutId(payoutId: string) {
-        if (payoutId.length <= 10) return payoutId
-
-        const firstPart = payoutId.slice(0, 3)
-        const lastPart = payoutId.slice(-3)
-
-        return `${firstPart}...${lastPart}`
-    }
 
     const handleCopyPayoutId = async (
         event: React.MouseEvent<HTMLButtonElement>,
@@ -113,8 +64,6 @@ export default function DirectPayoutList() {
         }
     }
 
-    const isCopied = copiedPayoutId === selectedPayout?.payoutId || false
-
 
     const filteredPayouts = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase()
@@ -128,9 +77,7 @@ export default function DirectPayoutList() {
                 payout.maskedAccountNumber.toLowerCase().includes(normalizedSearch) ||
                 payout.ifscCode.toLowerCase().includes(normalizedSearch)
 
-            const matchesStatus =
-                statusFilter === 'all' || payout.status === statusFilter
-
+            const matchesStatus = statusFilter === 'all' || payout.status === statusFilter
             return matchesSearch && matchesStatus
         })
     }, [search, statusFilter])
@@ -151,8 +98,7 @@ export default function DirectPayoutList() {
                     actions={
                         <Link
                             href="/payout/direct/create"
-                            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                        >
+                            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700">
                             <Plus className="h-4 w-4" />
                             Direct Payout
                         </Link>
@@ -255,150 +201,12 @@ export default function DirectPayoutList() {
                             </p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1100px] border-collapse">
-                                <thead>
-                                    <tr className="border-b border-slate-200 bg-slate-50">
-                                        <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Payout ID
-                                        </th>
-
-                                        <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Account Holder
-                                        </th>
-
-                                        <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Bank Account
-                                        </th>
-
-                                        <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Amount
-                                        </th>
-
-                                        <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Created At
-                                        </th>
-
-                                        <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Status
-                                        </th>
-
-                                        <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody className="divide-y divide-slate-200 bg-white">
-                                    {filteredPayouts.map((payout) => (
-                                        <tr
-                                            key={payout.id}
-                                            className="transition hover:bg-slate-50/80"
-                                        >
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-1.5">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedPayout(payout)}
-                                                        className="text-sm font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline"
-                                                        title={payout.payoutId}
-                                                    >
-                                                        {getShortPayoutId(payout.payoutId)}
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        onClick={(event) =>
-                                                            handleCopyPayoutId(event, payout.payoutId)
-                                                        }
-                                                        aria-label={`Copy ${payout.payoutId}`}
-                                                        title={isCopied ? 'Copied' : 'Copy payout ID'}
-                                                        className="rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
-                                                    >
-                                                        {isCopied ? (
-                                                            <Check className="h-3.5 w-3.5 text-green-600" />
-                                                        ) : (
-                                                            <Copy className="h-3.5 w-3.5" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </td>
-
-                                            <td className="px-5 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
-                                                        {getInitials(payout.accountHolderName)}
-                                                    </div>
-
-                                                    <div className="min-w-0">
-                                                        <p
-                                                            title={payout.accountHolderName}
-                                                            className="max-w-[230px] truncate text-sm font-semibold text-slate-900"
-                                                        >
-                                                            {payout.accountHolderName}
-                                                        </p>
-
-                                                        <p className="mt-0.5 text-xs text-slate-500">
-                                                            Direct bank transfer
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td className="px-5 py-4">
-                                                <p className="flex items-center gap-1.5 text-sm font-medium text-slate-900">
-                                                    <Building2 className="h-4 w-4 shrink-0 text-slate-400" />
-                                                    {payout.bankName}
-                                                    <span className="text-slate-400">
-                                                        {payout.maskedAccountNumber}
-                                                    </span>
-                                                </p>
-
-                                                <p className="mt-1 text-xs text-slate-500">
-                                                    IFSC: {payout.ifscCode}
-                                                </p>
-                                            </td>
-
-                                            <td className="px-5 py-4 text-right">
-                                                <p className="text-sm font-bold text-slate-900">
-                                                    {formatIndianCurrency(payout.amount)}
-                                                </p>
-
-                                                <p className="mt-1 text-xs text-slate-500">
-                                                    Debit: {formatIndianCurrency(payout.totalDebit)}
-                                                </p>
-                                            </td>
-
-                                            <td className="px-5 py-4 text-sm text-slate-600">
-                                                {payout.createdAt}
-                                            </td>
-
-                                            <td className="px-5 py-4">
-                                                <span
-                                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusStyles(
-                                                        payout.status,
-                                                    )}`}
-                                                >
-                                                    {getStatusLabel(payout.status)}
-                                                </span>
-                                            </td>
-
-                                            <td className="px-5 py-4 text-right">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setSelectedPayout(payout)}
-                                                    aria-label={`View details for ${payout.payoutId}`}
-                                                    title="View payout details"
-                                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <DirectPayoutTable
+                            payouts={filteredPayouts}
+                            copiedPayoutId={copiedPayoutId}
+                            onViewDetails={setSelectedPayout}
+                            onCopyPayoutId={handleCopyPayoutId}
+                        />
                     )}
                 </div>
 
@@ -445,11 +253,11 @@ export default function DirectPayoutList() {
 
                                         <div className="mt-1">
                                             <span
-                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusStyles(
+                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getDirectPayoutStatusStyles(
                                                     selectedPayout.status,
                                                 )}`}
                                             >
-                                                {getStatusLabel(selectedPayout.status)}
+                                                {getDirectPayoutStatusLabel(selectedPayout.status)}
                                             </span>
                                         </div>
                                     </div>
