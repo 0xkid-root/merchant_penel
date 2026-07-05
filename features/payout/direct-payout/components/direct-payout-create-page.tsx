@@ -84,10 +84,13 @@ export default function DirectPayoutCreatePage() {
         if (step === 'otp') {
             return (
                 <DirectPayoutOtp
-                    values={formValues}
                     onBack={() => setStep('review')}
-                    onVerify={handleVerifyOtp}
+                    onVerify={() => {
+                        setIsSuccess(true)
+                        setStep('result')
+                    }}
                 />
+
             )
         }
 
@@ -106,7 +109,7 @@ export default function DirectPayoutCreatePage() {
     }
 
     return (
-        <div className="min-h-full bg-slate-50 px-4 py-4">
+        <div className="min-h-full bg-slate-50 px-4 py-2">
             <div className="mx-auto max-w-[1180px]">
                 <div className="mb-7 flex items-center gap-2 text-sm">
                     <Link
