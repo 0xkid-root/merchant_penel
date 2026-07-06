@@ -24,7 +24,7 @@ export interface BulkPayoutRecord {
   accountNumber: string
   ifscCode: string
   amount: number
-  remarks?: string
+  remarks: string
   status: BulkPayoutValidationStatus
   errorMessage?: string
 }

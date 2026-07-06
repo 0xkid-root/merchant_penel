@@ -18,7 +18,7 @@ import type { BulkPayoutFormValues, BulkPayoutRecord, } from '../types/bulk-payo
 interface BulkPayoutValidationProps {
     values: BulkPayoutFormValues
     onBack: () => void
-    onContinue: () => void
+    onContinue: (validRecords: BulkPayoutRecord[]) => void
     onReupload: () => void
 }
 
@@ -37,7 +37,7 @@ export default function BulkPayoutValidation({
     onContinue,
     onReupload,
 }: BulkPayoutValidationProps) {
-    
+
     const records: BulkPayoutRecord[] = values.records
     const fileName = values.fileName
 
@@ -145,7 +145,7 @@ export default function BulkPayoutValidation({
                         <p className="text-xl font-bold text-slate-900">
                             {formatIndianCurrency(values.totalAmount)}
                         </p>
-                    </div>  
+                    </div>
 
                 </div>
 
@@ -279,7 +279,7 @@ export default function BulkPayoutValidation({
                     </SecondaryButton>
 
                     <PrimaryButton
-                        onClick={onContinue}
+                        onClick={() => onContinue(validRecords)}
                         disabled={validRecords.length === 0}
                     >
                         Continue to Review

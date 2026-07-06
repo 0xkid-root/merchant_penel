@@ -69,8 +69,7 @@ export default function BulkPayoutCreatePage() {
 
                     {currentStep === 'validation' ? (
                         <BulkPayoutValidation
-                            fileName={values.fileName}
-                            records={values.records}
+                            values={values}
                             onBack={() => setCurrentStep('upload')}
                             onReupload={() => setCurrentStep('upload')}
                             onContinue={(validRecords) => {
@@ -103,11 +102,10 @@ export default function BulkPayoutCreatePage() {
 
                     {currentStep === 'otp' ? (
                         <BulkPayoutOtp
-                            fileName={values.fileName}
-                            records={values.records}
+                            totalRecords={values.records.length}
                             totalAmount={values.totalAmount}
                             onBack={() => setCurrentStep('review')}
-                            onVerify={handleSubmitBulkPayout}
+                            onVerified={() => handleSubmitBulkPayout()}
                         />
                     ) : null}
 
