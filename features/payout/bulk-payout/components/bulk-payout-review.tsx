@@ -13,11 +13,11 @@ import {
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 
-import { BulkPayoutValidationRecord } from '../types/bulk-payout.types'
+import type { BulkPayoutFormValues, BulkPayoutRecord, } from '../types/bulk-payout.types'
 
 interface BulkPayoutReviewProps {
     fileName: string
-    records: BulkPayoutValidationRecord[]
+    records: BulkPayoutRecord[]
     onBack: () => void
     onContinue: () => void
 }
