@@ -13,10 +13,6 @@ import BulkPayoutValidation from './bulk-payout-validation'
 
 import type { BulkPayoutFormValues } from '../types/bulk-payout.types'
 
-
-
-
-
 const INITIAL_VALUES: BulkPayoutFormValues = {
     batchName: '',
     fileName: '',
@@ -49,7 +45,7 @@ export default function BulkPayoutCreatePage() {
     return (
         <div className="min-h-full bg-slate-50">
             <PageHeader
-                title="Create Bulk Payout"
+                title="Create Bulk hii Payout"
                 subtitle="Upload a payout file, validate beneficiary records, and submit the batch securely."
             />
 
@@ -102,8 +98,6 @@ export default function BulkPayoutCreatePage() {
 
                     {currentStep === 'otp' ? (
                         <BulkPayoutOtp
-                            totalRecords={values.records.length}
-                            totalAmount={values.totalAmount}
                             onBack={() => setCurrentStep('review')}
                             onVerified={() => handleSubmitBulkPayout()}
                         />
