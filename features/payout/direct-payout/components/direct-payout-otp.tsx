@@ -1,3 +1,5 @@
+// features/payout/direct-payout/components/direct-payout-otp.tsx
+
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
@@ -9,10 +11,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import type { DirectPayoutFormValues } from './direct-payout-create-page'
-
 interface DirectPayoutOtpProps {
-  values: DirectPayoutFormValues
   onBack: () => void
   onVerify: () => void
 }
@@ -21,7 +20,6 @@ const OTP_LENGTH = 6
 const RESEND_SECONDS = 30
 
 export default function DirectPayoutOtp({
-  values,
   onBack,
   onVerify,
 }: DirectPayoutOtpProps) {
@@ -31,14 +29,8 @@ export default function DirectPayoutOtp({
 
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
-  const payoutAmount = Number(values.amount)
-
   useEffect(() => {
-    const firstInput = inputRefs.current[0]
-
-    if (firstInput) {
-      firstInput.focus()
-    }
+    inputRefs.current[0]?.focus()
   }, [])
 
   useEffect(() => {
@@ -81,9 +73,7 @@ export default function DirectPayoutOtp({
     }
   }
 
-  const handlePaste = (
-    event: React.ClipboardEvent<HTMLInputElement>,
-  ) => {
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
     event.preventDefault()
 
     const pastedOtp = event.clipboardData
@@ -131,9 +121,7 @@ export default function DirectPayoutOtp({
 
     window.setTimeout(() => {
       setIsVerifying(false)
-
       toast.success('OTP verified successfully')
-
       onVerify()
     }, 1000)
   }
@@ -159,75 +147,55 @@ export default function DirectPayoutOtp({
         </div>
       </div>
 
-      <div className="px-5 py-8 lg:px-6">
-        <div className="mx-auto max-w-md">
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-              Direct payout amount
-            </p>
+      <div className="px-5 py-10 lg:px-6">
+        <div className="mx-auto max-w-md text-center">
+          <p className="text-sm font-semibold text-slate-800">
+            Enter 6-digit OTP
+          </p>
 
-            <p className="mt-1 text-2xl font-bold text-slate-900">
-              ₹{payoutAmount.toLocaleString('en-IN')}
-            </p>
+          <p className="mt-1 text-xs text-slate-500">
+            For dummy UI, enter any 6 digits.
+          </p>
 
-            <p className="mt-2 text-sm text-slate-600">
-              To: {values.accountHolderName}
-            </p>
-
-            <p className="mt-1 text-sm text-slate-600">
-              Account: XXXXXX{values.accountNumber.slice(-4)}
-            </p>
+          <div className="mt-6 flex justify-center gap-2 sm:gap-3">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(element) => {
+                  inputRefs.current[index] = element
+                }}
+                value={digit}
+                onChange={(event) =>
+                  updateOtpValue(index, event.target.value)
+                }
+                onKeyDown={(event) => handleKeyDown(event, index)}
+                onPaste={handlePaste}
+                inputMode="numeric"
+                maxLength={1}
+                aria-label={`OTP digit ${index + 1}`}
+                className="h-12 w-11 rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:h-14 sm:w-12"
+              />
+            ))}
           </div>
 
-          <div className="mt-7 text-center">
-            <p className="text-sm font-medium text-slate-700">
-              Enter 6-digit OTP
-            </p>
-
-            <p className="mt-1 text-xs text-slate-500">
-              For dummy UI, enter any 6 digits.
-            </p>
-
-            <div className="mt-5 flex justify-center gap-2 sm:gap-3">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(element) => {
-                    inputRefs.current[index] = element
-                  }}
-                  value={digit}
-                  onChange={(event) =>
-                    updateOtpValue(index, event.target.value)
-                  }
-                  onKeyDown={(event) => handleKeyDown(event, index)}
-                  onPaste={handlePaste}
-                  inputMode="numeric"
-                  maxLength={1}
-                  aria-label={`OTP digit ${index + 1}`}
-                  className="h-11 w-10 rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:h-12 sm:w-11"
-                />
-              ))}
-            </div>
-
-            <div className="mt-5">
-              {resendSeconds > 0 ? (
-                <p className="text-xs text-slate-500">
-                  Resend OTP available in{' '}
-                  <span className="font-semibold text-slate-700">
-                    {resendSeconds}s
-                  </span>
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Resend OTP
-                </button>
-              )}
-            </div>
+          <div className="mt-5">
+            {resendSeconds > 0 ? (
+              <p className="text-xs text-slate-500">
+                Resend OTP available in{' '}
+                <span className="font-semibold text-slate-700">
+                  {resendSeconds}s
+                </span>
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Resend OTP
+              </button>
+            )}
           </div>
         </div>
       </div>

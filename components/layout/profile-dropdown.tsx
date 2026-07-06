@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { User, HelpCircle, LogOut } from 'lucide-react'
+import { User, HelpCircle, LogOut, Lock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Props {
@@ -28,6 +28,17 @@ export default function ProfileDropdown({ onClose }: Props) {
         <User className="h-5 w-5 text-slate-500" />
         <span className="text-sm font-medium text-slate-700">
           Profile
+        </span>
+      </Link>
+
+
+      <Link 
+      href="#"
+      className='flex items-center gap-3 px-4 py-3 hover:bg-slate-50'
+      >
+        <Lock className="h-5 w-5 text-slate-500" />
+        <span className='text-sm font-medium text-slate-700'>
+          Security
         </span>
       </Link>
 

@@ -94,7 +94,7 @@ export default function SinglePayoutForm({
         </p>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+      <div className="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
@@ -119,8 +119,8 @@ export default function SinglePayoutForm({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-150 bg-white">
-        <div className="border-b border-slate-150 px-6 py-5">
+      <div className="bg-white">
+        <div className=" px-6 py-5">
           <h2 className="text-base font-semibold text-slate-900">
             Payout Details
           </h2>
@@ -163,7 +163,7 @@ export default function SinglePayoutForm({
           </div>
 
           {selectedBeneficiary && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
                   <CheckCircle2 className="h-5 w-5 text-emerald-600" />
@@ -302,7 +302,7 @@ export default function SinglePayoutForm({
             </div>
           )}
 
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col-reverse gap-3  pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <Landmark className="h-4 w-4 text-slate-400" />
               Funds will be transferred to the selected beneficiary.
