@@ -1,4 +1,3 @@
-
 export type BulkPayoutStatus =
   | 'PROCESSING'
   | 'COMPLETED'
@@ -17,11 +16,9 @@ export interface BulkPayoutBatch {
   createdAt: string
 }
 
-
 export type BulkPayoutValidationStatus = 'valid' | 'invalid'
 
-
-export interface BulkPayoutValidationRecord {
+export interface BulkPayoutRecord {
   id: string
   beneficiaryName: string
   accountNumber: string
@@ -30,4 +27,13 @@ export interface BulkPayoutValidationRecord {
   remarks?: string
   status: BulkPayoutValidationStatus
   errorMessage?: string
+}
+
+export interface BulkPayoutFormValues {
+  batchName: string
+  fileName: string
+  records: BulkPayoutRecord[]
+  totalAmount: number
+  validRecords: number
+  invalidRecords: number
 }

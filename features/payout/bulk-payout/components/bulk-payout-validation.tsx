@@ -11,17 +11,14 @@ import {
 
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
-import type { BulkPayoutFormValues } from './bulk-payout-create-page'
 
 
-import { BulkPayoutValidationRecord } from '../types/bulk-payout.types'
+import type { BulkPayoutFormValues, BulkPayoutRecord, } from '../types/bulk-payout.types'
 
 interface BulkPayoutValidationProps {
     values: BulkPayoutFormValues
-    fileName: string
-    records: BulkPayoutValidationRecord[]
     onBack: () => void
-    onContinue: (validRecords: BulkPayoutValidationRecord[]) => void
+    onContinue: () => void
     onReupload: () => void
 }
 
@@ -36,20 +33,15 @@ function formatIndianCurrency(amount: number) {
 
 export default function BulkPayoutValidation({
     values,
-    fileName,
-    records,
     onBack,
     onContinue,
     onReupload,
 }: BulkPayoutValidationProps) {
-    
+    const records: BulkPayoutRecord[] = values.records
+    const fileName = values.fileName
+
     const validRecords = records.filter((record) => record.status === 'valid')
     const invalidRecords = records.filter((record) => record.status === 'invalid')
-
-    const totalAmount = validRecords.reduce(
-        (total, record) => total + Number(record.amount || 0),
-        0,
-    )
 
     const hasInvalidRecords = invalidRecords.length > 0
 
@@ -150,9 +142,10 @@ export default function BulkPayoutValidation({
                         </div>
 
                         <p className="text-xl font-bold text-slate-900">
-                            {formatIndianCurrency(totalAmount)}
+                            {formatIndianCurrency(values.totalAmount)}
                         </p>
-                    </div>
+                    </div>  
+
                 </div>
 
                 {hasInvalidRecords ? (
@@ -285,7 +278,7 @@ export default function BulkPayoutValidation({
                     </SecondaryButton>
 
                     <PrimaryButton
-                        onClick={() => onContinue(validRecords)}
+                        onClick={onContinue}
                         disabled={validRecords.length === 0}
                     >
                         Continue to Review
