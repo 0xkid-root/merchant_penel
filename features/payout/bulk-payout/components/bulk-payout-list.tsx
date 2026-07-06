@@ -54,8 +54,7 @@ export default function BulkPayoutList() {
         batch.id.toLowerCase().includes(normalizedSearch) ||
         batch.fileName.toLowerCase().includes(normalizedSearch)
 
-      const matchesStatus =
-        statusFilter === 'all' || batch.status === statusFilter
+      const matchesStatus = statusFilter === 'all' || batch.status === statusFilter
 
       return matchesSearch && matchesStatus
     })

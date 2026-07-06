@@ -1,4 +1,3 @@
-import { CheckCircle2, Clock3, XCircle } from 'lucide-react'
 
 export type BulkPayoutStatus =
   | 'PROCESSING'
@@ -16,4 +15,19 @@ export interface BulkPayoutBatch {
   pendingCount: number
   status: BulkPayoutStatus
   createdAt: string
+}
+
+
+export type BulkPayoutValidationStatus = 'valid' | 'invalid'
+
+
+export interface BulkPayoutValidationRecord {
+  id: string
+  beneficiaryName: string
+  accountNumber: string
+  ifscCode: string
+  amount: number
+  remarks?: string
+  status: BulkPayoutValidationStatus
+  errorMessage?: string
 }
