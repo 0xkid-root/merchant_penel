@@ -123,7 +123,7 @@ export default function SinglePayoutOtp({
 
       <div className="overflow-hidden rounded-2xl border border-slate-120 bg-white">
         <div className="space-y-6 p-5 sm:p-6">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+          <div className=" p-4 sm:p-5">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
                 <Smartphone className="h-5 w-5 text-indigo-600" />
@@ -169,13 +169,12 @@ export default function SinglePayoutOtp({
                   }
                   onKeyDown={(event) => handleKeyDown(event, index)}
                   onPaste={handlePaste}
-                  className={`h-12 w-11 rounded-xl border text-center text-lg font-bold outline-none transition sm:h-14 sm:w-14 ${
-                    error
-                      ? 'border-red-400 bg-red-50 text-red-700 focus:ring-4 focus:ring-red-100'
-                      : value
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 focus:ring-4 focus:ring-indigo-100'
-                        : 'border-slate-300 bg-white text-slate-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100'
-                  }`}
+                  className={`h-12 w-11 rounded-xl border text-center text-lg font-bold outline-none transition sm:h-14 sm:w-14 ${error
+                    ? 'border-red-400 bg-red-50 text-red-700 focus:ring-4 focus:ring-red-100'
+                    : value
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700 focus:ring-4 focus:ring-indigo-100'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100'
+                    }`}
                 />
               ))}
             </div>
@@ -212,7 +211,7 @@ export default function SinglePayoutOtp({
             )}
           </div>
 
-          <div className="flex flex-col-reverse gap-4 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col-reverse gap-4  pt-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <UserRound className="h-4 w-4 text-slate-400" />
               OTP is valid only for this payout request.

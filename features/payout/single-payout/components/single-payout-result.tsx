@@ -131,7 +131,7 @@ export default function SinglePayoutResult({
 
         <div className="space-y-6 p-6">
           {result.status !== 'failed' && (
-            <div className="rounded-xl border border-slate-150 bg-slate-50 p-3">
+            <div className=" p-3">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-xs font-medium text-slate-500">
@@ -175,8 +175,8 @@ export default function SinglePayoutResult({
             </div>
           )}
 
-          <div>
-            <div className="mb-4 flex items-center gap-2">
+          <div className='border-t border-slate-200'>
+            <div className="mb-4 flex items-center gap-2 mt-4">
               <Landmark className="h-4 w-4 text-indigo-600" />
 
               <h2 className="text-sm font-semibold text-slate-900">
@@ -184,7 +184,7 @@ export default function SinglePayoutResult({
               </h2>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-slate-150">
+            <div className="overflow-hidden">
               <div className="grid grid-cols-1 gap-5 border-b border-slate-150 bg-white p-5 sm:grid-cols-2">
                 <div>
                   <p className="text-xs font-medium text-slate-500">
@@ -261,7 +261,7 @@ export default function SinglePayoutResult({
                 </p>
               </div>
 
-              <div className="flex items-center justify-between bg-indigo-50 px-5 py-4">
+              <div className="flex items-center justify-between  px-5 py-4">
                 <div>
                   <p className="text-sm font-semibold text-indigo-900">
                     Total Wallet Debit
@@ -280,7 +280,7 @@ export default function SinglePayoutResult({
           </div>
 
           {remarks && (
-            <div>
+            <div className="border-t border-slate-200 pt-4">
               <div className="mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4 text-indigo-600" />
 
@@ -289,13 +289,13 @@ export default function SinglePayoutResult({
                 </h2>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
+              <div className="rounded-xl px-5 py-4">
                 <p className="text-sm leading-6 text-slate-700">{remarks}</p>
               </div>
             </div>
           )}
 
-          <div className="flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <SecondaryButton onClick={onBackToHistory}>
               <ArrowRight className="h-4 w-4 rotate-180" />
               Back to Payout History

@@ -26,7 +26,8 @@ export default function DirectPayoutReview({
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-7"> <div className="flex items-start gap-3">
+      <div className="mb-7"> 
+        <div className="flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
           <WalletCards className="h-5 w-5 text-indigo-600" />
         </div>
@@ -98,7 +99,7 @@ export default function DirectPayoutReview({
               <Landmark className="h-4 w-4 text-indigo-600" />
 
               <h3 className="text-sm font-bold text-slate-900">
-                Bank Details
+                Bank Details 
               </h3>
             </div>
 
@@ -148,7 +149,7 @@ export default function DirectPayoutReview({
           {values.remarks ? (
             <section className="px-5 py-4 sm:px-6">
               <h3 className="text-sm font-bold text-slate-900">
-                Remarks
+                Remarks 
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-slate-600">

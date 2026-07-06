@@ -82,7 +82,7 @@ export default function SinglePayoutReview({
               </h3>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50">
+            <div className="">
               <div className="grid grid-cols-1 gap-5 p-5 sm:grid-cols-2">
                 <div>
                   <p className="text-xs font-medium text-slate-500">
@@ -149,16 +149,16 @@ export default function SinglePayoutReview({
           </div>
 
           {/* Transaction details */}
-          <div>
-            <div className="mb-4 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-indigo-600" />
+          <div className='border-t border-slate-200 '>
+            <div className="mb-4 flex items-center gap-2 mt-2">
+              <FileText className="h-4 w-4 text-indigo-600"/>
 
               <h3 className="text-sm font-semibold text-slate-900">
                 Transaction Details
               </h3>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-slate-150">
+            <div className="overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-150 bg-white px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50">
@@ -197,7 +197,7 @@ export default function SinglePayoutReview({
                 </p>
               </div>
 
-              <div className="flex items-center justify-between bg-indigo-50 px-5 py-4">
+              <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
                 <div>
                   <p className="text-sm font-semibold text-indigo-900">
                     Total Debit From Wallet
@@ -235,7 +235,7 @@ export default function SinglePayoutReview({
     
 
           {/* Footer actions */}
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col-reverse gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <Landmark className="h-4 w-4 text-slate-400" />
               Please verify the bank details before proceeding.
