@@ -14,13 +14,6 @@ import { toast } from 'sonner'
 import DirectPayoutTable from './direct-payout-table'
 import DirectPayoutDetailsModal from './direct-payout-details-modal'
 
-import {
-    formatIndianCurrency,
-    getDirectPayoutStatusLabel,
-    getDirectPayoutStatusStyles,
-} from '../utils/direct-payout.utils'
-
-
 import PageHeader from '@/components/layout/page-header'
 
 import { DIRECT_PAYOUTS } from '../data/direct-payout-data'

@@ -1,0 +1,48 @@
+import type { BulkPayoutBatch } from '../types/bulk-payout.types'
+
+export const BULK_PAYOUT_BATCHES: BulkPayoutBatch[] = [
+  {
+    id: 'BP-20260706-001',
+    fileName: 'vendor-payout-july.csv',
+    totalRecords: 42,
+    totalAmount: 128500,
+    successCount: 40,
+    failedCount: 1,
+    pendingCount: 1,
+    status: 'PROCESSING',
+    createdAt: '06 Jul 2026, 11:30 AM',
+  },
+  {
+    id: 'BP-20260705-002',
+    fileName: 'salary-payout-july.csv',
+    totalRecords: 85,
+    totalAmount: 475000,
+    successCount: 85,
+    failedCount: 0,
+    pendingCount: 0,
+    status: 'COMPLETED',
+    createdAt: '05 Jul 2026, 04:45 PM',
+  },
+  {
+    id: 'BP-20260704-001',
+    fileName: 'partner-commission.csv',
+    totalRecords: 18,
+    totalAmount: 62400,
+    successCount: 14,
+    failedCount: 4,
+    pendingCount: 0,
+    status: 'PARTIALLY_FAILED',
+    createdAt: '04 Jul 2026, 02:10 PM',
+  },
+  {
+    id: 'BP-20260703-001',
+    fileName: 'refund-payouts.csv',
+    totalRecords: 12,
+    totalAmount: 28600,
+    successCount: 0,
+    failedCount: 12,
+    pendingCount: 0,
+    status: 'FAILED',
+    createdAt: '03 Jul 2026, 10:20 AM',
+  },
+]
