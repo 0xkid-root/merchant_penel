@@ -17,6 +17,7 @@ import type {
   SinglePayoutState,
   SinglePayoutStep,
 } from '../types/single-payout.types'
+import { StringifyOptions } from 'querystring'
 
 const INITIAL_FORM_DATA: SinglePayoutFormData = {
   beneficiaryId: null,
@@ -177,9 +178,9 @@ export function useSinglePayout() {
       otp,
     }))
   }
-
-  const verifyOtpAndCreatePayout = async () => {
-    if (state.otp.length !== 6) {
+  
+  const verifyOtpAndCreatePayout = async (otp: string) => {
+    if (otp.length !== 6) {
       setError('Please enter the 6-digit OTP.')
       return
     }
@@ -192,7 +193,7 @@ export function useSinglePayout() {
     }))
 
     try {
-      // TODO: Replace this timeout with your backend verify OTP + create payout API.
+      // Later: send `otp` in your backend API request.
       await new Promise((resolve) => setTimeout(resolve, 1200))
 
       const result: SinglePayoutResult = {
@@ -223,7 +224,6 @@ export function useSinglePayout() {
       }))
     }
   }
-
   const resetPayout = () => {
     setError(null)
     setState(INITIAL_STATE)
