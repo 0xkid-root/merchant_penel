@@ -53,7 +53,7 @@ export default function BeneficiariesTable({
   
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white ">
 
       <div className="overflow-x-auto">
 
