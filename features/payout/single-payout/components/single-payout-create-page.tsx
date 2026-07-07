@@ -82,15 +82,14 @@ export default function SinglePayoutCreatePage() {
     if (state.currentStep === 'otp') {
       return (
         <SinglePayoutOtp
-          otp={state.otp}
-          error={error}
-          isLoading={state.isLoading}
-          onOtpChange={updateOtp}
           onBack={goBackToReview}
           onVerify={verifyOtpAndCreatePayout}
         />
       )
     }
+
+
+
 
     if (
       state.currentStep === 'result' &&

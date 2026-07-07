@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft,
-  CheckCircle2,
   Clock3,
   RefreshCw,
   ShieldCheck,
