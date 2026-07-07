@@ -7,6 +7,7 @@ import {
   RefreshCw,
   ShieldCheck,
   Smartphone,
+  UserRound,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -32,6 +33,7 @@ export default function PayoutOtpVerification({
   description,
   backLabel = 'Back to Review',
   verifyLabel = 'Verify and Submit',
+  verificationNote = 'OTP is valid only for this payout request.',
   onBack,
   onVerify,
   onResend,
@@ -148,101 +150,106 @@ export default function PayoutOtpVerification({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="px-5 py-8 sm:px-6 sm:py-10">
-        <div className="mx-auto max-w-2xl">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900">
-              {title}
-            </h2>
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-slate-900">
+            {title}
+          </h2>
 
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              {description}
-            </p>
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            {description}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-6 sm:px-8 sm:py-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
+              <Smartphone className="h-6 w-6 text-indigo-600" />
+            </div>
+
+            <div>
+              <p className="text-base font-semibold text-slate-900">
+                OTP sent successfully
+              </p>
+
+              <p className="mt-1 text-sm leading-6 text-slate-500">
+                Please enter the 6-digit OTP sent to your registered mobile
+                number.
+              </p>
+            </div>
           </div>
 
-          <div className="border border-slate-200 bg-slate-50/60 px-5 py-6 sm:px-8 sm:py-8">
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
-                <Smartphone className="h-6 w-6 text-indigo-600" />
-              </div>
+          <div className="mt-10">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-indigo-600" />
 
-              <div>
-                <p className="text-base font-semibold text-slate-900">
-                  OTP sent successfully
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-slate-500">
-                  Please enter the 6-digit OTP sent to your registered mobile number.
-                </p>
-              </div>
+              <label className="text-sm font-semibold text-slate-900">
+                Enter OTP
+              </label>
             </div>
 
-            <div className="mt-10">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-indigo-600" />
-
-                <label className="text-sm font-semibold text-slate-900">
-                  Enter OTP
-                </label>
-              </div>
-
-              <div className="mt-5 flex flex-wrap gap-3">
-                {otp.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(element) => {
-                      inputRefs.current[index] = element
-                    }}
-                    value={digit}
-                    onChange={(event) =>
-                      handleOtpChange(index, event.target.value)
-                    }
-                    onKeyDown={(event) => handleKeyDown(index, event)}
-                    onPaste={handlePaste}
-                    inputMode="numeric"
-                    autoComplete={index === 0 ? 'one-time-code' : 'off'}
-                    maxLength={1}
-                    aria-label={`OTP digit ${index + 1}`}
-                    className="h-14 w-12 rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-                  />
-                ))}
-              </div>
-
-              <div className="mt-7">
-                {secondsLeft > 0 ? (
-                  <p className="inline-flex items-center gap-2 text-sm text-slate-500">
-                    <Clock3 className="h-4 w-4" />
-                    Resend OTP available in {secondsLeft}s
-                  </p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Resend OTP
-                  </button>
-                )}
-              </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(element) => {
+                    inputRefs.current[index] = element
+                  }}
+                  value={digit}
+                  onChange={(event) =>
+                    handleOtpChange(index, event.target.value)
+                  }
+                  onKeyDown={(event) => handleKeyDown(index, event)}
+                  onPaste={handlePaste}
+                  inputMode="numeric"
+                  autoComplete={index === 0 ? 'one-time-code' : 'off'}
+                  maxLength={1}
+                  aria-label={`OTP digit ${index + 1}`}
+                  disabled={isSubmitting}
+                  className="h-14 w-12 rounded-xl border border-slate-300 bg-white text-center text-lg font-bold text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60"
+                />
+              ))}
             </div>
 
-            <div className="mt-12 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <SecondaryButton onClick={onBack} disabled={isSubmitting}>
-                  <ArrowLeft className="h-4 w-4" />
-                  {backLabel}
-                </SecondaryButton>
-
-                <PrimaryButton
-                  onClick={handleVerifyOtp}
-                  disabled={!isOtpComplete || isSubmitting}
+            <div className="mt-7">
+              {secondsLeft > 0 ? (
+                <p className="inline-flex items-center gap-2 text-sm text-slate-500">
+                  <Clock3 className="h-4 w-4" />
+                  Resend OTP available in {secondsLeft}s
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ShieldCheck className="h-4 w-4" />
-                  {isSubmitting ? 'Verifying...' : verifyLabel}
-                </PrimaryButton>
-              </div>
+                  <RefreshCw className="h-4 w-4" />
+                  Resend OTP
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-slate-100 pt-6">
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <UserRound className="h-4 w-4 text-slate-400" />
+              {verificationNote}
+            </div>
+
+            <div className="mt-5 flex flex-col-reverse justify-center gap-3 sm:flex-row">
+              <SecondaryButton onClick={onBack} disabled={isSubmitting}>
+                <ArrowLeft className="h-4 w-4" />
+                {backLabel}
+              </SecondaryButton>
+
+              <PrimaryButton
+                onClick={handleVerifyOtp}
+                disabled={!isOtpComplete || isSubmitting}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                {isSubmitting ? 'Verifying...' : verifyLabel}
+              </PrimaryButton>
             </div>
           </div>
         </div>
