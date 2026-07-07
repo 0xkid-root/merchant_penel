@@ -60,10 +60,8 @@ export default function BulkPayoutResult({
       <h1 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">
         Bulk Payout Submitted Successfully
       </h1>
-
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-500">
-        Your bulk payout batch has been submitted successfully. You can track
-        the processing status from the Bulk Payout list.
+        Your bulk payout batch has been submitted successfully and is ready for processing.
       </p>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white text-left">

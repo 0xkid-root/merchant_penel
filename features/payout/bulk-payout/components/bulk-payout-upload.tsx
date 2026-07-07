@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import type {
+import {
   BulkPayoutFormValues,
   BulkPayoutRecord,
 } from './bulk-payout-create-page'
@@ -119,7 +119,7 @@ export default function BulkPayoutUpload({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div className="overflow-hidden  bg-white">
       <div className="border-b border-slate-200 px-5 py-5 lg:px-6">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
@@ -201,7 +201,7 @@ export default function BulkPayoutUpload({
         ) : null}
       </div>
 
-      <div className="flex justify-end border-t border-slate-200 px-5 py-4 lg:px-6">
+      <div className="flex justify-end  px-5 py-4 lg:px-6">
         <button
           type="button"
           onClick={handleContinue}

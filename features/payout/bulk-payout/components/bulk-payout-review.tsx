@@ -218,22 +218,7 @@ export default function BulkPayoutReview({
                     </table>
                 </div>
 
-                <div className="border-t border-amber-100 bg-amber-50 px-5 py-4 sm:px-6">
-                    <div className="flex gap-3">
-                        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-
-                        <div>
-                            <p className="text-sm font-semibold text-amber-900">
-                                Final confirmation required
-                            </p>
-
-                            <p className="mt-1 text-sm leading-6 text-amber-700">
-                                After confirmation, an OTP will be sent for verification before
-                                this bulk payout batch is submitted.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            
 
                 <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                     <SecondaryButton onClick={onBack}>
