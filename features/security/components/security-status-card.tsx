@@ -1,11 +1,24 @@
-import { CheckCircle2, ShieldCheck } from 'lucide-react'
+'use client'
 
-export default function SecurityStatusCard() {
+import {
+  CheckCircle2,
+  ShieldCheck,
+} from 'lucide-react'
+
+import type { SecurityStatusData } from '../types/security.types'
+
+interface SecurityStatusCardProps {
+  data: SecurityStatusData
+}
+
+export default function SecurityStatusCard({
+  data,
+}: SecurityStatusCardProps) {
   return (
-    <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
+    <aside className="rounded-3xl border border-emerald-200 bg-white p-6  sm:p-8">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-          <ShieldCheck className="h-6 w-6 text-emerald-600" />
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+          <ShieldCheck className="h-7 w-7 text-emerald-600" />
         </div>
 
         <div>
@@ -15,29 +28,36 @@ export default function SecurityStatusCard() {
 
           <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1.5 text-sm font-semibold text-emerald-700">
             <CheckCircle2 className="h-4 w-4" />
-            Secure
+            {data.statusLabel}
           </div>
         </div>
       </div>
 
-      <p className="mt-6 text-sm leading-6 text-slate-600">
-        Your account password is active and your current login session is
-        protected.
+      <p className="mt-7 text-sm leading-7 text-slate-500">
+        {data.description}
       </p>
 
-      <div className="mt-6 border-t border-slate-200 pt-5">
+      <div className="mt-7 border-t border-slate-200 pt-6">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-slate-500">Account access</p>
+          <span className="text-sm text-slate-500">
+            Account access
+          </span>
 
-          <p className="text-sm font-semibold text-emerald-700">Protected</p>
+          <span className="text-sm font-semibold text-emerald-700">
+            {data.accountAccess}
+          </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-4">
-          <p className="text-sm text-slate-500">Password status</p>
+        <div className="mt-5 flex items-center justify-between gap-4">
+          <span className="text-sm text-slate-500">
+            Password status
+          </span>
 
-          <p className="text-sm font-semibold text-emerald-700">Active</p>
+          <span className="text-sm font-semibold text-emerald-700">
+            {data.passwordStatus}
+          </span>
         </div>
       </div>
-    </section>
+    </aside>
   )
 }

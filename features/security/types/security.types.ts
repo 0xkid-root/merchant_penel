@@ -1,31 +1,46 @@
-export type SecurityActivityType =
-  | 'login'
+export type SecurityTabId =
   | 'password'
-  | 'device'
-  | 'warning'
+  | 'sessions'
+  | 'activity'
 
-export interface SecuritySession {
+export interface SecurityTab {
+  id: SecurityTabId
+  label: string
+}
+
+export interface PasswordSecurityData {
+  status: 'Active' | 'Expired' | 'Pending'
+  lastChangedAt: string
+  recommendation: string
+}
+
+export interface LoginSession {
   id: string
-  device: string
+  deviceName: string
   browser: string
-  location: string
   ipAddress: string
+  location: string
   lastActive: string
-  isCurrent: boolean
+  isCurrentSession: boolean
 }
 
 export interface SecurityActivity {
   id: string
-  type: SecurityActivityType
   title: string
   description: string
-  date: string
+  occurredAt: string
+  type: 'success' | 'warning' | 'info'
 }
 
-export interface SecurityData {
-  passwordStatus: 'Active'
-  lastPasswordChanged: string
-  passwordPolicy: string
-  sessions: SecuritySession[]
-  activities: SecurityActivity[]
+export interface SecurityStatusData {
+  accountAccess: string
+  passwordStatus: string
+  statusLabel: string
+  description: string
+}
+
+export interface SecuritySupportData {
+  title: string
+  description: string
+  actionLabel: string
 }
