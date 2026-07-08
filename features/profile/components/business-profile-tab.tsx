@@ -18,7 +18,9 @@ interface BusinessProfileTabProps {
 export default function BusinessProfileTab({
     data,
 }: BusinessProfileTabProps) {
-    return (<div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"> <div className="mb-6"> <h2 className="text-xl font-semibold text-slate-900">
+    return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-6"> 
+    <div className="mb-6"> <h2 className="text-xl font-semibold text-slate-900">
         Business Information </h2>
 
         <p className="mt-1 text-sm text-slate-500">

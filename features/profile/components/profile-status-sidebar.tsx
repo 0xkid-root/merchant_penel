@@ -17,7 +17,7 @@ export default function ProfileStatusSidebar({
 }: ProfileStatusSidebarProps) {
     return (
         <div className="space-y-6 xl:sticky xl:top-6">
-            <div className="rounded-2xl border border-green-200 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-green-200 bg-white p-6">
                 <div className="mb-5 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                         <CheckCircle2 className="h-5 w-5 text-green-600" />
