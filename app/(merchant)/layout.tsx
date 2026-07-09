@@ -13,7 +13,9 @@ export default function MerchantLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated')
@@ -27,14 +29,27 @@ export default function MerchantLayout({
     setIsSidebarCollapsed((previous) => !previous)
   }
 
+  const openMobileSidebar = () => {
+    setIsMobileSidebarOpen(true)
+  }
+
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false)
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
-      <DashboardSidebar collapsed={isSidebarCollapsed} />
+      <DashboardSidebar
+        collapsed={isSidebarCollapsed}
+        mobileOpen={isMobileSidebarOpen}
+        onCloseMobile={closeMobileSidebar}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <AppHeader
           isSidebarCollapsed={isSidebarCollapsed}
           onToggleSidebar={toggleSidebar}
+          onOpenMobileSidebar={openMobileSidebar}
         />
 
         <main className="flex-1 overflow-y-auto">
