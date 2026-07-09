@@ -1,38 +1,50 @@
 'use client'
 
-export default function TransactionPagination() {
-  return (
-    <div className="flex items-center justify-between border-t border-slate-200 px-6 py-5">
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+export default function TransactionPagination() {
+  const pages = [1, 2, 3, 4]
+
+  return (
+    <div className="flex flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <p className="text-sm text-slate-500">
-        Showing 1 to 5 of 24 transactions
+        Showing <span className="font-medium text-slate-700">1–5</span> of{' '}
+        <span className="font-medium text-slate-700">24</span> transactions
       </p>
 
-      <div className="flex items-center gap-2">
-
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50">
-          ←
+      <div className="flex items-center gap-2 self-start sm:self-auto">
+        <button
+          type="button"
+          aria-label="Previous page"
+          disabled
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition-colors disabled:cursor-not-allowed disabled:bg-slate-50"
+        >
+          <ChevronLeft className="h-4 w-4" />
         </button>
 
-        {[1, 2, 3, 4].map((page) => (
+        {pages.map((page) => (
           <button
             key={page}
-            className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+            type="button"
+            aria-label={`Page ${page}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold transition-colors ${
               page === 1
-                ? 'bg-indigo-600 text-white'
-                : 'border border-slate-200 hover:bg-slate-50'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
             }`}
           >
             {page}
           </button>
         ))}
 
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50">
-          →
+        <button
+          type="button"
+          aria-label="Next page"
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50"
+        >
+          <ChevronRight className="h-4 w-4" />
         </button>
-
       </div>
-
     </div>
   )
 }

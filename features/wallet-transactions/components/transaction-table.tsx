@@ -8,6 +8,7 @@ interface TransactionTableProps {
   setCurrentPage: (page: number) => void
 }
 
+
 export function TransactionTable({
   currentPage,
   setCurrentPage,

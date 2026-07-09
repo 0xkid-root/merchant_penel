@@ -12,37 +12,35 @@ export default function TransactionRow({
 }: Props) {
   return (
     <tr className="border-b border-slate-100 transition-colors hover:bg-slate-50">
-
-      <td className="px-6 py-5 text-sm font-semibold text-indigo-600">
+      <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-indigo-600 sm:px-6 sm:py-5">
         {transaction.id}
       </td>
 
-      <td className="px-6 py-5 text-sm font-medium text-slate-700">
+      <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-700 sm:px-6 sm:py-5">
         {transaction.type}
       </td>
 
-      <td className={`px-6 py-5 text-sm font-semibold ${transaction.amountColor}`}>
+      <td
+        className={`whitespace-nowrap px-4 py-4 text-sm font-semibold sm:px-6 sm:py-5 ${transaction.amountColor}`}
+      >
         {transaction.amount}
       </td>
 
-      <td className="px-6 py-5">
-        <TransactionStatusBadge
-          status={transaction.status}
-        />
+      <td className="whitespace-nowrap px-4 py-4 sm:px-6 sm:py-5">
+        <TransactionStatusBadge status={transaction.status} />
       </td>
 
-      <td className="px-6 py-5 text-sm text-slate-600">
+      <td className="min-w-[220px] px-4 py-4 text-sm text-slate-600 sm:px-6 sm:py-5">
         {transaction.remarks}
       </td>
 
-      <td className="px-6 py-5 text-sm text-slate-500">
+      <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500 sm:px-6 sm:py-5">
         {transaction.date}
       </td>
 
-      <td className="px-6 py-5 text-sm font-semibold text-slate-900">
+      <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6 sm:py-5">
         {transaction.balance}
       </td>
-
     </tr>
   )
 }
