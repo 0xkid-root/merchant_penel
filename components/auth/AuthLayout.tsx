@@ -11,21 +11,14 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <main className="min-h-screen bg-[#F6F4FF] p-5">
-
-      <div className="h-[calc(100vh-40px)] overflow-hidden rounded-[22px] bg-white shadow-sm">
-
+      <div className="h-[calc(100vh-40px)] overflow-hidden rounded-[22px] bg-white">
         <div className="grid h-full lg:grid-cols-[46%_54%]">
-
           {/* LEFT */}
-
           <div className="bg-white flex items-center justify-center">
             {children}
           </div>
-
           {/* RIGHT */}
-
           <div className="relative hidden lg:block bg-[#F5F3FF]">
-
             <Image
               src="/loginsection-image.png"
               alt="Login"
@@ -33,7 +26,6 @@ export default function AuthLayout({
               priority
               className="object-cover"
             />
-
           </div>
 
         </div>
