@@ -1,113 +1,98 @@
 'use client'
 
+import Link from 'next/link'
+
 import { RECENT_PAYOUTS } from '../data/dashboard-data'
 import { getStatusBadge } from '../utils/status-badge'
 
 export default function RecentPayouts() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="flex items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-6">
+        <div>
+          <h3 className="text-xl font-semibold text-slate-900 sm:text-2xl">
+            Recent Payouts
+          </h3>
 
-      {/* Header */}
+          <p className="mt-1 text-sm text-slate-500">
+            Latest payouts sent to beneficiaries.
+          </p>
+        </div>
 
-      <div className="flex items-center justify-between px-6 pt-6 pb-5">
-
-        <h3 className="text-2xl font-semibold text-slate-900">
-          Recent Payouts
-        </h3>
-
-        <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+        <Link
+          href="/payout/payout-history"
+          className="shrink-0 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           View all
-        </button>
-
+        </Link>
       </div>
 
-      {/* Table */}
-
       <div className="overflow-x-auto">
-
-        <table className="w-full">
-
+        <table className="min-w-[800px] w-full">
           <thead>
-
-            <tr className="border-b border-slate-200">
-
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                BENEFICIARY
+            <tr className="border-y border-slate-200 bg-slate-50/70">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4">
+                Beneficiary
               </th>
 
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                BANK / UPI
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4">
+                Bank / UPI
               </th>
 
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                AMOUNT
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4">
+                Amount
               </th>
 
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                MODE
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4">
+                Mode
               </th>
 
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                STATUS
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4">
+                Status
               </th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             {RECENT_PAYOUTS.map((payout, index) => (
-
               <tr
-                key={index}
+                key={`${payout.beneficiary}-${index}`}
                 className="border-b border-slate-100 transition-colors hover:bg-slate-50"
               >
-
-                <td className="px-6 py-5">
-
+                <td className="px-4 py-4 sm:px-6 sm:py-5">
                   <div className="flex items-center gap-3">
-
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-medium text-slate-700">
                       {payout.avatar}
                     </div>
 
-                    <span className="text-sm font-medium text-slate-900">
+                    <span className="whitespace-nowrap text-sm font-medium text-slate-900">
                       {payout.beneficiary}
                     </span>
-
                   </div>
-
                 </td>
 
-                <td className="px-6 py-5 text-sm text-slate-600">
+                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-600 sm:px-6 sm:py-5">
                   {payout.bank}
                 </td>
 
-                <td className="px-6 py-5 text-[15px] font-semibold text-slate-900">
+                <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6 sm:py-5">
                   {payout.amount}
                 </td>
 
-                <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-700 sm:px-6 sm:py-5">
                   {payout.mode}
                 </td>
 
-                <td className="px-6 py-5">
+                <td className="whitespace-nowrap px-4 py-4 sm:px-6 sm:py-5">
                   <span className={getStatusBadge(payout.status)}>
                     {payout.status}
                   </span>
                 </td>
-
               </tr>
-
             ))}
-
           </tbody>
-
         </table>
-
       </div>
-
-    </div>
+    </section>
   )
 }

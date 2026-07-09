@@ -7,9 +7,7 @@ import DashboardStats from '../components/dashboard-stats'
 import PayoutChart from '../components/payout-chart'
 import RecentTransactions from '../components/recent-transactions'
 import RecentPayouts from '../components/recent-payouts'
-
-import { RecentActivity } from '@/features/dashboard/components/recent-activity'
-import MerchantHeader from '@/components/layout/app-header'
+import { RecentActivity } from '../components/recent-activity'
 
 export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState('')
@@ -20,31 +18,23 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="p-8">
-
-      {/* Header */}
+    <div className="w-full px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10">
       <PageHeader
-            title="Dashboard"
-            subtitle="Welcome back. Here's what's happening with your account today."
+        title="Dashboard"
+        subtitle="Welcome back. Here's what's happening with your account today."
       />
 
-      {/* Statistics */}
       <DashboardStats />
 
-      {/* Chart + Activity */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <PayoutChart />
         <RecentActivity />
       </div>
 
-      {/* Tables */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 2xl:grid-cols-2">
         <RecentTransactions />
         <RecentPayouts />
       </div>
-
-
-
     </div>
   )
 }
