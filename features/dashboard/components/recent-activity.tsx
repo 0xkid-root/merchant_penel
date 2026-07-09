@@ -1,7 +1,7 @@
 import {
+  AlertCircle,
   ArrowUpRight,
   Plus,
-  AlertCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -60,73 +60,56 @@ const ACTIVITIES = [
 
 export function RecentActivity() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-      <div className="flex items-center justify-between px-6 pt-6 pb-5">
-
-        <h3 className="text-2xl font-semibold text-slate-900">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="flex items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-6">
+        <h3 className="text-xl font-semibold text-slate-900 sm:text-2xl">
           Recent Activity
         </h3>
 
         <Link
           href="/activity"
-          className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+          className="shrink-0 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-700"
         >
           View all
         </Link>
-
       </div>
 
       <div>
-
         {ACTIVITIES.map((activity) => {
-
           const Icon = activity.icon
 
           return (
-
             <div
               key={activity.id}
-              className="flex items-center justify-between border-b border-slate-100 px-6 py-5 last:border-0 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-4 transition-colors hover:bg-slate-50 sm:px-6 sm:py-5"
             >
-
-              <div className="flex items-center gap-4">
-
+              <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                 <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl ${activity.iconBg}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${activity.iconBg}`}
                 >
-                  <Icon
-                    className={`h-5 w-5 ${activity.iconColor}`}
-                  />
+                  <Icon className={`h-5 w-5 ${activity.iconColor}`} />
                 </div>
 
-                <div>
-
-                  <p className="text-sm font-medium text-slate-900">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-900">
                     {activity.title}
                   </p>
 
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 truncate text-xs text-slate-500 sm:text-sm">
                     {activity.subtitle}
                   </p>
-
                 </div>
-
               </div>
 
               <p
-                className={`text-base font-semibold ${activity.amountColor}`}
+                className={`shrink-0 text-sm font-semibold sm:text-base ${activity.amountColor}`}
               >
                 {activity.amount}
               </p>
-
             </div>
-
           )
         })}
-
       </div>
-
-    </div>
+    </section>
   )
 }

@@ -1,10 +1,10 @@
 'use client'
 
 import {
-  Wallet,
   Lock,
-  TrendingUp,
   TrendingDown,
+  TrendingUp,
+  Wallet,
 } from 'lucide-react'
 
 export function BalanceCards() {
@@ -29,7 +29,7 @@ export function BalanceCards() {
     },
     {
       title: 'Lifetime Credit',
-      amount: '₹28,45,300.00',
+      amount: '₹28,45,30.00',
       subTitle: 'Successful Credit',
       subAmount: '32',
       icon: TrendingUp,
@@ -48,57 +48,45 @@ export function BalanceCards() {
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
-      {cards.map((card, index) => {
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+      {cards.map((card) => {
         const Icon = card.icon
 
         return (
-          <div
-            key={index}
-            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+          <article
+            key={card.title}
+            className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md sm:p-6"
           >
-            {/* Top */}
-            <div className="flex items-start justify-between">
-
-              <div>
-
-                <p className="text-[15px] font-medium text-slate-600">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-slate-500">
                   {card.title}
                 </p>
 
-                <h3 className="mt-4 text-[24px] font-bold leading-none text-slate-900">
+                <h3 className="mt-3 break-words text-[22px] font-bold tracking-tight text-slate-900 sm:text-[24px]">
                   {card.amount}
                 </h3>
-
               </div>
 
               <div
-                className={`flex h-14 w-14 items-center justify-center rounded-xl ${card.iconBg}`}
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl sm:h-14 sm:w-14 ${card.iconBg}`}
               >
-                <Icon className={`h-6 w-6 ${card.iconColor}`} />
+                <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${card.iconColor}`} />
               </div>
-
             </div>
 
-            {/* Divider */}
             <div className="my-5 border-t border-slate-100" />
 
-            {/* Bottom */}
             <div>
-
-              <p className="text-sm text-slate-500">
-                {card.subTitle}
-              </p>
+              <p className="text-sm text-slate-500">{card.subTitle}</p>
 
               <p className="mt-1 text-base font-semibold text-slate-900">
                 {card.subAmount}
               </p>
-
             </div>
-
-          </div>
+          </article>
         )
       })}
-    </div>
+    </section>
   )
 }

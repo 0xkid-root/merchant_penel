@@ -4,9 +4,9 @@ import { useState } from 'react'
 
 import PageHeader from '@/components/layout/page-header'
 
-import {TransactionSummary} from '../components/transaction-summary'
-import {TransactionFilters} from '../components/transaction-filters'
-import {TransactionTable} from '../components/transaction-table'
+import { TransactionSummary } from '../components/transaction-summary'
+import { TransactionFilters } from '../components/transaction-filters'
+import { TransactionTable } from '../components/transaction-table'
 import TransactionHeaderActions from '../components/transaction-header-actions'
 
 export default function WalletTransactionsPage() {
@@ -24,8 +24,7 @@ export default function WalletTransactionsPage() {
   })
 
   return (
-    <div className="space-y-6 p-6">
-
+    <div className="min-w-0 space-y-6 p-4 sm:space-y-7 sm:p-6 lg:p-8">
       <PageHeader
         title="Wallet Transactions"
         subtitle="View all credits, debits and adjustments in your wallet."
@@ -43,7 +42,6 @@ export default function WalletTransactionsPage() {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-
     </div>
   )
 }

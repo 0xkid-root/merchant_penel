@@ -1,10 +1,19 @@
 'use client'
 
-import { Search, RotateCcw } from 'lucide-react'
+import { RotateCcw, Search } from 'lucide-react'
 
 interface TransactionFiltersProps {
-  filters: any
-  setFilters: any
+  filters: {
+    search: string
+    type: string
+    mode: string
+    status: string
+    dateRange?: {
+      from: string
+      to: string
+    }
+  }
+  setFilters: (filters: any) => void
 }
 
 export function TransactionFilters({
@@ -17,23 +26,26 @@ export function TransactionFilters({
       type: 'All Types',
       mode: 'All Modes',
       status: 'All Status',
+      dateRange: {
+        from: '01/06/2025',
+        to: '18/06/2025',
+      },
     })
   }
 
+  const selectClassName =
+    'h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100'
+
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-6">
-
-        {/* Search */}
-        <div className="lg:col-span-2">
-          <div className="flex h-11 items-center rounded-xl border border-slate-300 px-4 focus-within:border-indigo-600">
-
-            <Search className="mr-3 h-4 w-4 text-slate-500" />
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6 lg:gap-4">
+        <div className="sm:col-span-2 lg:col-span-2">
+          <div className="flex h-12 items-center rounded-xl border border-slate-300 px-4 transition focus-within:border-indigo-600 focus-within:ring-2 focus-within:ring-indigo-100">
+            <Search className="mr-3 h-4 w-4 shrink-0 text-slate-500" />
 
             <input
               type="text"
-              placeholder="Search Transaction ID..."
+              placeholder="Search transaction ID..."
               value={filters.search}
               onChange={(e) =>
                 setFilters({
@@ -41,13 +53,11 @@ export function TransactionFilters({
                   search: e.target.value,
                 })
               }
-              className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+              className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
-
           </div>
         </div>
 
-        {/* Transaction Type */}
         <select
           value={filters.type}
           onChange={(e) =>
@@ -56,7 +66,7 @@ export function TransactionFilters({
               type: e.target.value,
             })
           }
-          className="h-11 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-indigo-600"
+          className={selectClassName}
         >
           <option>All Types</option>
           <option>Add Funds</option>
@@ -65,7 +75,6 @@ export function TransactionFilters({
           <option>Fees</option>
         </select>
 
-        {/* Payment Mode */}
         <select
           value={filters.mode}
           onChange={(e) =>
@@ -74,7 +83,7 @@ export function TransactionFilters({
               mode: e.target.value,
             })
           }
-          className="h-11 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-indigo-600"
+          className={selectClassName}
         >
           <option>All Modes</option>
           <option>NEFT</option>
@@ -82,7 +91,6 @@ export function TransactionFilters({
           <option>IMPS</option>
         </select>
 
-        {/* Status */}
         <select
           value={filters.status}
           onChange={(e) =>
@@ -91,7 +99,7 @@ export function TransactionFilters({
               status: e.target.value,
             })
           }
-          className="h-11 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-indigo-600"
+          className={selectClassName}
         >
           <option>All Status</option>
           <option>Success</option>
@@ -99,18 +107,15 @@ export function TransactionFilters({
           <option>Failed</option>
         </select>
 
-        {/* Reset */}
         <button
+          type="button"
           onClick={handleReset}
-          className="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
         >
           <RotateCcw className="h-4 w-4" />
           Reset
         </button>
-
       </div>
-    
-
-    </div>
+    </section>
   )
 }
