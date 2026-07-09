@@ -1,37 +1,37 @@
 'use client'
 
-import { Plus, ArrowRight } from 'lucide-react'
-import { PrimaryButton } from '@/components/buttons/primary-button'
-import { SecondaryButton } from '@/components/buttons/secondary-button'
+import { ArrowRight, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
+import { PrimaryButton } from '@/components/buttons/primary-button'
+import { SecondaryButton } from '@/components/buttons/secondary-button'
+import PageHeader from '@/components/layout/page-header'
 
 import { BalanceCards } from '../components/balance-cards'
 import { WalletTransactionsTable } from '../components/wallet-transactions-table'
-import PageHeader from '@/components/layout/page-header'
 
 export default function WalletPage() {
   const router = useRouter()
 
-
-  const addfundsPage = ()=>{
+  const addFundsPage = () => {
     router.push('/add-funds')
   }
 
-  const withdrawPage = ()=>{
+  const withdrawPage = () => {
     router.push('/withdrawal-request')
   }
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', padding: '24px' }}>
-      {/* Header */}
+    <div className="min-w-0 space-y-6 p-4 sm:space-y-7 sm:p-6 lg:p-8">
 
       <PageHeader
         title="Wallet Overview"
         subtitle="Manage your wallet balance, funds and transactions"
         actions={
-          <>
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
             <SecondaryButton
-              onClick={addfundsPage}
+              onClick={addFundsPage}
+              className="h-12 w-full justify-center sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               Add Funds
@@ -39,24 +39,16 @@ export default function WalletPage() {
 
             <PrimaryButton
               onClick={withdrawPage}
+              className="h-12 w-full justify-center sm:w-auto"
             >
               <ArrowRight className="h-4 w-4" />
               Withdrawal Request
             </PrimaryButton>
-          </>
+          </div>
         }
       />
-
-      {/* Balance Cards - Grid Layout */}
       <BalanceCards />
 
-      {/* Charts Section - 2fr 1fr Grid */}
-      {/* <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-        <BalanceTrendChart />
-        <BalanceBreakdown />
-      </div> */}
-
-      {/* Transactions Table */}
       <WalletTransactionsTable />
     </div>
   )

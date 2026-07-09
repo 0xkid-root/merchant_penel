@@ -2,25 +2,29 @@
 
 import { TRANSACTIONS } from '../data/transaction-data'
 
-import TransactionTableHeader from './transaction-table-header'
+import TransactionPagination from './transaction-pagination'
 import TransactionSearch from './transaction-search'
 import TransactionTable from './transaction-table'
-import TransactionPagination from './transaction-pagination'
+import TransactionTableHeader from './transaction-table-header'
 
 export function WalletTransactionsTable() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="min-w-0">
+        <TransactionTableHeader />
+      </div>
 
-      <TransactionTableHeader />
+      <div className="min-w-0 border-t border-slate-100">
+        <TransactionSearch />
+      </div>
 
-      <TransactionSearch />
+      <div className="min-w-0 overflow-x-auto">
+        <TransactionTable transactions={TRANSACTIONS} />
+      </div>
 
-      <TransactionTable
-        transactions={TRANSACTIONS}
-      />
-
-      <TransactionPagination />
-
-    </div>
+      <div className="min-w-0 border-t border-slate-100">
+        <TransactionPagination />
+      </div>
+    </section>
   )
 }
