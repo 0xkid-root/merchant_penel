@@ -13,60 +13,33 @@ import WithdrawalProofUpload from './withdrawal-proof-upload'
 import WithdrawalActions from './withdrawal-actions'
 
 export default function WithdrawalRequestForm() {
-  const {
-    form,
-    submit,
-    uploadFile,
-    fileName,
-  } = useWithdrawal()
+  const { form, submit, uploadFile, fileName } = useWithdrawal()
 
   return (
     <FormProvider {...form}>
-
       <form
         onSubmit={form.handleSubmit(submit)}
-        className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6"
       >
+        <AvailableBalanceCard balance={1482350} />
 
-        {/* Available Balance */}
-        <AvailableBalanceCard
-          balance={1482350}
-        />
+        <WithdrawalAmountInput control={form.control} />
 
-        {/* Withdrawal Amount */}
-        <WithdrawalAmountInput
-          control={form.control}
-        />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <BankAccountSelector control={form.control} />
+          <PaymentMethodSelector control={form.control} />
+        </div>
 
-        {/* Bank Account */}
-        <BankAccountSelector
-          control={form.control}
-        />
+        <WithdrawalRemarks control={form.control} />
 
-        {/* Payment Method */}
-        <PaymentMethodSelector
-          control={form.control}
-        />
-
-        {/* Remarks */}
-        <WithdrawalRemarks
-          control={form.control}
-        />
-
-        {/* Supporting Document */}
         <WithdrawalProofUpload
           control={form.control}
           uploadFile={uploadFile}
           fileName={fileName}
         />
 
-        {/* Submit / Cancel */}
-        <WithdrawalActions
-          loading={form.formState.isSubmitting}
-        />
-
+        <WithdrawalActions loading={form.formState.isSubmitting} />
       </form>
-
     </FormProvider>
   )
 }

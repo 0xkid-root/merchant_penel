@@ -1,128 +1,144 @@
-'use client';
+'use client'
 
-import { Shield, Clock, FileText, AlertTriangle, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+import {
+  AlertTriangle,
+  Clock,
+  FileText,
+  HelpCircle,
+  Shield,
+} from 'lucide-react'
+import Link from 'next/link'
+
+const informationItems = [
+  {
+    icon: Shield,
+    title: 'Registered account only',
+    description:
+      'Withdrawals are processed only to your registered bank account.',
+    iconClass: 'bg-green-100 text-green-600',
+  },
+  {
+    icon: Clock,
+    title: 'Review time',
+    description:
+      'Requests are usually reviewed within 30 minutes during working hours.',
+    iconClass: 'bg-blue-100 text-blue-600',
+  },
+  {
+    icon: FileText,
+    title: 'KYC verification',
+    description:
+      'Ensure your selected bank account is active and KYC verified.',
+    iconClass: 'bg-amber-100 text-amber-600',
+  },
+  {
+    icon: AlertTriangle,
+    title: 'Correct information required',
+    description:
+      'Incorrect details may result in rejection or processing delays.',
+    iconClass: 'bg-red-100 text-red-600',
+  },
+]
 
 export function WithdrawalLimitsInfo() {
-  const dailyLimit = 500000;
-  const usedToday = 120000;
-  const remainingLimit = dailyLimit - usedToday;
+  const dailyLimit = 500000
+  const usedToday = 120000
+  const remainingLimit = dailyLimit - usedToday
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-      {/* Important Information Card */}
-      <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '24px' }}>
-        <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>Important Information</h3>
+    <aside className="space-y-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <h3 className="text-base font-semibold text-slate-900">
+          Important Information
+        </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-          {/* Info Item 1 */}
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div style={{ flexShrink: 0, width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Shield style={{ width: '16px', height: '16px', color: '#16a34a' }} />
-            </div>
-            <div>
-              <p style={{ fontSize: '14px', color: '#111827', margin: 0 }}>
-                Withdrawals are processed to your registered bank account only.
-              </p>
-            </div>
-          </div>
+        <div className="mt-5 space-y-4">
+          {informationItems.map((item) => {
+            const Icon = item.icon
 
-          {/* Info Item 2 */}
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div style={{ flexShrink: 0, width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Clock style={{ width: '16px', height: '16px', color: '#2563eb' }} />
-            </div>
-            <div>
-              <p style={{ fontSize: '14px', color: '#111827', margin: 0 }}>
-                Requests are reviewed within <span style={{ fontWeight: 600 }}>30 minutes</span> during working hours.
-              </p>
-            </div>
-          </div>
+            return (
+              <div key={item.title} className="flex gap-3">
+                <div
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${item.iconClass}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </div>
 
-          {/* Info Item 3 */}
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div style={{ flexShrink: 0, width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FileText style={{ width: '16px', height: '16px', color: '#d97706' }} />
-            </div>
-            <div>
-              <p style={{ fontSize: '14px', color: '#111827', margin: 0 }}>
-                Ensure your bank account is active and KYC verified.
-              </p>
-            </div>
-          </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-800">
+                    {item.title}
+                  </p>
 
-          {/* Info Item 4 */}
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div style={{ flexShrink: 0, width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AlertTriangle style={{ width: '16px', height: '16px', color: '#dc2626' }} />
-            </div>
-            <div>
-              <p style={{ fontSize: '14px', color: '#111827', margin: 0 }}>
-                Incorrect information may lead to rejection or processing delays.
-              </p>
-            </div>
-          </div>
+                  <p className="mt-1 text-sm leading-5 text-slate-500">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
         </div>
-      </div>
+      </section>
 
-      {/* Withdrawal Limits Card */}
-      <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '24px' }}>
-        <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>Withdrawal Limits</h3>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <h3 className="text-base font-semibold text-slate-900">
+          Withdrawal Limits
+        </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-          {/* Daily Limit */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '14px', color: '#6b7280' }}>Daily Withdrawal Limit</span>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>
+        <div className="mt-5 divide-y divide-slate-100">
+          <div className="flex items-center justify-between gap-4 py-3 pt-0">
+            <span className="text-sm text-slate-500">
+              Daily Withdrawal Limit
+            </span>
+
+            <span className="text-sm font-semibold text-slate-900">
               ₹{dailyLimit.toLocaleString('en-IN')}
             </span>
           </div>
 
-          {/* Divider */}
-          <div style={{ borderTop: '1px solid #e5e7eb' }} />
+          <div className="flex items-center justify-between gap-4 py-3">
+            <span className="text-sm text-slate-500">Used Today</span>
 
-          {/* Used Today */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '14px', color: '#6b7280' }}>Used Today</span>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>
+            <span className="text-sm font-semibold text-slate-900">
               ₹{usedToday.toLocaleString('en-IN')}
             </span>
           </div>
 
-          {/* Divider */}
-          <div style={{ borderTop: '1px solid #e5e7eb' }} />
+          <div className="flex items-center justify-between gap-4 py-3 pb-0">
+            <span className="text-sm text-slate-500">Remaining Limit</span>
 
-          {/* Remaining Limit */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '14px', color: '#6b7280' }}>Remaining Limit</span>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#6366f1' }}>
+            <span className="text-sm font-semibold text-indigo-600">
               ₹{remainingLimit.toLocaleString('en-IN')}
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Need Help Card */}
-      <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-          <HelpCircle style={{ width: '20px', height: '20px', color: '#6366f1', flexShrink: 0, marginTop: '4px' }} />
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <div className="flex gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
+            <HelpCircle className="h-5 w-5 text-indigo-600" />
+          </div>
+
           <div>
-            <h4 style={{ fontWeight: 600, color: '#111827', margin: '0 0 8px 0' }}>Need Help?</h4>
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 16px 0' }}>
-              If you face any issues while withdrawing, our support team is here to help.
+            <h3 className="text-base font-semibold text-slate-900">
+              Need Help?
+            </h3>
+
+            <p className="mt-2 text-sm leading-5 text-slate-500">
+              If you face any issue while withdrawing funds, our support team
+              is available to help.
             </p>
+
             <Link
-              href="#"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, color: '#6366f1', textDecoration: 'none', transition: 'color 0.2s' }}
-              onMouseOver={(e) => e.currentTarget.style.color = '#4f46e5'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#6366f1'}
+              href="/support"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
             >
               Contact Support
               <span>↗</span>
             </Link>
           </div>
         </div>
-      </div>
-    </div>
-  );
+      </section>
+    </aside>
+  )
 }
