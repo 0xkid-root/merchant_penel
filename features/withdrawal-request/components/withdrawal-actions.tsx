@@ -1,5 +1,8 @@
 'use client'
 
+import { PrimaryButton } from '@/components/buttons/primary-button'
+import { SecondaryButton } from '@/components/buttons/secondary-button'
+
 interface Props {
   loading: boolean
 }
@@ -8,25 +11,21 @@ export default function WithdrawalActions({
   loading,
 }: Props) {
   return (
-    <div className="flex items-center justify-end gap-4 border-t border-slate-200 pt-6">
-
-      <button
+    <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-end">
+      <SecondaryButton
         type="reset"
-        className="rounded-xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        className="w-full sm:w-auto"
       >
         Cancel
-      </button>
+      </SecondaryButton>
 
-      <button
+      <PrimaryButton
         type="submit"
-        disabled={loading}
-        className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        isLoading={loading}
+        className="w-full sm:w-auto"
       >
-        {loading
-          ? 'Submitting...'
-          : 'Submit Withdrawal Request'}
-      </button>
-
+        Submit Withdrawal Request
+      </PrimaryButton>
     </div>
   )
 }

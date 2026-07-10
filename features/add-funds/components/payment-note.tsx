@@ -1,62 +1,75 @@
 'use client'
 
-import { CheckCircle2, Clock, AlertTriangle, Headphones } from 'lucide-react'
 import Link from 'next/link'
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock3,
+  Headphones,
+} from 'lucide-react'
 
 const infoItems = [
   {
     icon: CheckCircle2,
-    title: 'Use only your unique Virtual Account Number (VAN)',
-    description: 'Use only your unique Virtual Account Number (VAN) to transfer funds.',
-    color: 'bg-green-50',
-    iconColor: 'text-green-600',
+    title: 'Use your Virtual Account Number',
+    description:
+      'Transfer funds only to the Virtual Account Number shown in this form.',
+    iconClassName: 'text-emerald-600',
+    backgroundClassName: 'bg-emerald-50',
   },
   {
-    icon: Clock,
-    title: '30 minutes review time',
-    description: 'Requests are typically reviewed within 30 minutes during working hours.',
-    color: 'bg-blue-50',
-    iconColor: 'text-blue-600',
+    icon: Clock3,
+    title: 'Review time',
+    description:
+      'Fund requests are generally reviewed within 30 minutes during working hours.',
+    iconClassName: 'text-blue-600',
+    backgroundClassName: 'bg-blue-50',
   },
   {
     icon: AlertTriangle,
     title: 'Account name verification',
-    description: 'Ensure the name on the sending account matches your registered business name.',
-    color: 'bg-yellow-50',
-    iconColor: 'text-yellow-600',
+    description:
+      'The sender account name should match your registered business name.',
+    iconClassName: 'text-amber-600',
+    backgroundClassName: 'bg-amber-50',
   },
   {
     icon: AlertTriangle,
-    title: 'Avoid incorrect information',
-    description: 'Incorrect information may lead to delays in crediting your wallet.',
-    color: 'bg-red-50',
-    iconColor: 'text-red-600',
+    title: 'Avoid incorrect details',
+    description:
+      'Incorrect transfer reference or amount details may delay wallet credit.',
+    iconClassName: 'text-red-600',
+    backgroundClassName: 'bg-red-50',
   },
 ]
 
 export function PaymentNotes() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-      {/* Important Information Card */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-gray-900 mb-6" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '16px' }}>
+    <aside className="space-y-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 className="text-base font-semibold text-slate-900">
           Important Information
-        </h3>
+        </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-          {infoItems.map((item, index) => {
+        <div className="mt-5 space-y-3">
+          {infoItems.map((item) => {
             const Icon = item.icon
+
             return (
               <div
-                key={index}
-                className={`${item.color} rounded-lg p-4 flex gap-3`}
+                key={item.title}
+                className={`flex gap-3 rounded-xl p-4 ${item.backgroundClassName}`}
               >
-                <Icon className={`${item.iconColor} w-5 h-5 flex-shrink-0 mt-0.5`} />
+                <Icon
+                  className={`mt-0.5 h-5 w-5 shrink-0 ${item.iconClassName}`}
+                />
+
                 <div>
-                  <p className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '13px', marginBottom: '4px' }}>
+                  <p className="text-sm font-semibold text-slate-900">
                     {item.title}
                   </p>
-                  <p className="text-gray-700" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '13px' }}>
+
+                  <p className="mt-1 text-xs leading-5 text-slate-600">
                     {item.description}
                   </p>
                 </div>
@@ -66,33 +79,36 @@ export function PaymentNotes() {
         </div>
       </div>
 
-      {/* Need Help Card */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-gray-900 mb-4" style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '16px' }}>
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 className="text-base font-semibold text-slate-900">
           Need Help?
-        </h3>
+        </h2>
 
-        <div className="flex gap-3 mb-4">
-          <Headphones className="w-6 h-6 text-indigo-600 flex-shrink-0" />
+        <div className="mt-4 flex gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
+            <Headphones className="h-5 w-5 text-indigo-600" />
+          </div>
+
           <div>
-            <p className="text-gray-900" style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: '14px', marginBottom: '2px' }}>
+            <p className="text-sm font-semibold text-slate-900">
               Support Available
             </p>
-            <p className="text-gray-600" style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '13px' }}>
-              If you face any issues while adding funds, our support team is here to help.
+
+            <p className="mt-1 text-sm leading-5 text-slate-500">
+              Contact support if you face any issue while submitting your fund
+              request.
             </p>
           </div>
         </div>
 
         <Link
           href="/support"
-          className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold"
-          style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '14px' }}
+          className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
         >
           Contact Support
-          <span>→</span>
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
-    </div>
+    </aside>
   )
 }
