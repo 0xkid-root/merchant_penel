@@ -145,7 +145,7 @@ export default function AddBeneficiaryForm({
         {/* LEFT SIDE */}
 
         <div className="col-span-12 xl:col-span-9">
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-8">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-8">
 
             {/* Basic Details */}
             <BeneficiaryBasicDetails />

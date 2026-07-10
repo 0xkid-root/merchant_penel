@@ -9,40 +9,35 @@ import AddBankAccountForm from '../components/add-bank-account/add-bank-account-
 import AddBankAccountSidebar from '../components/add-bank-account/add-bank-account-sidebar'
 
 export default function AddBankAccountPage() {
-    return (<div className="space-y-6 p-6"> <div className="flex items-center gap-2 text-sm"> <Link
-        href="/wallet-whitelist"
-        className="font-medium text-slate-500 transition hover:text-indigo-600"
-    >
-        Wallet Whitelist </Link>
-
+  return (
+    <div className="space-y-6 p-4 sm:p-6">
+      <div className="flex items-center gap-2 text-sm">
+        <Link
+          href="/wallet-whitelist"
+          className="font-medium text-slate-500 transition hover:text-indigo-600"
+        >
+          Wallet Whitelist
+        </Link>
 
         <ChevronRight className="h-4 w-4 text-slate-400" />
 
         <span className="font-semibold text-slate-900">
-            Add Bank Account
+          Add Bank Account
         </span>
-    </div>
+      </div>
 
-        <PageHeader
-            title="Add Bank Account"
-            subtitle="Add a new bank account for wallet withdrawals. All accounts are verified before approval."
-        />
+      <PageHeader
+        title="Add Bank Account"
+        subtitle="Add a new bank account for wallet withdrawals. All accounts are verified before approval."
+      />
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
-                <div className="xl:col-span-8">
-                    <AddBankAccountForm />
-                </div>
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <AddBankAccountForm />
 
-                <div className="hidden border-l border-slate-200 xl:col-span-4 xl:block">
-                    <div className="pl-8">
-                        <AddBankAccountSidebar />
-                    </div>
-                </div>
-            </div>
+        <div className="hidden xl:block">
+          <AddBankAccountSidebar />
         </div>
+      </div>
     </div>
-
-
-    )
+  )
 }
