@@ -1,7 +1,8 @@
 'use client'
 
-import { Controller, Control } from 'react-hook-form'
-import { AddFundsSchema } from '../schema/add-funds.schema'
+import { Controller, type Control } from 'react-hook-form'
+
+import type { AddFundsSchema } from '../schema/add-funds.schema'
 
 const PAYMENT_METHODS = [
   { label: 'IMPS', value: 'IMPS' },
@@ -28,13 +29,13 @@ export default function PaymentMethodSelector({
 
           <select
             {...field}
-            className={`h-14 w-full rounded-xl border px-4 text-sm outline-none ${
+            className={`h-11 w-full rounded-xl border bg-white px-4 text-sm text-slate-900 outline-none transition ${
               fieldState.error
-                ? 'border-red-500'
-                : 'border-slate-300 focus:border-indigo-600'
+                ? 'border-red-500 focus:ring-4 focus:ring-red-100'
+                : 'border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100'
             }`}
           >
-            <option value="">Select Payment Method</option>
+            <option value="">Select payment method</option>
 
             {PAYMENT_METHODS.map((item) => (
               <option key={item.value} value={item.value}>
@@ -43,9 +44,13 @@ export default function PaymentMethodSelector({
             ))}
           </select>
 
-          {fieldState.error && (
+          {fieldState.error ? (
             <p className="text-xs text-red-500">
               {fieldState.error.message}
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500">
+              Select the method used for the bank transfer.
             </p>
           )}
         </div>
