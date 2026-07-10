@@ -10,7 +10,7 @@ import {
 
 export default function BeneficiarySidebar() {
   return (
-    <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-6">
 
       <h3 className="mb-8 text-lg font-semibold text-slate-900">
         How It Works

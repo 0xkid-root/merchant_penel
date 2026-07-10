@@ -32,7 +32,7 @@ export default function AddBankAccountSidebar() {
 
   return (
     <aside className="space-y-5">
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
           <BadgeCheck className="h-5 w-5 text-indigo-600" />
         </div>

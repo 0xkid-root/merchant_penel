@@ -7,7 +7,7 @@ export default function BeneficiaryOptionalDetails() {
   const { register } = useFormContext<AddBeneficiaryFormData>()
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6">
+    <div className="rounded-xl bg-white">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Mobile Number */}
 
