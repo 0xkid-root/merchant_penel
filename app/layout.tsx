@@ -1,8 +1,8 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+import ReactQueryProvider from "@/lib/react-query/ReactQueryProvider";
 
 const inter = Inter({
   variable: '--font-sans',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: 'AtMoonPe - Merchant Panel',
   description: 'All Your Payouts. One Powerful Platform.',
   generator: 'AtMoonPe.com',
- 
+
 }
 
 export const viewport: Viewport = {
@@ -39,9 +39,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} bg-slate-50`}>
       <body className="font-sans antialiased bg-slate-50">
-        {children}
-        <Toaster />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ReactQueryProvider>
+          {children}
+          <Toaster />
+        </ReactQueryProvider>
       </body>
     </html>
   )
