@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/lib/store/authStore'
 
 import { DashboardSidebar } from '@/components/layout/dashboard-sidebar'
 import PageFooter from '@/components/layout/page-footer'
@@ -16,14 +17,13 @@ export default function MerchantLayout({
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated')
-
     if (!isAuthenticated) {
       router.push('/')
     }
-  }, [router])
+  }, [isAuthenticated, router])
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed((previous) => !previous)

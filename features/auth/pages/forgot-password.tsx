@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
-import { forgotPasswordAction } from '@/features/auth/server-actions'
+import { authApi } from '@/features/auth/api/authApi'
 
 export default function ForgotPasswordPage() {
   const router = useRouter()

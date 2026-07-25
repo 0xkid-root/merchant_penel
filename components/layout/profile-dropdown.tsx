@@ -2,19 +2,17 @@
 
 import Link from 'next/link'
 import { User, HelpCircle, LogOut, Lock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useLogout } from '@/features/auth/hooks/useLogout'
 
 interface Props {
   onClose: () => void
 }
 
 export default function ProfileDropdown({ onClose }: Props) {
-  const router = useRouter()
+  const { mutate: logout, isPending } = useLogout()
 
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated')
-    localStorage.removeItem('userEmail')
-    router.push('/')
+    logout()
   }
 
   return (
@@ -55,11 +53,16 @@ export default function ProfileDropdown({ onClose }: Props) {
 
       <button
         onClick={handleLogout}
-        className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50"
+        disabled={isPending}
+        className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <LogOut className="h-5 w-5" />
+        {isPending ? (
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+        ) : (
+          <LogOut className="h-5 w-5" />
+        )}
         <span className="text-sm font-medium">
-          Logout
+          {isPending ? 'Logging out...' : 'Logout'}
         </span>
       </button>
 

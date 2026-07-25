@@ -5,18 +5,32 @@ import Image from 'next/image'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useLogin } from '../hooks/useLogin'
+import { useAuthStore } from '@/lib/store/authStore'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function LoginForm() {
   const router = useRouter()
+  const { mutateAsync: login, isPending } = useLogin()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/dashboard')
+    }
+  }, [isAuthenticated, router])
 
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberEmail')
@@ -40,14 +54,8 @@ export default function LoginForm() {
       return
     }
 
-    setIsLoading(true)
-
     try {
-      // Replace with login API when backend integration starts.
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      localStorage.setItem('isAuthenticated', 'true')
-      localStorage.setItem('userEmail', email)
+      await login({ email, password })
 
       if (rememberMe) {
         localStorage.setItem('rememberEmail', email)
@@ -56,12 +64,13 @@ export default function LoginForm() {
       }
 
       toast.success('Login successful. Welcome back.')
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>
 
-      router.push('/dashboard')
-    } catch {
-      toast.error('Login failed. Please try again.')
-    } finally {
-      setIsLoading(false)
+      toast.error(
+        err.response?.data?.message ??
+        'Login failed. Please try again.'
+      )
     }
   }
 
@@ -123,7 +132,7 @@ export default function LoginForm() {
               onChange={(event) => setEmail(event.target.value)}
               placeholder="Enter your email address"
               autoComplete="email"
-              disabled={isLoading}
+              disabled={isPending}
               className="h-13 rounded-xl border-slate-300 pl-12 text-sm sm:h-14 sm:text-base"
             />
           </div>
@@ -147,7 +156,7 @@ export default function LoginForm() {
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               autoComplete="current-password"
-              disabled={isLoading}
+              disabled={isPending}
               className="h-13 rounded-xl border-slate-300 pl-12 pr-12 text-sm sm:h-14 sm:text-base"
             />
 
@@ -155,7 +164,7 @@ export default function LoginForm() {
               type="button"
               onClick={() => setShowPassword((previous) => !previous)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
-              disabled={isLoading}
+              disabled={isPending}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showPassword ? (
@@ -173,7 +182,7 @@ export default function LoginForm() {
               type="checkbox"
               checked={rememberMe}
               onChange={(event) => setRememberMe(event.target.checked)}
-              disabled={isLoading}
+              disabled={isPending}
               className="h-5 w-5 rounded accent-indigo-600"
             />
 
@@ -183,7 +192,7 @@ export default function LoginForm() {
           <button
             type="button"
             onClick={handleForgotPassword}
-            disabled={isLoading}
+            disabled={isPending}
             className="self-start text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 sm:self-auto"
           >
             Forgot Password?
@@ -192,10 +201,10 @@ export default function LoginForm() {
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="h-13 w-full rounded-xl bg-indigo-600 text-sm font-semibold hover:bg-indigo-700 sm:h-14 sm:text-base"
         >
-          {isLoading ? (
+          {isPending ? (
             <>
               <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               Logging in...
