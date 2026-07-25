@@ -2,7 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useLogout } from '@/features/auth/hooks/useLogout'
 import {
   ArrowUpRight,
   CheckCircle2,
@@ -71,15 +72,12 @@ export function DashboardSidebar({
   mobileOpen,
   onCloseMobile,
 }: DashboardSidebarProps) {
-  const router = useRouter()
   const pathname = usePathname()
+  const { mutate: logout, isPending } = useLogout()
 
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated')
-    localStorage.removeItem('userEmail')
-
+    logout()
     onCloseMobile()
-    router.push('/')
   }
 
   const handleNavigation = () => {
@@ -216,14 +214,21 @@ export function DashboardSidebar({
           <button
             type="button"
             onClick={handleLogout}
+            disabled={isPending}
             title={collapsed ? 'Logout' : undefined}
-            className={`flex w-full items-center justify-center rounded-xl border border-red-100 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 ${
+            className={`flex w-full items-center justify-center rounded-xl border border-red-100 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed ${
               collapsed ? 'gap-2 px-4 py-2.5 lg:h-11 lg:px-0' : 'gap-2 px-4 py-2.5'
             }`}
           >
-            <LogOut className="h-4 w-4" />
+            {isPending ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+            ) : (
+              <LogOut className="h-4 w-4" />
+            )}
 
-            <span className={collapsed ? 'lg:hidden' : ''}>Logout</span>
+            <span className={collapsed ? 'lg:hidden' : ''}>
+              {isPending ? 'Logging out...' : 'Logout'}
+            </span>
           </button>
         </div>
       </aside>
