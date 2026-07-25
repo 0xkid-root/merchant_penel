@@ -41,8 +41,9 @@ export default function RootLayout({
       <body className="font-sans antialiased bg-slate-50">
         <ReactQueryProvider>
           {children}
-          <Toaster />
         </ReactQueryProvider>
+        <Toaster />
+
       </body>
     </html>
   )
