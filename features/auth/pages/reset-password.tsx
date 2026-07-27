@@ -9,6 +9,7 @@ import { AxiosError } from 'axios'
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { useResetPassword } from '../hooks/usePassword'
+import { PasswordRequirements } from '../components/PasswordRequirements'
 
 interface ApiErrorResponse {
   message: string
@@ -24,21 +25,25 @@ export default function ResetPasswordPage() {
 
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [resetToken, setResetToken] = useState('')
   
   const { mutateAsync: resetPassword, isPending } = useResetPassword()
 
   useEffect(() => {
     const token = sessionStorage.getItem('passwordResetToken')
-    if (token) {
-      setResetToken(token)
-    } else {
+    if (!token) {
       router.push('/forgot-password')
     }
   }, [router])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    
+    const resetToken = sessionStorage.getItem('passwordResetToken')
+    if (!resetToken) {
+      toast.error('Invalid or missing reset token')
+      router.push('/forgot-password')
+      return
+    }
     
     if (!passwords.new || !passwords.confirm) {
       toast.error('Please fill in both password fields')
@@ -181,18 +186,7 @@ export default function ResetPasswordPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-4 sm:px-5">
-          <p className="mb-2 text-sm font-semibold text-slate-900">
-            Password requirements
-          </p>
-
-          <ul className="space-y-1 text-sm leading-6 text-slate-600">
-            <li>• Minimum 8 characters</li>
-            <li>• At least one uppercase letter</li>
-            <li>• At least one lowercase letter</li>
-            <li>• At least one number</li>
-          </ul>
-        </div>
+        <PasswordRequirements />
 
         <PrimaryButton
           type="submit"

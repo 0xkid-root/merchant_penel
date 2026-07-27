@@ -40,3 +40,8 @@ export interface ChangePasswordPayload {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface VerifyOtpResponse {
+  message: string;
+  resetToken: string;
+}
