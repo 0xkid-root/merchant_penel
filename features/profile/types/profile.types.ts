@@ -97,22 +97,26 @@ export interface MerchantAgreement {
    Merchant Status
 ============================ */
 
+export type UserStatusEnum = "ACTIVE" | "INACTIVE";
+
 export interface MerchantStatus {
     businessProfileStatus: string | null;
     stage: string;
-    userStatus: string;
+    userStatus: UserStatusEnum;
 }
 
 /* ============================
    Merchant Verification
 ============================ */
 
+export type VerificationStatusEnum = "APPROVED" | "PENDING" | "REJECTED";
+
 export interface MerchantVerification {
     fieldName: string;
     remarks: string;
     reviewedAt: string;
     section: string;
-    status: string;
+    status: VerificationStatusEnum;
 }
 
 /* ============================
