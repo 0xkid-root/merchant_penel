@@ -2,6 +2,7 @@ import axios, { InternalAxiosRequestConfig } from 'axios';
 import { env } from '../env';
 import { tokenService } from '@/features/auth/api/tokenService';
 import { API_ENDPOINTS } from './endpoints';
+import { useAuthStore } from '@/lib/store/authStore';
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -15,59 +16,88 @@ export const apiClient = axios.create({
   },
 });
 
-// Request Interceptor
+/**
+ * Auth endpoints that should NEVER trigger refresh token logic.
+ */
+const AUTH_ENDPOINTS = [
+  API_ENDPOINTS.AUTH.LOGIN,
+  API_ENDPOINTS.AUTH.LOGOUT,
+  API_ENDPOINTS.AUTH.REFRESH_TOKEN,
+  API_ENDPOINTS.AUTH.FORGOT_PASSWORD_SEND_OTP,
+  API_ENDPOINTS.AUTH.FORGOT_PASSWORD_VERIFY_OTP,
+  API_ENDPOINTS.AUTH.RESET_PASSWORD,
+];
+
+/* -------------------------------------------------------------------------- */
+/*                              Request Interceptor                           */
+/* -------------------------------------------------------------------------- */
+
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const url = config.url || '';
-    
-    // Do not attach Authorization header for these endpoints
-    const publicEndpoints = [
-      API_ENDPOINTS.AUTH.LOGIN,
-      API_ENDPOINTS.AUTH.REFRESH_TOKEN,
-      API_ENDPOINTS.AUTH.FORGOT_PASSWORD_SEND_OTP,
-      API_ENDPOINTS.AUTH.FORGOT_PASSWORD_VERIFY_OTP,
-      API_ENDPOINTS.AUTH.RESET_PASSWORD,
-    ];
 
-    const isPublic = publicEndpoints.some((endpoint) => url.includes(endpoint));
+    const isAuthEndpoint = AUTH_ENDPOINTS.some((endpoint) =>
+      url.includes(endpoint)
+    );
 
-    if (!isPublic) {
+    if (!isAuthEndpoint) {
       const accessToken = tokenService.getAccessToken();
+
       if (accessToken && config.headers) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
     }
-    
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response Interceptor
+/* -------------------------------------------------------------------------- */
+/*                             Response Interceptor                           */
+/* -------------------------------------------------------------------------- */
+
 apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
+
   async (error) => {
     const originalRequest = error.config as RetryAxiosRequestConfig;
 
-    // If error is 401 and we haven't retried yet
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    const url = originalRequest?.url || '';
+
+    const isAuthEndpoint = AUTH_ENDPOINTS.some((endpoint) =>
+      url.includes(endpoint)
+    );
+
+    /**
+     * Refresh token only for protected APIs.
+     * Never refresh for login / forgot password / reset password APIs.
+     */
+    if (
+      error.response?.status === 401 &&
+      !isAuthEndpoint &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       try {
         const refreshToken = tokenService.getRefreshToken();
-        
+
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
 
-        // Keep refresh request using axios.post() NOT apiClient.post()
+        /**
+         * IMPORTANT:
+         * Use axios instead of apiClient here
+         * to avoid infinite interceptor loops.
+         */
         const response = await axios.post(
           `${env.NEXT_PUBLIC_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
-          { refreshToken },
+          {
+            refreshToken,
+          },
           {
             headers: {
               'Content-Type': 'application/json',
@@ -75,31 +105,38 @@ apiClient.interceptors.response.use(
           }
         );
 
-        // Validate response properly
-        if (!response.data || !response.data.accessToken || !response.data.refreshToken) {
-           throw new Error('Invalid refresh token response');
+        if (
+          !response.data ||
+          !response.data.accessToken ||
+          !response.data.refreshToken
+        ) {
+          throw new Error('Invalid refresh token response');
         }
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+        const {
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        } = response.data;
 
-        // Update Zustand
         tokenService.setTokens(newAccessToken, newRefreshToken);
 
-        // Update original request auth header
         if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
 
-        // Retry original request automatically
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // If refresh fails, first clear Zustand
+        /**
+         * Refresh token expired.
+         * Completely clear auth state.
+         */
         tokenService.clearTokens();
-        
-        // Then redirect using window.location.replace
+        useAuthStore.getState().clearAuth();
+
         if (typeof window !== 'undefined') {
-            window.location.replace('/login');
+          window.location.replace('/login');
         }
+
         return Promise.reject(refreshError);
       }
     }
