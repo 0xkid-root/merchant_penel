@@ -41,3 +41,8 @@ export interface BankDetails {
   verifiedBy: string
   remarks: string
 }
+
+export interface ProfileSidebarData extends BusinessData {
+  status: string
+  stage: string
+}
