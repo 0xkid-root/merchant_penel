@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
 
       updateTokens: (accessToken, refreshToken) => {
-        set({ accessToken, refreshToken });
+        set({ accessToken, refreshToken, isAuthenticated: true });
       },
 
       clearAuth: () => {

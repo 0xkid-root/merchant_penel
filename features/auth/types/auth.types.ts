@@ -3,6 +3,8 @@ export interface User {
   email: string;
   name?: string;
   role?: string;
+  forcePasswordChange?: boolean;
+
   [key: string]: any;
 }
 
