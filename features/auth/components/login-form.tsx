@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 
@@ -11,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useLogin } from '../hooks/useLogin'
 import { useAuthStore } from '@/lib/store/authStore'
+import { loginSchema, LoginSchema } from '../schemas/loginSchema'
 
 interface ApiErrorResponse {
   message: string
@@ -21,10 +24,22 @@ export default function LoginForm() {
   const { mutateAsync: login, isPending } = useLogin()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onChange',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -36,29 +51,20 @@ export default function LoginForm() {
     const rememberedEmail = localStorage.getItem('rememberEmail')
 
     if (rememberedEmail) {
-      setEmail(rememberedEmail)
+      setValue('email', rememberedEmail)
       setRememberMe(true)
     }
-  }, [])
+  }, [setValue])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    if (!email.trim() || !password) {
-      toast.error('Please fill in all fields')
-      return
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error('Please enter a valid email address')
-      return
-    }
-
+  const onSubmit = async (data: LoginSchema) => {
     try {
-      await login({ email, password })
+      await login({
+        email: data.email,
+        password: data.password,
+      })
 
       if (rememberMe) {
-        localStorage.setItem('rememberEmail', email)
+        localStorage.setItem('rememberEmail', data.email)
       } else {
         localStorage.removeItem('rememberEmail')
       }
@@ -113,7 +119,7 @@ export default function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 sm:space-y-7">
         <div>
           <label
             htmlFor="email"
@@ -128,14 +134,20 @@ export default function LoginForm() {
             <Input
               id="email"
               type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
               placeholder="Enter your email address"
               autoComplete="email"
               disabled={isPending}
-              className="h-13 rounded-xl border-slate-300 pl-12 text-sm sm:h-14 sm:text-base"
+              {...register('email')}
+              className={`h-13 rounded-xl pl-12 text-sm sm:h-14 sm:text-base ${
+                errors.email ? 'border-red-500' : 'border-slate-300'
+              }`}
             />
           </div>
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -152,12 +164,13 @@ export default function LoginForm() {
             <Input
               id="password"
               type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               autoComplete="current-password"
               disabled={isPending}
-              className="h-13 rounded-xl border-slate-300 pl-12 pr-12 text-sm sm:h-14 sm:text-base"
+              {...register('password')}
+              className={`h-13 rounded-xl pl-12 pr-12 text-sm sm:h-14 sm:text-base ${
+                errors.password ? 'border-red-500' : 'border-slate-300'
+              }`}
             />
 
             <button
@@ -174,6 +187,11 @@ export default function LoginForm() {
               )}
             </button>
           </div>
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

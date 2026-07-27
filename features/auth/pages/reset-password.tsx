@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Lock } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 
@@ -10,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { useResetPassword } from '../hooks/usePassword'
 import { PasswordRequirements } from '../components/PasswordRequirements'
+import { resetPasswordSchema, ResetPasswordSchema } from '../schemas/resetPasswordSchema'
 
 interface ApiErrorResponse {
   message: string
@@ -18,15 +21,23 @@ interface ApiErrorResponse {
 export default function ResetPasswordPage() {
   const router = useRouter()
 
-  const [passwords, setPasswords] = useState({
-    new: '',
-    confirm: '',
-  })
-
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   
   const { mutateAsync: resetPassword, isPending } = useResetPassword()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: 'onChange',
+    defaultValues: {
+      newPassword: '',
+      confirmPassword: '',
+    },
+  })
 
   useEffect(() => {
     const token = sessionStorage.getItem('passwordResetToken')
@@ -35,36 +46,19 @@ export default function ResetPasswordPage() {
     }
   }, [router])
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    
+  const onSubmit = async (data: ResetPasswordSchema) => {
     const resetToken = sessionStorage.getItem('passwordResetToken')
     if (!resetToken) {
       toast.error('Invalid or missing reset token')
       router.push('/forgot-password')
       return
     }
-    
-    if (!passwords.new || !passwords.confirm) {
-      toast.error('Please fill in both password fields')
-      return
-    }
-
-    if (passwords.new !== passwords.confirm) {
-      toast.error('Passwords do not match')
-      return
-    }
-
-    if (passwords.new.length < 8) {
-      toast.error('Password must be at least 8 characters')
-      return
-    }
 
     try {
       await resetPassword({
         resetToken,
-        newPassword: passwords.new,
-        confirmPassword: passwords.confirm,
+        newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
       })
       
       sessionStorage.removeItem('passwordResetToken')
@@ -93,7 +87,7 @@ export default function ResetPasswordPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label
             htmlFor="new-password"
@@ -109,15 +103,11 @@ export default function ResetPasswordPage() {
               id="new-password"
               type={showNewPassword ? 'text' : 'password'}
               placeholder="Enter new password"
-              value={passwords.new}
-              onChange={(event) =>
-                setPasswords((previous) => ({
-                  ...previous,
-                  new: event.target.value,
-                }))
-              }
               disabled={isPending}
-              className="h-14 w-full rounded-xl border-slate-300 pl-12 pr-12 text-base"
+              {...register('newPassword')}
+              className={`h-14 w-full rounded-xl pl-12 pr-12 text-base ${
+                errors.newPassword ? 'border-red-500' : 'border-slate-300'
+              }`}
             />
 
             <button
@@ -136,6 +126,11 @@ export default function ResetPasswordPage() {
               )}
             </button>
           </div>
+          {errors.newPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.newPassword.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -153,15 +148,11 @@ export default function ResetPasswordPage() {
               id="confirm-password"
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Confirm new password"
-              value={passwords.confirm}
-              onChange={(event) =>
-                setPasswords((previous) => ({
-                  ...previous,
-                  confirm: event.target.value,
-                }))
-              }
               disabled={isPending}
-              className="h-14 w-full rounded-xl border-slate-300 pl-12 pr-12 text-base"
+              {...register('confirmPassword')}
+              className={`h-14 w-full rounded-xl pl-12 pr-12 text-base ${
+                errors.confirmPassword ? 'border-red-500' : 'border-slate-300'
+              }`}
             />
 
             <button
@@ -184,6 +175,11 @@ export default function ResetPasswordPage() {
               )}
             </button>
           </div>
+          {errors.confirmPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
         <PasswordRequirements />
