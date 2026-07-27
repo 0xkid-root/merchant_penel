@@ -8,4 +8,7 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: '/merchant/auth/forgot-password/reset-password',
     CHANGE_PASSWORD: '/merchant/auth/change-password',
   },
+  PROFILE: {
+    GET_PROFILE: '/api/v1/merchant/profile',
+  },
 } as const;

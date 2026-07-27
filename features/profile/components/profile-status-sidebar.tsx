@@ -6,10 +6,10 @@ import {
     Mail,
 } from 'lucide-react'
 
-import type { BusinessData } from '../types/profile'
+import type { ProfileSidebarData } from '../types/profile'
 
 interface ProfileStatusSidebarProps {
-    data: BusinessData
+    data: ProfileSidebarData
 }
 
 export default function ProfileStatusSidebar({
