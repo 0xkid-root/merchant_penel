@@ -4,20 +4,24 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail } from 'lucide-react'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
-import { authApi } from '@/features/auth/api/authApi'
+import { useForgotPasswordSendOtp } from '../hooks/usePassword'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
-
   const [email, setEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const { mutateAsync: sendOtp, isPending } = useForgotPasswordSendOtp()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
+    
     if (!email.trim()) {
       toast.error('Please enter your email address')
       return
@@ -28,25 +32,15 @@ export default function ForgotPasswordPage() {
       return
     }
 
-    setIsLoading(true)
-
     try {
-      const response = await forgotPasswordAction({ email })
-
-      if (!response.success) {
-        toast.error(response.error?.message || 'Failed to process request')
-        return
-      }
-
-      toast.success('Password reset link sent to your email')
-
-      window.setTimeout(() => {
-        router.push('/login')
-      }, 2000)
-    } catch {
-      toast.error('An error occurred. Please try again.')
-    } finally {
-      setIsLoading(false)
+      await sendOtp({ email })
+      
+      sessionStorage.setItem('forgotPasswordEmail', email)
+      toast.success('OTP sent successfully.')
+      router.push('/verify-otp')
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>
+      toast.error(err.response?.data?.message || 'Failed to send OTP')
     }
   }
 
@@ -58,8 +52,7 @@ export default function ForgotPasswordPage() {
         </h2>
 
         <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
-          No worries. Enter your registered email address and we will send you
-          a password reset link.
+          Enter your registered email address. We'll send a One Time Password (OTP) to verify your identity.
         </p>
       </div>
 
@@ -81,8 +74,8 @@ export default function ForgotPasswordPage() {
               placeholder="Enter your email address"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              disabled={isLoading}
               autoComplete="email"
+              disabled={isPending}
               className="h-[52px] w-full rounded-xl border-slate-300 pl-12 text-sm sm:h-14 sm:text-base"
             />
           </div>
@@ -90,17 +83,17 @@ export default function ForgotPasswordPage() {
 
         <PrimaryButton
           type="submit"
-          isLoading={isLoading}
-          disabled={isLoading}
+          isLoading={isPending}
+          disabled={isPending}
           className="h-[52px] w-full sm:h-14"
         >
-          Send Reset Link
+          Send OTP
         </PrimaryButton>
 
         <button
           type="button"
           onClick={() => router.push('/login')}
-          disabled={isLoading}
+          disabled={isPending}
           className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
         >
           <ArrowLeft className="h-4 w-4" />

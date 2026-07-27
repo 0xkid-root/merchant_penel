@@ -1,9 +1,9 @@
 export interface User {
-  id: string;
+  id: number;
   email: string;
   name?: string;
   role?: string;
-  [key: string]: any;
+  forcePasswordChange?: boolean;
 }
 
 export interface AuthTokens {
@@ -17,7 +17,7 @@ export interface AuthResponse extends AuthTokens {
 
 export interface LoginCredentials {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface ForgotPasswordSendOtpPayload {
@@ -30,12 +30,13 @@ export interface ForgotPasswordVerifyOtpPayload {
 }
 
 export interface ResetPasswordPayload {
-  email: string;
-  otp: string;
+  resetToken: string;
   newPassword: string;
+  confirmPassword: string;
 }
 
 export interface ChangePasswordPayload {
   oldPassword: string;
   newPassword: string;
+  confirmPassword: string;
 }
