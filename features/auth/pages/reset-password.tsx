@@ -1,10 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Lock } from 'lucide-react'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
+
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
+import { useResetPassword } from '../hooks/usePassword'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function ResetPasswordPage() {
   const router = useRouter()
@@ -16,11 +24,56 @@ export default function ResetPasswordPage() {
 
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [resetToken, setResetToken] = useState('')
+  
+  const { mutateAsync: resetPassword, isPending } = useResetPassword()
 
-  const handleSubmit = (event: React.FormEvent) => {
+  useEffect(() => {
+    const token = sessionStorage.getItem('passwordResetToken')
+    if (token) {
+      setResetToken(token)
+    } else {
+      router.push('/forgot-password')
+    }
+  }, [router])
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    // Placeholder navigation for UI demonstration
-    router.push('/login')
+    
+    if (!passwords.new || !passwords.confirm) {
+      toast.error('Please fill in both password fields')
+      return
+    }
+
+    if (passwords.new !== passwords.confirm) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    if (passwords.new.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
+
+    try {
+      await resetPassword({
+        resetToken,
+        newPassword: passwords.new,
+        confirmPassword: passwords.confirm,
+      })
+      
+      sessionStorage.removeItem('passwordResetToken')
+      sessionStorage.removeItem('forgotPasswordEmail')
+      
+      toast.success('Password reset successfully.')
+      
+      setTimeout(() => {
+        router.push('/login')
+      }, 1500)
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>
+      toast.error(err.response?.data?.message || 'Failed to reset password')
+    }
   }
 
   return (
@@ -58,6 +111,7 @@ export default function ResetPasswordPage() {
                   new: event.target.value,
                 }))
               }
+              disabled={isPending}
               className="h-14 w-full rounded-xl border-slate-300 pl-12 pr-12 text-base"
             />
 
@@ -67,7 +121,8 @@ export default function ResetPasswordPage() {
               aria-label={
                 showNewPassword ? 'Hide new password' : 'Show new password'
               }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700"
+              disabled={isPending}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showNewPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -100,6 +155,7 @@ export default function ResetPasswordPage() {
                   confirm: event.target.value,
                 }))
               }
+              disabled={isPending}
               className="h-14 w-full rounded-xl border-slate-300 pl-12 pr-12 text-base"
             />
 
@@ -113,7 +169,8 @@ export default function ResetPasswordPage() {
                   ? 'Hide confirm password'
                   : 'Show confirm password'
               }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700"
+              disabled={isPending}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showConfirmPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -139,6 +196,8 @@ export default function ResetPasswordPage() {
 
         <PrimaryButton
           type="submit"
+          isLoading={isPending}
+          disabled={isPending}
           className="h-14 w-full rounded-xl text-base font-semibold"
         >
           Reset Password

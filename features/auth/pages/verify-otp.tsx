@@ -1,16 +1,35 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
+import { useForgotPasswordVerifyOtp } from '../hooks/usePassword'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function VerifyOtpPage() {
   const router = useRouter()
+  const [email, setEmail] = useState('')
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''))
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  
+  const { mutateAsync: verifyOtp, isPending } = useForgotPasswordVerifyOtp()
+
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem('forgotPasswordEmail')
+    if (storedEmail) {
+      setEmail(storedEmail)
+    } else {
+      router.push('/forgot-password')
+    }
+  }, [router])
 
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) {
@@ -34,10 +53,27 @@ export default function VerifyOtpPage() {
     }
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Placeholder navigation for UI demonstration
-    router.push('/reset-password')
+    
+    const otpValue = otp.join('')
+    if (otpValue.length < 6) {
+      toast.error('Please enter the complete 6-digit OTP')
+      return
+    }
+
+    try {
+      // The API definition in authApi doesn't specify returning a value type, 
+      // but according to the requirements it returns { message, resetToken }
+      const response = await verifyOtp({ email, otp: otpValue }) as any
+      
+      sessionStorage.setItem('passwordResetToken', response.resetToken)
+      toast.success(response.message || 'OTP verified successfully')
+      router.push('/reset-password')
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>
+      toast.error(err.response?.data?.message || 'Failed to verify OTP')
+    }
   }
 
   return (
@@ -54,7 +90,7 @@ export default function VerifyOtpPage() {
         <div className="mt-4">
           <Input 
             readOnly 
-            value="merchant@example.com" 
+            value={email} 
             className="h-[52px] w-full rounded-xl border-slate-300 bg-slate-50 text-slate-500 text-sm sm:h-14 sm:text-base cursor-not-allowed"
           />
         </div>
@@ -78,6 +114,7 @@ export default function VerifyOtpPage() {
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
+                disabled={isPending}
                 className="h-12 w-12 rounded-xl border-slate-300 text-center text-lg font-semibold sm:h-14 sm:w-14 sm:text-xl"
               />
             ))}
@@ -92,6 +129,8 @@ export default function VerifyOtpPage() {
 
         <PrimaryButton
           type="submit"
+          isLoading={isPending}
+          disabled={isPending}
           className="h-[52px] w-full sm:h-14"
         >
           Verify OTP
@@ -100,7 +139,8 @@ export default function VerifyOtpPage() {
         <button
           type="button"
           onClick={() => router.push('/forgot-password')}
-          className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 sm:text-base"
+          disabled={isPending}
+          className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
         >
           <ArrowLeft className="h-4 w-4" />
           Back

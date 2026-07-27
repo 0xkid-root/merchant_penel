@@ -3,18 +3,45 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail } from 'lucide-react'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
+import { useForgotPasswordSendOtp } from '../hooks/usePassword'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
+  const { mutateAsync: sendOtp, isPending } = useForgotPasswordSendOtp()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Placeholder navigation for UI demonstration
-    router.push('/verify-otp')
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address')
+      return
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+
+    try {
+      await sendOtp({ email })
+      
+      sessionStorage.setItem('forgotPasswordEmail', email)
+      toast.success('OTP sent successfully.')
+      router.push('/verify-otp')
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>
+      toast.error(err.response?.data?.message || 'Failed to send OTP')
+    }
   }
 
   return (
@@ -48,6 +75,7 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
+              disabled={isPending}
               className="h-[52px] w-full rounded-xl border-slate-300 pl-12 text-sm sm:h-14 sm:text-base"
             />
           </div>
@@ -55,6 +83,8 @@ export default function ForgotPasswordPage() {
 
         <PrimaryButton
           type="submit"
+          isLoading={isPending}
+          disabled={isPending}
           className="h-[52px] w-full sm:h-14"
         >
           Send OTP
@@ -63,7 +93,8 @@ export default function ForgotPasswordPage() {
         <button
           type="button"
           onClick={() => router.push('/login')}
-          className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 sm:text-base"
+          disabled={isPending}
+          className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Login
