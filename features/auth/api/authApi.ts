@@ -8,6 +8,7 @@ import {
   ForgotPasswordVerifyOtpPayload,
   ResetPasswordPayload,
   ChangePasswordPayload,
+  VerifyOtpResponse,
 } from '../types/auth.types';
 
 export const authApi = {
@@ -32,8 +33,9 @@ export const authApi = {
     await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD_SEND_OTP, payload);
   },
 
-  forgotPasswordVerifyOtp: async (payload: ForgotPasswordVerifyOtpPayload): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD_VERIFY_OTP, payload);
+  forgotPasswordVerifyOtp: async (payload: ForgotPasswordVerifyOtpPayload): Promise<VerifyOtpResponse> => {
+    const response = await apiClient.post<VerifyOtpResponse>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD_VERIFY_OTP, payload);
+    return response.data;
   },
 
   resetPassword: async (payload: ResetPasswordPayload): Promise<void> => {

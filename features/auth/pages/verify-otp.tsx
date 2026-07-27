@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
@@ -9,6 +9,8 @@ import { AxiosError } from 'axios'
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { useForgotPasswordVerifyOtp } from '../hooks/usePassword'
+import { OTPInput } from '../components/OTPInput'
+import { OTPCountdown } from '../components/OTPCountdown'
 
 interface ApiErrorResponse {
   message: string
@@ -17,8 +19,7 @@ interface ApiErrorResponse {
 export default function VerifyOtpPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(''))
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [otp, setOtp] = useState('')
   
   const { mutateAsync: verifyOtp, isPending } = useForgotPasswordVerifyOtp()
 
@@ -31,41 +32,16 @@ export default function VerifyOtpPage() {
     }
   }, [router])
 
-  const handleChange = (index: number, value: string) => {
-    if (value.length > 1) {
-      value = value.slice(-1)
-    }
-
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
-
-    // Move to next input if value is entered
-    if (value !== '' && index < 5) {
-      inputRefs.current[index + 1]?.focus()
-    }
-  }
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
-      // Move to previous input on backspace if current is empty
-      inputRefs.current[index - 1]?.focus()
-    }
-  }
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     
-    const otpValue = otp.join('')
-    if (otpValue.length < 6) {
+    if (otp.length < 6) {
       toast.error('Please enter the complete 6-digit OTP')
       return
     }
 
     try {
-      // The API definition in authApi doesn't specify returning a value type, 
-      // but according to the requirements it returns { message, resetToken }
-      const response = await verifyOtp({ email, otp: otpValue }) as any
+      const response = await verifyOtp({ email, otp })
       
       sessionStorage.setItem('passwordResetToken', response.resetToken)
       toast.success(response.message || 'OTP verified successfully')
@@ -102,29 +78,13 @@ export default function VerifyOtpPage() {
             One Time Password
           </label>
 
-          <div className="flex justify-between gap-2 sm:gap-4">
-            {otp.map((digit, index) => (
-              <Input
-                key={index}
-                ref={(el) => { inputRefs.current[index] = el }}
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                disabled={isPending}
-                className="h-12 w-12 rounded-xl border-slate-300 text-center text-lg font-semibold sm:h-14 sm:w-14 sm:text-xl"
-              />
-            ))}
-          </div>
+          <OTPInput
+            value={otp}
+            onChange={setOtp}
+            disabled={isPending}
+          />
 
-          <div className="mt-4 text-center">
-            <span className="text-sm font-medium text-slate-400">
-              Resend OTP in <span className="font-semibold text-slate-500">00:59</span>
-            </span>
-          </div>
+          <OTPCountdown email={email} />
         </div>
 
         <PrimaryButton
