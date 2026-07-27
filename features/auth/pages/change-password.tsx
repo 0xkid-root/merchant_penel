@@ -3,27 +3,68 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Lock, ArrowLeft } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 import { Input } from '@/components/ui/input'
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { PasswordRequirements } from '@/features/auth/components/PasswordRequirements'
+import { changePasswordSchema, ChangePasswordSchema } from '../schemas/changePasswordSchema'
+import { useChangePassword } from '../hooks/usePassword'
+import { useAuthStore } from '@/lib/store/authStore'
+
+interface ApiErrorResponse {
+  message: string
+}
 
 export default function ChangePasswordPage() {
   const router = useRouter()
-
-  const [passwords, setPasswords] = useState({
-    current: '',
-    new: '',
-    confirm: '',
-  })
+  const { mutateAsync: changePassword, isPending } = useChangePassword()
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-  }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ChangePasswordSchema>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+  })
+
+  const onSubmit = async (data: ChangePasswordSchema) => {
+    try {
+      const response = await changePassword({
+        oldPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
+      });
+
+      // Show backend success message
+      toast.success(response.message);
+
+      // Clear auth data
+      useAuthStore.getState().clearAuth();
+
+      // Redirect to login
+      router.replace("/login");
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorResponse>;
+
+      toast.error(
+        err.response?.data?.message ?? "Unable to change password"
+      );
+    }
+  };
 
   return (
     <div className="w-full max-w-[540px] px-6 py-6 lg:px-10 lg:py-8">
@@ -37,13 +78,12 @@ export default function ChangePasswordPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
         {/* Current Password */}
-
         <div>
           <label
-            htmlFor="current-password"
+            htmlFor="currentPassword"
             className="mb-2 block text-sm font-semibold text-slate-900"
           >
             Current Password
@@ -53,25 +93,20 @@ export default function ChangePasswordPage() {
             <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
             <Input
-              id="current-password"
+              id="currentPassword"
               type={showCurrentPassword ? 'text' : 'password'}
               placeholder="Enter current password"
-              value={passwords.current}
-              onChange={(e) =>
-                setPasswords((prev) => ({
-                  ...prev,
-                  current: e.target.value,
-                }))
-              }
-              className="h-12 rounded-xl border-slate-300 pl-12 pr-12"
+              disabled={isPending}
+              {...register('currentPassword')}
+              className={`h-12 rounded-xl pl-12 pr-12 ${errors.currentPassword ? 'border-red-500' : 'border-slate-300'
+                }`}
             />
 
             <button
               type="button"
-              onClick={() =>
-                setShowCurrentPassword((prev) => !prev)
-              }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              onClick={() => setShowCurrentPassword((prev) => !prev)}
+              disabled={isPending}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showCurrentPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -80,13 +115,17 @@ export default function ChangePasswordPage() {
               )}
             </button>
           </div>
+          {errors.currentPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.currentPassword.message}
+            </p>
+          )}
         </div>
 
         {/* New Password */}
-
         <div>
           <label
-            htmlFor="new-password"
+            htmlFor="newPassword"
             className="mb-2 block text-sm font-semibold text-slate-900"
           >
             New Password
@@ -96,25 +135,20 @@ export default function ChangePasswordPage() {
             <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
             <Input
-              id="new-password"
+              id="newPassword"
               type={showNewPassword ? 'text' : 'password'}
               placeholder="Enter new password"
-              value={passwords.new}
-              onChange={(e) =>
-                setPasswords((prev) => ({
-                  ...prev,
-                  new: e.target.value,
-                }))
-              }
-              className="h-12 rounded-xl border-slate-300 pl-12 pr-12"
+              disabled={isPending}
+              {...register('newPassword')}
+              className={`h-12 rounded-xl pl-12 pr-12 ${errors.newPassword ? 'border-red-500' : 'border-slate-300'
+                }`}
             />
 
             <button
               type="button"
-              onClick={() =>
-                setShowNewPassword((prev) => !prev)
-              }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              onClick={() => setShowNewPassword((prev) => !prev)}
+              disabled={isPending}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showNewPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -123,13 +157,17 @@ export default function ChangePasswordPage() {
               )}
             </button>
           </div>
+          {errors.newPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.newPassword.message}
+            </p>
+          )}
         </div>
 
         {/* Confirm Password */}
-
         <div>
           <label
-            htmlFor="confirm-password"
+            htmlFor="confirmPassword"
             className="mb-2 block text-sm font-semibold text-slate-900"
           >
             Confirm Password
@@ -139,25 +177,20 @@ export default function ChangePasswordPage() {
             <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
             <Input
-              id="confirm-password"
+              id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Confirm new password"
-              value={passwords.confirm}
-              onChange={(e) =>
-                setPasswords((prev) => ({
-                  ...prev,
-                  confirm: e.target.value,
-                }))
-              }
-              className="h-12 rounded-xl border-slate-300 pl-12 pr-12"
+              disabled={isPending}
+              {...register('confirmPassword')}
+              className={`h-12 rounded-xl pl-12 pr-12 ${errors.confirmPassword ? 'border-red-500' : 'border-slate-300'
+                }`}
             />
 
             <button
               type="button"
-              onClick={() =>
-                setShowConfirmPassword((prev) => !prev)
-              }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              disabled={isPending}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {showConfirmPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -166,6 +199,11 @@ export default function ChangePasswordPage() {
               )}
             </button>
           </div>
+          {errors.confirmPassword && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
         <PasswordRequirements />
@@ -173,15 +211,18 @@ export default function ChangePasswordPage() {
         <div className="space-y-4 pt-1">
           <PrimaryButton
             type="submit"
+            isLoading={isPending}
+            disabled={isPending}
             className="h-12 w-full rounded-xl"
           >
-            Change Password
+            {isPending ? 'Changing...' : 'Change Password'}
           </PrimaryButton>
 
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+            disabled={isPending}
+            className="flex w-full items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" />
             Back

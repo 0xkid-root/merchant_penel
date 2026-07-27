@@ -20,7 +20,7 @@ export const authApi = {
   logout: async (): Promise<void> => {
     const refreshToken = tokenService.getRefreshToken();
     if (!refreshToken) return;
-    
+
     await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
   },
 
@@ -42,7 +42,14 @@ export const authApi = {
     await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, payload);
   },
 
-  changePassword: async (payload: ChangePasswordPayload): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, payload);
+  changePassword: async (
+    payload: ChangePasswordPayload
+  ): Promise<{ message: string }> => {
+    const response = await apiClient.post(
+      API_ENDPOINTS.AUTH.CHANGE_PASSWORD,
+      payload
+    );
+
+    return response.data;
   },
 };
