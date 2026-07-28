@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
+import Pagination from '@/components/common/pagination/Pagination'
 import { useWalletLedger } from '../hooks/useWalletLedger'
-import TransactionPagination from './transaction-pagination'
 import TransactionSearch from './transaction-search'
 import TransactionTable from './transaction-table'
 import TransactionTableHeader from './transaction-table-header'
@@ -39,12 +39,13 @@ export function WalletTransactionsTable() {
       </div>
 
       <div className="min-w-0 border-t border-slate-100">
-        <TransactionPagination
-          currentPage={page}
+        <Pagination
+          page={page}
           totalPages={pagination?.totalPages || 1}
           totalElements={pagination?.totalElements || 0}
           pageSize={size}
           onPageChange={setPage}
+          itemName="transactions"
         />
       </div>
     </section>
