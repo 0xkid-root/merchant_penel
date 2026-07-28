@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Plus } from 'lucide-react'
+import { ArrowRight, Plus, Loader2, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { PrimaryButton } from '@/components/buttons/primary-button'
@@ -9,9 +9,11 @@ import PageHeader from '@/components/layout/page-header'
 
 import { BalanceCards } from '../components/balance-cards'
 import { WalletTransactionsTable } from '../components/wallet-transactions-table'
+import { useWallet } from '../hooks/useWallet'
 
 export default function WalletPage() {
   const router = useRouter()
+  const { isLoading, isError, refetch } = useWallet()
 
   const addFundsPage = () => {
     router.push('/add-funds')
@@ -19,6 +21,41 @@ export default function WalletPage() {
 
   const withdrawPage = () => {
     router.push('/withdrawal-request')
+  }
+
+  if (isLoading) {
+      return (
+          <div className="flex h-[400px] w-full items-center justify-center">
+              <div className="flex flex-col items-center gap-4">
+                  <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                  <p className="text-sm font-medium text-slate-500">Loading wallet...</p>
+              </div>
+          </div>
+      )
+  }
+
+  if (isError) {
+      return (
+          <div className="flex h-[400px] w-full items-center justify-center p-6">
+              <div className="flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                      <AlertCircle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div>
+                      <h3 className="text-lg font-bold text-slate-900">Unable to load wallet</h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                          Please try again.
+                      </p>
+                  </div>
+                  <button
+                      onClick={() => refetch()}
+                      className="mt-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+                  >
+                      Retry
+                  </button>
+              </div>
+          </div>
+      )
   }
 
   return (

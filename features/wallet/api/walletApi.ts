@@ -7,18 +7,18 @@ import {
 
 export const walletApi = {
     getWallet: async (): Promise<WalletResponse> => {
-        const response = await apiClient.get<WalletResponse>(
+        const response = await apiClient.get<{ data: WalletResponse }>(
             API_ENDPOINTS.WALLET.GET_WALLET
         );
 
-        return response.data;
+        return response.data.data;
     },
 
     getWalletSummary: async (): Promise<WalletSummaryResponse> => {
-        const response = await apiClient.get<WalletSummaryResponse>(
+        const response = await apiClient.get<{ data: WalletSummaryResponse }>(
             API_ENDPOINTS.WALLET.GET_WALLET_SUMMARY
         );
 
-        return response.data;
+        return response.data.data;
     },
 };
