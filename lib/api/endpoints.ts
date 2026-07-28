@@ -11,4 +11,8 @@ export const API_ENDPOINTS = {
   PROFILE: {
     GET_PROFILE: '/api/v1/merchant/profile',
   },
+  WALLET: {
+    GET_WALLET: '/api/v1/wallet',
+    GET_WALLET_SUMMARY: '/api/v1/wallet/summary',
+  },
 } as const;
