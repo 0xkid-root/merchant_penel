@@ -10,6 +10,7 @@ import PageHeader from '@/components/layout/page-header'
 import { BalanceCards } from '../components/balance-cards'
 import { WalletTransactionsTable } from '../components/wallet-transactions-table'
 import { useWallet } from '../hooks/useWallet'
+import WalletPageSkeleton from '../components/wallet-page-skeleton'
 
 export default function WalletPage() {
   const router = useRouter()
@@ -24,14 +25,7 @@ export default function WalletPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex h-[400px] w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-          <p className="text-sm font-medium text-slate-500">Loading  hello wallet...</p>
-        </div>
-      </div>
-    )
+    return <WalletPageSkeleton />
   }
 
   if (isError) {
