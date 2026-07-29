@@ -1,8 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Copy, Check } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowLeft, Copy, Check, ArrowDown, ArrowUp, Calendar, Tag, FileText, Info, MessageSquare, Headphones, ArrowRight } from 'lucide-react'
+import { useState, ReactNode } from 'react'
 import { toast } from 'sonner'
 import { useWalletLedgerDetails } from '../hooks/useWalletLedger'
 import { formatCurrency } from '../utils/formatCurrency'
@@ -24,31 +24,27 @@ export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string 
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         <div className="flex items-center space-x-4 mb-8">
-          <div className="w-10 h-10 bg-slate-200 rounded-full animate-pulse" />
           <div className="space-y-2">
             <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
             <div className="h-4 w-64 bg-slate-200 rounded animate-pulse" />
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-64 bg-slate-200 rounded-xl animate-pulse shadow-sm" />
-          <div className="h-64 bg-slate-200 rounded-xl animate-pulse shadow-sm" />
-          <div className="h-48 bg-slate-200 rounded-xl animate-pulse shadow-sm" />
-          <div className="h-48 bg-slate-200 rounded-xl animate-pulse shadow-sm" />
-        </div>
+        <div className="h-48 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
+        <div className="h-96 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
+        <div className="h-40 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
       </div>
     )
   }
 
   if (isError || !data?.data) {
     return (
-      <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
           <h2 className="text-xl font-semibold text-slate-800 mb-2">Transaction Not Found</h2>
           <p className="text-slate-500 mb-6">The transaction details could not be loaded or do not exist.</p>
-          <button 
+          <button
             onClick={() => router.back()}
             className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
@@ -61,168 +57,226 @@ export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string 
 
   const transaction = data.data
   const isCredit = transaction.transactionType === 'CREDIT'
+  const isDebit = transaction.transactionType === 'DEBIT'
+
   const amountPrefix = isCredit ? '+' : '-'
   const amountColor = isCredit ? 'text-green-600' : 'text-red-600'
+  const bgIconColor = isCredit ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+  const badgeColor = isCredit ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
   const formattedAmount = `${amountPrefix}${formatCurrency(transaction.amount)}`
-  const difference = transaction.closingBalance - transaction.openingBalance
+
+  const formattedDateTimeStr = formatDateTime(transaction.createdAt)
+  const [datePart, timePart] = formattedDateTimeStr.split(', ')
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
-        <button 
+      <div>
+        <button
           onClick={() => router.back()}
-          className="p-2 hover:bg-slate-100 rounded-full transition-colors self-start sm:self-auto"
-          title="Go Back"
+          className="flex items-center text-indigo-600 text-sm font-semibold mb-6 hover:underline"
         >
-          <ArrowLeft className="w-6 h-6 text-slate-600" />
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back to Wallet Transactions
         </button>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Transaction Details</h1>
-          <p className="text-sm text-slate-500 mt-1">View complete transaction information</p>
-        </div>
+        <h1 className="text-2xl font-bold text-slate-900">Transaction Details</h1>
+        <p className="text-sm text-slate-500 mt-1">View complete transaction information</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Card 1: Transaction Information */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-slate-800 mb-6">Transaction Information</h2>
-          <div className="space-y-4">
-            <InfoRow 
-              label="Transaction ID" 
-              value={transaction.referenceId || transaction.id.toString()} 
+      <div className="bg-white rounded-xl  border border-slate-200 p-6 sm:p-8">
+        {/* Top Summary Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
+
+          {/* Amount Section */}
+          <div className="flex flex-col items-center justify-center flex-1">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${bgIconColor}`}>
+              {isCredit ? <ArrowUp className="w-6 h-6" /> : <ArrowDown className="w-6 h-6" />}
+            </div>
+            <div className={`px-4 py-1 rounded-full text-xs font-bold mb-3 ${badgeColor}`}>
+              {formatTransactionType(transaction.transactionType)}
+            </div>
+            <div className={`text-3xl font-extrabold mb-2 ${amountColor}`}>
+              {formattedAmount}
+            </div>
+            <div className="text-sm font-bold text-slate-800 mb-3">
+              {formatTransactionType(transaction.referenceType)}
+            </div>
+            <TransactionStatusBadge status="Success" />
+          </div>
+
+          <div className="hidden md:block w-px h-40 bg-slate-100"></div>
+
+          {/* Date & Time Section */}
+          <div className="flex flex-col items-center justify-center flex-1">
+            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-3">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-medium text-slate-400 mb-2">Date & Time</div>
+            <div className="text-sm font-bold text-slate-800 mb-1">{datePart}</div>
+            <div className="text-sm font-bold text-slate-800">{timePart}</div>
+          </div>
+
+          <div className="hidden md:block w-px h-40 bg-slate-100"></div>
+
+          {/* Reference ID Section */}
+          <div className="flex flex-col items-center justify-center flex-1">
+            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-3">
+              <Tag className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-medium text-slate-400 mb-2">Reference ID</div>
+            <div className="text-sm font-bold text-slate-800 mb-3">{transaction.referenceId}</div>
+            <button
+              onClick={() => handleCopy(transaction.referenceId, 'topRefId')}
+              className="text-slate-400 hover:text-indigo-600 transition-colors p-1"
+            >
+              {copiedId === 'topRefId' ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+            </button>
+          </div>
+
+          <div className="hidden md:block w-px h-40 bg-slate-100"></div>
+
+          {/* Ledger Code Section */}
+          <div className="flex flex-col items-center justify-center flex-1">
+            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-3">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-medium text-slate-400 mb-2">Ledger Code</div>
+            <div className="text-sm font-bold text-slate-800 mb-3">{transaction.ledgerCode}</div>
+            <button
+              onClick={() => handleCopy(transaction.ledgerCode, 'topLedgerCode')}
+              className="text-slate-400 hover:text-indigo-600 transition-colors p-1"
+            >
+              {copiedId === 'topLedgerCode' ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+            </button>
+          </div>
+
+        </div>
+
+        <hr className="border-slate-200 my-8" />
+
+        {/* Transaction Information Section */}
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
+              <Info className="w-4 h-4 text-indigo-600" />
+            </div>
+            <h2 className="text-base font-bold text-slate-900">Transaction Information</h2>
+          </div>
+
+          <div className="space-y-1">
+            <InfoRow
+              label="Transaction ID"
+              value={transaction.referenceId || transaction.id.toString()}
               copyable
               onCopy={() => handleCopy(transaction.referenceId || transaction.id.toString(), 'txnId')}
               isCopied={copiedId === 'txnId'}
             />
-            <InfoRow 
-              label="Ledger Code" 
-              value={transaction.ledgerCode} 
+            <InfoRow
+              label="Ledger Code"
+              value={transaction.ledgerCode}
               copyable
               onCopy={() => handleCopy(transaction.ledgerCode, 'ledgerCode')}
               isCopied={copiedId === 'ledgerCode'}
             />
-            <InfoRow 
-              label="Reference ID" 
-              value={transaction.referenceId} 
+            <InfoRow
+              label="Reference ID"
+              value={transaction.referenceId}
               copyable
               onCopy={() => handleCopy(transaction.referenceId, 'refId')}
               isCopied={copiedId === 'refId'}
             />
-            <InfoRow 
-              label="Reference Type" 
-              value={formatTransactionType(transaction.referenceType)} 
+            <InfoRow
+              label="Reference Type"
+              value={
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full">
+                  {formatTransactionType(transaction.referenceType)}
+                </span>
+              }
             />
-            <InfoRow 
-              label="Transaction Type" 
-              value={formatTransactionType(transaction.transactionType)} 
+            <InfoRow
+              label="Transaction Type"
+              value={
+                <span className={`px-3 py-1 text-xs font-bold rounded-full ${badgeColor}`}>
+                  {formatTransactionType(transaction.transactionType)}
+                </span>
+              }
             />
-            <div className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
-              <span className="text-sm text-slate-500">Status</span>
-              <TransactionStatusBadge status="Success" />
+            <InfoRow
+              label="Status"
+              value={<TransactionStatusBadge status="Success" />}
+            />
+            <InfoRow
+              label="Created By"
+              value={transaction.createdBy}
+            />
+            <InfoRow
+              label="Created At"
+              value={formattedDateTimeStr}
+            />
+          </div>
+        </div>
+
+        <hr className="border-slate-200 my-8" />
+
+        {/* Remarks Section */}
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-indigo-600" />
             </div>
-            <InfoRow 
-              label="Date & Time" 
-              value={formatDateTime(transaction.createdAt)} 
-            />
-            {transaction.createdBy && (
-              <InfoRow 
-                label="Created By" 
-                value={transaction.createdBy} 
-              />
-            )}
+            <h2 className="text-base font-bold text-slate-900">Remarks</h2>
           </div>
-        </div>
-
-        {/* Card 2: Financial Details */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-slate-800 mb-6">Financial Details</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center py-2 border-b border-slate-50">
-              <span className="text-sm text-slate-500">Amount</span>
-              <span className={`text-base font-semibold ${amountColor}`}>
-                {formattedAmount}
-              </span>
-            </div>
-            <InfoRow 
-              label="Opening Balance" 
-              value={formatCurrency(transaction.openingBalance)} 
-            />
-            <InfoRow 
-              label="Closing Balance" 
-              value={formatCurrency(transaction.closingBalance)} 
-            />
-            <InfoRow 
-              label="Difference" 
-              value={formatCurrency(Math.abs(difference))} 
-              valueClass={difference >= 0 ? 'text-green-600' : 'text-red-600'}
-            />
-          </div>
-        </div>
-
-        {/* Card 3: Merchant Information */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-slate-800 mb-6">Merchant Information</h2>
-          <div className="space-y-4">
-            <InfoRow 
-              label="Merchant Name" 
-              value={transaction.merchantName} 
-            />
-            <InfoRow 
-              label="Merchant ID" 
-              value={transaction.merchantId.toString()} 
-              copyable
-              onCopy={() => handleCopy(transaction.merchantId.toString(), 'merchantId')}
-              isCopied={copiedId === 'merchantId'}
-            />
-            <InfoRow 
-              label="Wallet Code" 
-              value={transaction.walletCode} 
-              copyable
-              onCopy={() => handleCopy(transaction.walletCode, 'walletCode')}
-              isCopied={copiedId === 'walletCode'}
-            />
-          </div>
-        </div>
-
-        {/* Card 4: Remarks */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-slate-800 mb-6">Remarks</h2>
-          <div className="bg-slate-50 rounded-xl p-5 min-h-[120px] border border-slate-100">
-            <p className="text-sm text-slate-700 whitespace-pre-wrap break-words leading-relaxed">
+          <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 min-h-[100px]">
+            <p className="text-sm font-medium text-slate-700 whitespace-pre-wrap leading-relaxed">
               {transaction.remarks || 'No remarks provided for this transaction.'}
             </p>
           </div>
         </div>
 
+        <hr className="border-slate-200 my-8" />
+
+        {/* Need Help Section */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+              <Headphones className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Need Help?</h3>
+              <p className="text-xs font-medium text-slate-500 mt-1">If you have any questions regarding this transaction, please contact our support team.</p>
+            </div>
+          </div>
+          <button className="shrink-0 flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-indigo-600 text-sm font-bold hover:bg-slate-50 transition-colors">
+            Contact Support <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
       </div>
+
     </div>
   )
 }
 
-function InfoRow({ 
-  label, 
-  value, 
-  copyable, 
-  onCopy, 
-  isCopied,
-  valueClass = "text-slate-900"
-}: { 
-  label: string, 
-  value: string, 
-  copyable?: boolean, 
-  onCopy?: () => void, 
-  isCopied?: boolean,
-  valueClass?: string
+function InfoRow({
+  label,
+  value,
+  copyable,
+  onCopy,
+  isCopied
+}: {
+  label: string,
+  value: ReactNode,
+  copyable?: boolean,
+  onCopy?: () => void,
+  isCopied?: boolean
 }) {
   return (
-    <div className="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0">
-      <span className="text-sm text-slate-500 font-medium">{label}</span>
+    <div className="flex justify-between items-center py-4 border-b border-slate-100 last:border-0">
+      <span className="text-sm font-medium text-slate-500">{label}</span>
       <div className="flex items-center gap-2">
-        <span className={`text-sm font-medium ${valueClass}`}>{value || 'N/A'}</span>
+        <div className="text-sm font-bold text-slate-800">{value || 'N/A'}</div>
         {copyable && onCopy && (
-          <button 
+          <button
             onClick={onCopy}
             className="text-slate-400 hover:text-indigo-600 transition-colors p-1"
             title="Copy"
