@@ -14,7 +14,7 @@ export function WalletTransactionsTable() {
   const [transactionType, setTransactionType] = useState<'CREDIT' | 'DEBIT' | undefined>(undefined)
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 400)
-  
+
   const size = 10
   const { data, isLoading, isError } = useWalletLedger(page, size, transactionType, debouncedSearchTerm)
 
@@ -24,7 +24,7 @@ export function WalletTransactionsTable() {
   return (
     <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <div className="min-w-0">
-        <TransactionTableHeader 
+        <TransactionTableHeader
           selectedTransactionType={transactionType}
           onTransactionTypeChange={(type) => {
             setTransactionType(type)
@@ -34,12 +34,12 @@ export function WalletTransactionsTable() {
       </div>
 
       <div className="min-w-0 border-t border-slate-100">
-        <TransactionSearch 
-          value={searchTerm} 
+        <TransactionSearch
+          value={searchTerm}
           onChange={(val) => {
             setSearchTerm(val)
             setPage(0)
-          }} 
+          }}
         />
       </div>
 

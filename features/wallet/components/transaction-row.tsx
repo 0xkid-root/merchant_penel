@@ -1,7 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Copy, Check, Eye } from 'lucide-react'
 import { WalletLedger } from '../types/walletLedger.types'
 import TransactionStatusBadge from './transaction-status-badge'
+import { formatTransactionId } from '@/utils/formatTransactionId'
+import { formatTransactionType } from '@/utils/formatTransactionType'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 interface Props {
   transaction: WalletLedger
@@ -29,22 +35,55 @@ function formatDateTime(dateStr: string) {
 export default function TransactionRow({
   transaction,
 }: Props) {
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
   const isCredit = transaction.transactionType === 'CREDIT'
-  const amountPrefix = isCredit ? '+₹' : '-₹'
+  const amountPrefix = isCredit ? '+' : '-'
   const amountColor = isCredit ? 'text-green-600' : 'text-red-600'
-  const formattedAmount = `${amountPrefix}${transaction.amount}`
+  const formattedAmount = `${amountPrefix}${formatCurrency(transaction.amount)}`
 
   // TODO: Actual status will come from backend later
   const status = 'Success'
 
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id)
+    setCopiedId(id)
+    toast.success('Transaction ID successfully copied!')
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
   return (
     <tr className="border-b border-slate-100 transition-colors hover:bg-slate-50">
       <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-indigo-600 sm:px-6 sm:py-5">
-        {transaction.referenceId}
+        <div className="flex items-center gap-2">
+          <span 
+            className="cursor-pointer hover:text-indigo-800 transition-colors"
+            onClick={() => handleCopyId(transaction.referenceId)}
+            title="Click to copy full ID"
+          >
+            {formatTransactionId(transaction.referenceId)}
+          </span>
+          <button 
+            onClick={() => handleCopyId(transaction.referenceId)}
+            className="text-slate-400 hover:text-indigo-600 transition-colors relative group"
+            title="Copy ID"
+          >
+            {copiedId === transaction.referenceId ? (
+              <Check className="h-4 w-4 text-green-600" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+            {copiedId === transaction.referenceId && (
+              <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-sm z-10">
+                Copied!
+              </span>
+            )}
+          </button>
+        </div>
       </td>
 
       <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-700 sm:px-6 sm:py-5">
-        {transaction.referenceType}
+        {formatTransactionType(transaction.referenceType)}
       </td>
 
       <td
@@ -57,16 +96,26 @@ export default function TransactionRow({
         <TransactionStatusBadge status={status} />
       </td>
 
-      <td className="min-w-[220px] px-4 py-4 text-sm text-slate-600 sm:px-6 sm:py-5">
-        {transaction.remarks}
+      <td className="min-w-[220px] max-w-[220px] px-4 py-4 text-sm text-slate-600 sm:px-6 sm:py-5">
+        <div 
+          className="line-clamp-2 cursor-default" 
+          title={transaction.remarks}
+        >
+          {transaction.remarks}
+        </div>
       </td>
 
       <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500 sm:px-6 sm:py-5">
         {formatDateTime(transaction.createdAt)}
       </td>
 
-      <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6 sm:py-5">
-        ₹{transaction.closingBalance}
+      <td className="whitespace-nowrap px-4 py-4 text-center sm:px-6 sm:py-5">
+        <button 
+          className="text-slate-400 hover:text-indigo-600 transition-colors"
+          title="View Details"
+        >
+          <Eye className="mx-auto h-5 w-5 cursor-pointer" />
+        </button>
       </td>
     </tr>
   )

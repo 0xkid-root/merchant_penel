@@ -39,8 +39,8 @@ export default function TransactionTable({
               DATE &amp; TIME
             </th>
 
-            <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6">
-              BALANCE
+            <th className="whitespace-nowrap px-4 py-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6">
+              ACTION
             </th>
           </tr>
         </thead>
