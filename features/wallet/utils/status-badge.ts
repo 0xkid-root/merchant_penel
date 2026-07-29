@@ -1,6 +1,6 @@
-import { TransactionStatus } from '../types/transaction'
+export type TransactionStatus = 'Success' | 'Pending' | 'Failed'
 
-export function getStatusBadge(status: TransactionStatus) {
+export function getStatusBadge(status: TransactionStatus | string) {
   switch (status) {
     case 'Success':
       return 'bg-green-100 text-green-700'

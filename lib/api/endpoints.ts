@@ -15,4 +15,12 @@ export const API_ENDPOINTS = {
     GET_WALLET: '/api/v1/wallet',
     GET_WALLET_SUMMARY: '/api/v1/wallet/summary',
   },
+  WALLET_LEDGER: {
+    GET_LEDGER: '/api/v1/wallet-ledger',
+
+    GET_LEDGER_DETAILS: (ledgerId: number) =>
+      `/api/v1/wallet-ledger/${ledgerId}`,
+
+    GET_STATEMENT: '/api/v1/wallet-ledger/statement',
+  },
 } as const;

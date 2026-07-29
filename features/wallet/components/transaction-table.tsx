@@ -1,10 +1,10 @@
 'use client'
 
-import { Transaction } from '../types/transaction'
+import { WalletLedger } from '../types/walletLedger.types'
 import TransactionRow from './transaction-row'
 
 interface Props {
-  transactions: Transaction[]
+  transactions: WalletLedger[]
 }
 
 export default function TransactionTable({
