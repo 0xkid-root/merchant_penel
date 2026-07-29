@@ -4,13 +4,14 @@ import { walletLedgerApi } from '../api/walletLedgerApi'
 
 export const useWalletLedger = (
     page = 0,
-    size = 10
+    size = 10,
+    transactionType?: 'CREDIT' | 'DEBIT'
 ) =>
     useQuery({
-        queryKey: ['wallet-ledger', page, size],
+        queryKey: ['wallet-ledger', page, size, transactionType],
 
         queryFn: () =>
-            walletLedgerApi.getLedger(page, size),
+            walletLedgerApi.getLedger(page, size, transactionType),
 
         staleTime: 1000 * 60 * 5,
 

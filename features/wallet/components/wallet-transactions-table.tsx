@@ -10,8 +10,9 @@ import TransactionTableHeader from './transaction-table-header'
 
 export function WalletTransactionsTable() {
   const [page, setPage] = useState(0)
+  const [transactionType, setTransactionType] = useState<'CREDIT' | 'DEBIT' | undefined>(undefined)
   const size = 10
-  const { data, isLoading, isError } = useWalletLedger(page, size)
+  const { data, isLoading, isError } = useWalletLedger(page, size, transactionType)
 
   const transactions = data?.data?.content || []
   const pagination = data?.data
@@ -19,7 +20,13 @@ export function WalletTransactionsTable() {
   return (
     <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <div className="min-w-0">
-        <TransactionTableHeader />
+        <TransactionTableHeader 
+          selectedTransactionType={transactionType}
+          onTransactionTypeChange={(type) => {
+            setTransactionType(type)
+            setPage(0)
+          }}
+        />
       </div>
 
       <div className="min-w-0 border-t border-slate-100">

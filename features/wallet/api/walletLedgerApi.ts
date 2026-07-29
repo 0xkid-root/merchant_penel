@@ -9,7 +9,8 @@ import {
 export const walletLedgerApi = {
   getLedger: async (
     page = 0,
-    size = 10
+    size = 10,
+    transactionType?: 'CREDIT' | 'DEBIT'
   ): Promise<WalletLedgerListResponse> => {
     const response = await apiClient.get<WalletLedgerListResponse>(
       API_ENDPOINTS.WALLET_LEDGER.GET_LEDGER,
@@ -17,6 +18,7 @@ export const walletLedgerApi = {
         params: {
           page,
           size,
+          transactionType,
         },
       }
     )
