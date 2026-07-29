@@ -9,6 +9,7 @@ import { formatCurrency } from '../utils/formatCurrency'
 import { formatTransactionType } from '../utils/formatTransactionType'
 import { formatDateTime } from '../utils/formatDate'
 import TransactionStatusBadge from '../components/transaction-status-badge'
+import TransactionDetailsSkeleton from '../components/transaction-details-skeleton'
 
 export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string }) {
   const router = useRouter()
@@ -23,19 +24,7 @@ export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string 
   }
 
   if (isLoading) {
-    return (
-      <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        <div className="flex items-center space-x-4 mb-8">
-          <div className="space-y-2">
-            <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
-            <div className="h-4 w-64 bg-slate-200 rounded animate-pulse" />
-          </div>
-        </div>
-        <div className="h-48 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
-        <div className="h-96 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
-        <div className="h-40 bg-slate-200 rounded-2xl animate-pulse shadow-sm" />
-      </div>
-    )
+    return <TransactionDetailsSkeleton />
   }
 
   if (isError || !data?.data) {

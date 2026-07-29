@@ -24,38 +24,38 @@ export default function WalletPage() {
   }
 
   if (isLoading) {
-      return (
-          <div className="flex h-[400px] w-full items-center justify-center">
-              <div className="flex flex-col items-center gap-4">
-                  <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-                  <p className="text-sm font-medium text-slate-500">Loading wallet...</p>
-              </div>
-          </div>
-      )
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          <p className="text-sm font-medium text-slate-500">Loading  hello wallet...</p>
+        </div>
+      </div>
+    )
   }
 
   if (isError) {
-      return (
-          <div className="flex h-[400px] w-full items-center justify-center p-6">
-              <div className="flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                      <AlertCircle className="h-6 w-6 text-red-600" />
-                  </div>
-                  <div>
-                      <h3 className="text-lg font-bold text-slate-900">Unable to load wallet</h3>
-                      <p className="mt-1 text-sm text-slate-500">
-                          Please try again.
-                      </p>
-                  </div>
-                  <button
-                      onClick={() => refetch()}
-                      className="mt-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
-                  >
-                      Retry
-                  </button>
-              </div>
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center p-6">
+        <div className="flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
-      )
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Unable to load wallet</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              Please try again.
+            </p>
+          </div>
+          <button
+            onClick={() => refetch()}
+            className="mt-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
