@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import Pagination from '@/components/common/pagination/Pagination'
+import Pagination from '../../../components/common/pagination/Pagination'
 import { useWalletLedger } from '../hooks/useWalletLedger'
 import TransactionSearch from './transaction-search'
 import TransactionTable from './transaction-table'

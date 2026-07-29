@@ -1,4 +1,4 @@
-import { PaginationResponse } from '@/lib/types/pagination'
+import { PaginationResponse } from '../../../lib/types/pagination'
 
 export type WalletTransactionType =
     | 'CREDIT'
