@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Copy, Check, Eye } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { WalletLedger } from '../types/walletLedger.types'
 import TransactionStatusBadge from './transaction-status-badge'
-import { formatTransactionId } from '@/utils/formatTransactionId'
-import { formatTransactionType } from '@/utils/formatTransactionType'
-import { formatCurrency } from '@/utils/formatCurrency'
+import { formatTransactionId } from '../utils/maskTransactionId'
+import { formatTransactionType } from '../utils/formatTransactionType'
+import { formatCurrency } from '../utils/formatCurrency'
 
 interface Props {
   transaction: WalletLedger
@@ -35,6 +36,7 @@ function formatDateTime(dateStr: string) {
 export default function TransactionRow({
   transaction,
 }: Props) {
+  const router = useRouter()
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const isCredit = transaction.transactionType === 'CREDIT'
@@ -111,6 +113,7 @@ export default function TransactionRow({
 
       <td className="whitespace-nowrap px-4 py-4 text-center sm:px-6 sm:py-5">
         <button 
+          onClick={() => router.push(`/wallet/transactions/${transaction.id}`)}
           className="text-slate-400 hover:text-indigo-600 transition-colors"
           title="View Details"
         >
