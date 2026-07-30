@@ -3,12 +3,16 @@
 import {
   ArrowDown,
   ArrowUp,
-  MoreVertical,
+  Eye,
+  Copy,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { WalletTransaction } from '../types/walletTransactions.types'
 import Pagination from '@/components/common/pagination/Pagination'
 import { PaginationResponse } from '@/lib/types/pagination'
+import { formatTransactionId } from '@/lib/utils/maskTransactionId'
+import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 
 interface TransactionTableProps {
   transactions: WalletTransaction[]
@@ -27,18 +31,9 @@ export function TransactionTable({
   page,
   onPageChange,
 }: TransactionTableProps) {
-  const getStatusClassName = (status: string) => {
-    switch (status) {
-      case 'Completed':
-      case 'Success':
-        return 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
-      case 'Pending':
-        return 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20'
-      case 'Failed':
-        return 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
-      default:
-        return 'bg-slate-100 text-slate-700'
-    }
+  
+  const handleView = (id: number) => {
+    // Navigation to be implemented in a later phase
   }
 
   if (loading) {
@@ -87,7 +82,7 @@ export function TransactionTable({
                 </th>
 
                 <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Mode
+                  Reference Type
                 </th>
 
                 <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -100,10 +95,6 @@ export function TransactionTable({
 
                 <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Date & time
-                </th>
-
-                <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Status
                 </th>
 
                 <th className="whitespace-nowrap px-4 py-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -119,7 +110,20 @@ export function TransactionTable({
                   className="border-b border-slate-100 transition-colors hover:bg-slate-50 last:border-b-0"
                 >
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-indigo-600">
-                    {tx.referenceId}
+                    <div className="flex items-center gap-2">
+                      <span>{formatTransactionId(tx.referenceId)}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(tx.referenceId)
+                          toast.success('txn id successfully copy')
+                        }}
+                        className="text-slate-400 transition hover:text-indigo-600"
+                        title="Copy TXN ID"
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4">
@@ -143,7 +147,7 @@ export function TransactionTable({
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-indigo-600">
-                    {tx.referenceType}
+                    {formatTransactionType(tx.referenceType)}
                   </td>
 
                   <td
@@ -156,8 +160,10 @@ export function TransactionTable({
                     {tx.transactionType === 'CREDIT' ? '+' : '-'}₹{tx.amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </td>
 
-
-                  <td className="min-w-[220px] px-4 py-4 text-sm text-slate-600">
+                  <td
+                    className="max-w-[220px] truncate px-4 py-4 text-sm text-slate-600"
+                    title={tx.remarks}
+                  >
                     {tx.remarks || '-'}
                   </td>
 
@@ -171,23 +177,14 @@ export function TransactionTable({
                     })}
                   </td>
 
-                  <td className="whitespace-nowrap px-4 py-4">
-                    <span
-                      className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold ${getStatusClassName(
-                        'Completed',
-                      )}`}
-                    >
-                      Completed
-                    </span>
-                  </td>
-
                   <td className="px-4 py-4 text-center">
                     <button
                       type="button"
-                      aria-label={`Actions for ${tx.referenceId}`}
-                      className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                      onClick={() => handleView(tx.id)}
+                      className="inline-flex rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
+                      title="View Details"
                     >
-                      <MoreVertical className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
