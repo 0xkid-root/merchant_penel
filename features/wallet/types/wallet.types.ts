@@ -26,3 +26,10 @@ export interface WalletSummaryResponse {
 
     currency: string;
 }
+
+import { WalletLedger } from './walletLedger.types';
+
+export interface WalletDashboardResponse {
+    summary: WalletSummaryResponse;
+    recentTransactions: WalletLedger[];
+}

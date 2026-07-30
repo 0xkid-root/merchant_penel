@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
   WALLET: {
     GET_WALLET: '/api/v1/wallet',
     GET_WALLET_SUMMARY: '/api/v1/wallet/summary',
+    GET_DASHBOARD: '/api/v1/wallet/dashboard',
   },
   WALLET_LEDGER: {
     GET_LEDGER: '/api/v1/wallet-ledger',
