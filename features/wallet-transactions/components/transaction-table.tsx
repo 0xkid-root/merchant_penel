@@ -14,6 +14,8 @@ import { PaginationResponse } from '@/lib/types/pagination'
 import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 
+import { TransactionTableSkeleton } from './transaction-table-skeleton'
+
 interface TransactionTableProps {
   transactions: WalletTransaction[]
   pagination?: PaginationResponse<WalletTransaction>
@@ -37,13 +39,7 @@ export function TransactionTable({
   }
 
   if (loading) {
-    return (
-      <section className="min-w-0">
-        <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
-          <p className="text-sm font-medium text-slate-500">Loading transactions...</p>
-        </div>
-      </section>
-    )
+    return <TransactionTableSkeleton />
   }
 
   if (error) {
