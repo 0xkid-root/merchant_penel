@@ -14,6 +14,7 @@ import { PaginationResponse } from '@/lib/types/pagination'
 import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 
+import { useRouter } from 'next/navigation'
 import { TransactionTableSkeleton } from './transaction-table-skeleton'
 
 interface TransactionTableProps {
@@ -33,9 +34,10 @@ export function TransactionTable({
   page,
   onPageChange,
 }: TransactionTableProps) {
+  const router = useRouter()
   
   const handleView = (id: number) => {
-    // Navigation to be implemented in a later phase
+    router.push(`/wallet/transactions/${id}`)
   }
 
   if (loading) {
