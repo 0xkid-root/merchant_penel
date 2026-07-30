@@ -80,7 +80,7 @@ export default function WalletPage() {
       />
       <BalanceCards summary={data.summary} />
 
-      <WalletTransactionsTable recentTransactions={data.recentTransactions} />
+      <WalletTransactionsTable transactions={data.recentTransactions} />
     </div>
   )
 }
