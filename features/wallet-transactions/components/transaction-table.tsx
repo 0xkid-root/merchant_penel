@@ -3,26 +3,33 @@
 import {
   ArrowDown,
   ArrowUp,
-  ChevronLeft,
-  ChevronRight,
   MoreVertical,
 } from 'lucide-react'
 
-import { transactions } from '../data/wallet-transactions'
+import { WalletTransaction } from '../types/walletTransactions.types'
+import Pagination from '@/components/common/pagination/Pagination'
+import { PaginationResponse } from '@/lib/types/pagination'
 
 interface TransactionTableProps {
-  currentPage: number
-  setCurrentPage: (page: number) => void
+  transactions: WalletTransaction[]
+  pagination?: PaginationResponse<WalletTransaction>
+  loading: boolean
+  error: boolean
+  page: number
+  onPageChange: (page: number) => void
 }
 
 export function TransactionTable({
-  currentPage,
-  setCurrentPage,
+  transactions,
+  pagination,
+  loading,
+  error,
+  page,
+  onPageChange,
 }: TransactionTableProps) {
-  const pages = [1, 2, 3, 4, 5]
-
   const getStatusClassName = (status: string) => {
     switch (status) {
+      case 'Completed':
       case 'Success':
         return 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
       case 'Pending':
@@ -32,6 +39,36 @@ export function TransactionTable({
       default:
         return 'bg-slate-100 text-slate-700'
     }
+  }
+
+  if (loading) {
+    return (
+      <section className="min-w-0">
+        <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+          <p className="text-sm font-medium text-slate-500">Loading transactions...</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="min-w-0">
+        <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+          <p className="text-sm font-medium text-red-500">Failed to load transactions.</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (!transactions || transactions.length === 0) {
+    return (
+      <section className="min-w-0">
+        <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+          <p className="text-sm font-medium text-slate-500">No transactions found.</p>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -57,8 +94,6 @@ export function TransactionTable({
                   Amount
                 </th>
 
-          
-
                 <th className="min-w-[220px] px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Remarks
                 </th>
@@ -78,72 +113,78 @@ export function TransactionTable({
             </thead>
 
             <tbody>
-              {transactions.map((tx, index) => (
+              {transactions.map((tx) => (
                 <tr
-                  key={`${tx.id}-${index}`}
+                  key={tx.id}
                   className="border-b border-slate-100 transition-colors hover:bg-slate-50 last:border-b-0"
                 >
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-indigo-600">
-                    {tx.id}
+                    {tx.referenceId}
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4">
                     <div className="flex items-center gap-2">
                       <div
                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-                          tx.icon === 'down' ? 'bg-green-100' : 'bg-red-100'
+                          tx.transactionType === 'CREDIT' ? 'bg-green-100' : 'bg-red-100'
                         }`}
                       >
-                        {tx.icon === 'down' ? (
+                        {tx.transactionType === 'CREDIT' ? (
                           <ArrowDown className="h-3.5 w-3.5 text-green-600" />
                         ) : (
                           <ArrowUp className="h-3.5 w-3.5 text-red-600" />
                         )}
                       </div>
 
-                      <span className="text-sm font-medium text-slate-900">
-                        {tx.type}
+                      <span className="text-sm font-medium text-slate-900 capitalize">
+                        {tx.transactionType.toLowerCase()}
                       </span>
                     </div>
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-indigo-600">
-                    {tx.mode}
+                    {tx.referenceType}
                   </td>
 
                   <td
                     className={`whitespace-nowrap px-4 py-4 text-sm font-semibold ${
-                      tx.amount.includes('+')
+                      tx.transactionType === 'CREDIT'
                         ? 'text-green-600'
                         : 'text-red-600'
                     }`}
                   >
-                    {tx.amount}
+                    {tx.transactionType === 'CREDIT' ? '+' : '-'}₹{tx.amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </td>
 
 
                   <td className="min-w-[220px] px-4 py-4 text-sm text-slate-600">
-                    {tx.remarks}
+                    {tx.remarks || '-'}
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-600">
-                    {tx.date}
+                    {new Date(tx.createdAt).toLocaleString('en-IN', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </td>
 
                   <td className="whitespace-nowrap px-4 py-4">
                     <span
                       className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold ${getStatusClassName(
-                        tx.status,
+                        'Completed',
                       )}`}
                     >
-                      {tx.status}
+                      Completed
                     </span>
                   </td>
 
                   <td className="px-4 py-4 text-center">
                     <button
                       type="button"
-                      aria-label={`Actions for ${tx.id}`}
+                      aria-label={`Actions for ${tx.referenceId}`}
                       className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
                     >
                       <MoreVertical className="h-4 w-4" />
@@ -156,46 +197,18 @@ export function TransactionTable({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-500">
-          Showing <span className="font-medium text-slate-700">1–10</span> of{' '}
-          <span className="font-medium text-slate-700">80</span> transactions
-        </p>
-
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <button
-            type="button"
-            aria-label="Previous page"
-            disabled={currentPage === 1}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-300"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          {pages.map((page) => (
-            <button
-              key={page}
-              type="button"
-              onClick={() => setCurrentPage(page)}
-              className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold transition ${
-                page === currentPage
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            aria-label="Next page"
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
+      {pagination && (
+        <div className="mt-4">
+          <Pagination
+            page={page}
+            totalPages={pagination.totalPages}
+            totalElements={pagination.totalElements}
+            pageSize={10}
+            onPageChange={onPageChange}
+            itemName="transactions"
+          />
         </div>
-      </div>
+      )}
     </section>
   )
 }

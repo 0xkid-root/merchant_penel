@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-
+import { useWalletTransactions } from '../hooks/useWalletTransactions'
 import PageHeader from '@/components/layout/page-header'
 
 import { TransactionSummary } from '../components/transaction-summary'
@@ -10,12 +10,21 @@ import { TransactionTable } from '../components/transaction-table'
 import TransactionHeaderActions from '../components/transaction-header-actions'
 
 export default function WalletTransactionsPage() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [page, setPage] = useState(0)
 
   const [filters, setFilters] = useState({
     search: '',
     transactionType: 'ALL',
   })
+
+  const { data, isLoading, isError } = useWalletTransactions(
+    page,
+    10,
+    filters.transactionType === 'ALL'
+      ? undefined
+      : (filters.transactionType as 'CREDIT' | 'DEBIT'),
+    filters.search || undefined
+  )
 
   return (
     <div className="min-w-0 space-y-6 p-4 sm:space-y-7 sm:p-6 lg:p-8">
@@ -30,11 +39,16 @@ export default function WalletTransactionsPage() {
       <TransactionFilters
         filters={filters}
         setFilters={setFilters}
+        setPage={setPage}
       />
 
       <TransactionTable
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+        transactions={data?.data?.content || []}
+        pagination={data?.data}
+        loading={isLoading}
+        error={isError}
+        page={page}
+        onPageChange={setPage}
       />
     </div>
   )

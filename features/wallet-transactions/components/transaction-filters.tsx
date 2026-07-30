@@ -8,17 +8,20 @@ interface TransactionFiltersProps {
     transactionType: string
   }
   setFilters: (filters: any) => void
+  setPage: (page: number) => void
 }
 
 export function TransactionFilters({
   filters,
   setFilters,
+  setPage,
 }: TransactionFiltersProps) {
   const handleReset = () => {
     setFilters({
       search: '',
       transactionType: 'ALL',
     })
+    setPage(0)
   }
 
   const selectClassName =
@@ -35,12 +38,13 @@ export function TransactionFilters({
               type="text"
               placeholder="Search transaction ID..."
               value={filters.search}
-              onChange={(e) =>
+              onChange={(e) => {
                 setFilters({
                   ...filters,
                   search: e.target.value,
                 })
-              }
+                setPage(0)
+              }}
               className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
           </div>
@@ -50,12 +54,13 @@ export function TransactionFilters({
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <select
             value={filters.transactionType}
-            onChange={(e) =>
+            onChange={(e) => {
               setFilters({
                 ...filters,
                 transactionType: e.target.value,
               })
-            }
+              setPage(0)
+            }}
             className="h-10 w-full sm:w-48 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
           >
             <option value="ALL">All Transactions</option>

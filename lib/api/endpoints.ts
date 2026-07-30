@@ -17,8 +17,21 @@ export const API_ENDPOINTS = {
     GET_DASHBOARD: '/api/v1/wallet/dashboard',
   },
 
+  // Existing (keep it because Wallet module uses it)
   WALLET_LEDGER: {
     GET_LEDGER_DETAILS: (ledgerId: number) =>
       `/api/v1/wallet-ledger/${ledgerId}`,
   },
-} as const;
+
+  // New (Wallet Transactions feature)
+  WALLET_TRANSACTIONS: {
+    GET_TRANSACTIONS: '/api/v1/wallet-ledger',
+
+    GET_TRANSACTION_DETAILS: (ledgerId: number) =>
+      `/api/v1/wallet-ledger/${ledgerId}`,
+
+    GET_STATEMENT: '/api/v1/wallet-ledger/statement',
+  },
+
+  
+} as const
