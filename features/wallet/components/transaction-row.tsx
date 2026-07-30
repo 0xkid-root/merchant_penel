@@ -6,9 +6,9 @@ import { Copy, Check, Eye } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { WalletLedger } from '../types/walletLedger.types'
 import TransactionStatusBadge from './transaction-status-badge'
-import { formatTransactionId } from '../utils/maskTransactionId'
-import { formatTransactionType } from '../utils/formatTransactionType'
-import { formatCurrency } from '../utils/formatCurrency'
+import { formatTransactionId } from '@/lib/utils/maskTransactionId'
+import { formatTransactionType } from '@/lib/utils/formatTransactionType'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 interface Props {
   transaction: WalletLedger

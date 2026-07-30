@@ -5,9 +5,9 @@ import { ArrowLeft, Copy, Check, ArrowDown, ArrowUp, Calendar, Tag, FileText, In
 import { useState, ReactNode } from 'react'
 import { toast } from 'sonner'
 import { useWalletLedgerDetails } from '../hooks/useWalletLedger'
-import { formatCurrency } from '../utils/formatCurrency'
-import { formatTransactionType } from '../utils/formatTransactionType'
-import { formatDateTime } from '../utils/formatDate'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatTransactionType } from '@/lib/utils/formatTransactionType'
+import { formatDateTime } from '@/lib/utils/formatDate'
 import TransactionStatusBadge from '../components/transaction-status-badge'
 import TransactionDetailsSkeleton from '../components/transaction-details-skeleton'
 
