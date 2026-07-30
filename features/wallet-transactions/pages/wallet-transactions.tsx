@@ -1,13 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useWalletTransactions } from '../hooks/useWalletTransactions'
+import { useWalletStatement } from '../hooks/useWalletStatement'
 import PageHeader from '@/components/layout/page-header'
 
 import { TransactionSummary } from '../components/transaction-summary'
 import { TransactionFilters } from '../components/transaction-filters'
 import { TransactionTable } from '../components/transaction-table'
 import TransactionHeaderActions from '../components/transaction-header-actions'
+import { WalletTransactionsPageSkeleton } from '../components/wallet-transactions-page-skeleton'
 
 export default function WalletTransactionsPage() {
   const [page, setPage] = useState(0)
@@ -17,7 +19,12 @@ export default function WalletTransactionsPage() {
     transactionType: 'ALL',
   })
 
-  const { data, isLoading, isError } = useWalletTransactions(
+  const {
+    data: transactionsResponse,
+    isLoading: isLoadingTransactions,
+    isFetching: isFetchingTransactions,
+    isError: isErrorTransactions,
+  } = useWalletTransactions(
     page,
     10,
     filters.transactionType === 'ALL'
@@ -25,6 +32,21 @@ export default function WalletTransactionsPage() {
       : (filters.transactionType as 'CREDIT' | 'DEBIT'),
     filters.search || undefined
   )
+
+  const {
+    data: statementResponse,
+    isLoading: isLoadingStatement,
+  } = useWalletStatement()
+
+  const hasLoadedInitialData = useRef(false)
+
+  if (transactionsResponse || statementResponse) {
+    hasLoadedInitialData.current = true
+  }
+
+  if (!hasLoadedInitialData.current && (isLoadingTransactions || isLoadingStatement)) {
+    return <WalletTransactionsPageSkeleton />
+  }
 
   return (
     <div className="min-w-0 space-y-6 p-4 sm:space-y-7 sm:p-6 lg:p-8">
@@ -34,7 +56,7 @@ export default function WalletTransactionsPage() {
         actions={<TransactionHeaderActions />}
       />
 
-      <TransactionSummary />
+      <TransactionSummary summary={statementResponse?.data} />
 
       <TransactionFilters
         filters={filters}
@@ -43,10 +65,10 @@ export default function WalletTransactionsPage() {
       />
 
       <TransactionTable
-        transactions={data?.data?.content || []}
-        pagination={data?.data}
-        loading={isLoading}
-        error={isError}
+        transactions={transactionsResponse?.data?.content || []}
+        pagination={transactionsResponse?.data}
+        loading={isFetchingTransactions}
+        error={isErrorTransactions}
         page={page}
         onPageChange={setPage}
       />

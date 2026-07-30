@@ -24,9 +24,7 @@ export function TransactionFilters({
     setPage(0)
   }
 
-  const selectClassName =
-    'h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100'
-
+  
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -64,8 +62,8 @@ export function TransactionFilters({
             className="h-10 w-full sm:w-48 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
           >
             <option value="ALL">All Transactions</option>
-            <option value="CREDITS">Credits</option>
-            <option value="DEBITS">Debits</option>
+            <option value="CREDIT">Credits</option>
+            <option value="DEBIT">Debits</option>
           </select>
 
           <button
