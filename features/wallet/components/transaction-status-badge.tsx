@@ -1,7 +1,6 @@
 'use client'
 
-import { TransactionStatus } from '../types/transaction'
-import { getStatusBadge } from '../utils/status-badge'
+import { TransactionStatus, getStatusBadge } from '../utils/status-badge'
 
 interface Props {
   status: TransactionStatus
