@@ -14,13 +14,7 @@ export default function WalletTransactionsPage() {
 
   const [filters, setFilters] = useState({
     search: '',
-    type: 'All Types',
-    mode: 'All Modes',
-    status: 'All Status',
-    dateRange: {
-      from: '01/06/2025',
-      to: '18/06/2025',
-    },
+    transactionType: 'ALL',
   })
 
   return (
