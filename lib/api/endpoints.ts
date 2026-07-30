@@ -8,19 +8,17 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: '/merchant/auth/forgot-password/reset-password',
     CHANGE_PASSWORD: '/merchant/auth/change-password',
   },
+
   PROFILE: {
     GET_PROFILE: '/api/v1/merchant/profile',
   },
-  WALLET: {
-    GET_WALLET: '/api/v1/wallet',
-    GET_WALLET_SUMMARY: '/api/v1/wallet/summary',
-  },
-  WALLET_LEDGER: {
-    GET_LEDGER: '/api/v1/wallet-ledger',
 
+  WALLET: {
+    GET_DASHBOARD: '/api/v1/wallet/dashboard',
+  },
+
+  WALLET_LEDGER: {
     GET_LEDGER_DETAILS: (ledgerId: number) =>
       `/api/v1/wallet-ledger/${ledgerId}`,
-
-    GET_STATEMENT: '/api/v1/wallet-ledger/statement',
   },
 } as const;

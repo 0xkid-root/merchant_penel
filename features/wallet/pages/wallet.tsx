@@ -9,12 +9,12 @@ import PageHeader from '@/components/layout/page-header'
 
 import { BalanceCards } from '../components/balance-cards'
 import { WalletTransactionsTable } from '../components/wallet-transactions-table'
-import { useWallet } from '../hooks/useWallet'
+import { useWalletDashboard } from '../hooks/useWalletDashboard'
 import WalletPageSkeleton from '../components/wallet-page-skeleton'
 
 export default function WalletPage() {
   const router = useRouter()
-  const { isLoading, isError, refetch } = useWallet()
+  const { data, isLoading, isError, refetch } = useWalletDashboard()
 
   const addFundsPage = () => {
     router.push('/add-funds')
@@ -28,7 +28,7 @@ export default function WalletPage() {
     return <WalletPageSkeleton />
   }
 
-  if (isError) {
+  if (isError || !data) {
     return (
       <div className="flex h-[400px] w-full items-center justify-center p-6">
         <div className="flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
@@ -36,7 +36,7 @@ export default function WalletPage() {
             <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Unable to load wallet</h3>
+            <h3 className="text-lg font-bold text-slate-900">Unable to load wallet dashboard</h3>
             <p className="mt-1 text-sm text-slate-500">
               Please try again.
             </p>
@@ -78,9 +78,9 @@ export default function WalletPage() {
           </div>
         }
       />
-      <BalanceCards />
+      <BalanceCards summary={data.summary} />
 
-      <WalletTransactionsTable />
+      <WalletTransactionsTable transactions={data.recentTransactions} />
     </div>
   )
 }
