@@ -31,6 +31,7 @@ export const API_ENDPOINTS = {
       `/api/v1/wallet-ledger/${ledgerId}`,
 
     GET_STATEMENT: '/api/v1/wallet-ledger/statement',
+    EXPORT: '/api/v1/wallet-ledger/export',
   },
 
   

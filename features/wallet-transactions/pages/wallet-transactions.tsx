@@ -53,7 +53,7 @@ export default function WalletTransactionsPage() {
       <PageHeader
         title="Wallet Transactions"
         subtitle="View all credits, debits and adjustments in your wallet."
-        actions={<TransactionHeaderActions />}
+        actions={<TransactionHeaderActions filters={filters} />}
       />
 
       <TransactionSummary summary={statementResponse?.data} />
