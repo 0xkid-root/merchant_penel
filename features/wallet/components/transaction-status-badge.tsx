@@ -1,6 +1,7 @@
 'use client'
 
-import { TransactionStatus, getStatusBadge } from '../utils/status-badge'
+import { getStatusBadge } from '../utils/status-badge'
+import { TransactionStatus } from '../types/walletLedger.types'
 
 interface Props {
   status: TransactionStatus

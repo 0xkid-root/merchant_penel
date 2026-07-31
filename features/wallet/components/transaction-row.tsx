@@ -44,8 +44,7 @@ export default function TransactionRow({
   const amountColor = isCredit ? 'text-green-600' : 'text-red-600'
   const formattedAmount = `${amountPrefix}${formatCurrency(transaction.amount)}`
 
-  // TODO: Actual status will come from backend later
-  const status = 'Success'
+  const status = transaction.status || 'UNKNOWN'
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)
