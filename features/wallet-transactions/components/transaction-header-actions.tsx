@@ -28,23 +28,13 @@ export default function TransactionHeaderActions({
 }: TransactionHeaderActionsProps) {
   const { mutate: exportTransactions, isPending } = useWalletExport()
 
-  const handleExport = (format: "CSV" | "EXCEL") => {
-
-    console.log("========== EXPORT CLICK ==========")
-
-    console.log("Format:", format)
-
-    console.log("Filters:", filters)
-
+  const handleExport = (format: 'CSV' | 'EXCEL') => {
     exportTransactions({
       search: filters?.search || undefined,
-      transactionType:
-        filters?.transactionType === "ALL"
-          ? undefined
-          : filters?.transactionType,
+      transactionType: filters?.transactionType === 'ALL' ? undefined : filters?.transactionType,
       fromDate: filters?.fromDate || undefined,
       toDate: filters?.toDate || undefined,
-      exportFormat: format,
+      exportFormat: format
     })
   }
 

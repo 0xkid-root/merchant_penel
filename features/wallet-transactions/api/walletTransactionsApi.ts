@@ -70,10 +70,6 @@ export const walletTransactionsApi = {
             }
         )
 
-        console.log("========== API RESPONSE ==========")
-        console.log("Full Response:", response)
-        console.log("Response Data:", response.data)
-        console.log("Is Blob:", response.data instanceof Blob)
         return response.data
     },
 }
