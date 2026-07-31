@@ -8,7 +8,7 @@ import { useWalletLedgerDetails } from '../hooks/useWalletLedger'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 import { formatDateTime } from '@/lib/utils/formatDate'
-import TransactionStatusBadge from '../components/transaction-status-badge'
+import TransactionStatusBadge from '@/components/transaction-status-badge'
 import TransactionDetailsSkeleton from '../components/transaction-details-skeleton'
 
 export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string }) {

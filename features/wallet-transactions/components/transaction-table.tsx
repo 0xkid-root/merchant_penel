@@ -13,6 +13,7 @@ import Pagination from '@/components/common/pagination/Pagination'
 import { PaginationResponse } from '@/lib/types/pagination'
 import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
+import TransactionStatusBadge from '@/components/transaction-status-badge'
 
 import { useRouter } from 'next/navigation'
 import { TransactionTableSkeleton } from './transaction-table-skeleton'
@@ -87,6 +88,10 @@ export function TransactionTable({
                   Amount
                 </th>
 
+                <th className="whitespace-nowrap px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Status
+                </th>
+
                 <th className="min-w-[220px] px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Remarks
                 </th>
@@ -156,6 +161,10 @@ export function TransactionTable({
                     }`}
                   >
                     {tx.transactionType === 'CREDIT' ? '+' : '-'}₹{tx.amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <TransactionStatusBadge status={tx.status} />
                   </td>
 
                   <td

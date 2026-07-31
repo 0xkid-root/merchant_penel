@@ -14,6 +14,13 @@ export type WalletReferenceType =
     | 'SINGLE_PAYOUT'
     | 'BULK_PAYOUT'
 
+export type WalletTransactionStatus =
+    | 'SUCCESS'
+    | 'FAILED'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'UNKNOWN'
+
 export interface WalletTransaction {
     id: number
 
@@ -27,6 +34,7 @@ export interface WalletTransaction {
 
     referenceType: WalletReferenceType
     referenceId: string
+    status: WalletTransactionStatus
 
     amount: number
 
