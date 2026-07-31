@@ -8,7 +8,7 @@ import { useWalletLedgerDetails } from '../hooks/useWalletLedger'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 import { formatDateTime } from '@/lib/utils/formatDate'
-import TransactionStatusBadge from '../components/transaction-status-badge'
+import TransactionStatusBadge from '@/components/transaction-status-badge'
 import TransactionDetailsSkeleton from '../components/transaction-details-skeleton'
 
 export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string }) {
@@ -90,7 +90,7 @@ export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string 
             <div className="text-sm font-bold text-slate-800 mb-3">
               {formatTransactionType(transaction.referenceType)}
             </div>
-            <TransactionStatusBadge status="Success" />
+            <TransactionStatusBadge status={transaction.status || 'UNKNOWN'} />
           </div>
 
           <div className="hidden md:block w-px h-40 bg-slate-100"></div>
@@ -192,7 +192,7 @@ export default function TransactionDetailsPage({ ledgerId }: { ledgerId: string 
             />
             <InfoRow
               label="Status"
-              value={<TransactionStatusBadge status="Success" />}
+              value={<TransactionStatusBadge status={transaction.status || 'UNKNOWN'} />}
             />
             <InfoRow
               label="Created By"

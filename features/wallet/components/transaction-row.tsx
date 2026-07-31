@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { Copy, Check, Eye } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { WalletLedger } from '../types/walletLedger.types'
-import TransactionStatusBadge from './transaction-status-badge'
+import TransactionStatusBadge from '@/components/transaction-status-badge'
 import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 import { formatTransactionType } from '@/lib/utils/formatTransactionType'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
@@ -44,8 +44,7 @@ export default function TransactionRow({
   const amountColor = isCredit ? 'text-green-600' : 'text-red-600'
   const formattedAmount = `${amountPrefix}${formatCurrency(transaction.amount)}`
 
-  // TODO: Actual status will come from backend later
-  const status = 'Success'
+  const status = transaction.status || 'UNKNOWN'
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)

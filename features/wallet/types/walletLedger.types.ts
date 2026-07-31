@@ -8,6 +8,13 @@ export type WalletTransactionType =
     | 'REFUND'
     | 'ADJUSTMENT'
 
+export type TransactionStatus =
+    | 'SUCCESS'
+    | 'FAILED'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'UNKNOWN'
+
 export type ReferenceType =
     | 'ADMIN_TOPUP'
     | 'DIRECT_PAYOUT'
@@ -25,6 +32,7 @@ export interface WalletLedger {
     transactionType: WalletTransactionType
     referenceType: ReferenceType
     referenceId: string
+    status: TransactionStatus
 
     amount: number
 
