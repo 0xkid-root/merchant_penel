@@ -49,4 +49,26 @@ export const walletTransactionsApi = {
 
         return response.data
     },
+
+    exportTransactions: async (params: {
+        transactionType?: string
+        referenceType?: string
+        referenceId?: string
+        fromDate?: string
+        toDate?: string
+        search?: string
+        exportFormat?: string
+    }): Promise<Blob> => {
+        const response = await apiClient.get<Blob>(
+            API_ENDPOINTS.WALLET_TRANSACTIONS.EXPORT,
+            {
+                params: {
+                    ...params,
+                    exportFormat: params.exportFormat || 'CSV',
+                },
+                responseType: 'blob',
+            }
+        )
+        return response.data
+    },
 }
