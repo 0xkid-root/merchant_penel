@@ -57,18 +57,23 @@ export const walletTransactionsApi = {
         fromDate?: string
         toDate?: string
         search?: string
-        exportFormat?: string
+        exportFormat: 'CSV' | 'EXCEL'
     }): Promise<Blob> => {
         const response = await apiClient.get<Blob>(
             API_ENDPOINTS.WALLET_TRANSACTIONS.EXPORT,
             {
                 params: {
                     ...params,
-                    exportFormat: params.exportFormat || 'CSV',
+                    exportFormat: params.exportFormat,
                 },
                 responseType: 'blob',
             }
         )
+
+        console.log("========== API RESPONSE ==========")
+        console.log("Full Response:", response)
+        console.log("Response Data:", response.data)
+        console.log("Is Blob:", response.data instanceof Blob)
         return response.data
     },
 }

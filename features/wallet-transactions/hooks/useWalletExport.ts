@@ -9,7 +9,46 @@ interface ExportParams {
     fromDate?: string
     toDate?: string
     search?: string
-    exportFormat?: string
+    exportFormat: 'CSV' | 'EXCEL'
+}
+const downloadExport = (
+    blob: Blob,
+    format: "CSV" | "EXCEL"
+) => {
+
+    console.log("========== DOWNLOAD ==========")
+
+    console.log("Blob:", blob)
+    console.log("Blob instanceof Blob:", blob instanceof Blob)
+    console.log("Blob Type:", blob.type)
+    console.log("Blob Size:", blob.size)
+
+    const url = URL.createObjectURL(blob)
+
+    console.log("Object URL:", url)
+
+    const a = document.createElement("a")
+
+    a.href = url
+
+    a.download =
+        format === "EXCEL"
+            ? "wallet-transactions.xlsx"
+            : "wallet-transactions.csv"
+
+    console.log("Download Name:", a.download)
+
+    document.body.appendChild(a)
+
+    console.log("Clicking Download...")
+
+    a.click()
+
+    document.body.removeChild(a)
+
+    URL.revokeObjectURL(url)
+
+    console.log("Download Finished")
 }
 
 export const useWalletExport = () => {
@@ -17,20 +56,21 @@ export const useWalletExport = () => {
         mutationFn: (params: ExportParams) => {
             return walletTransactionsApi.exportTransactions(params)
         },
-        onSuccess: (blob) => {
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            // We use .csv extension for now as requested. Future formats will adjust this.
-            a.download = 'wallet-transactions.csv'
-            document.body.appendChild(a)
-            a.click()
-            
-            // Cleanup
-            document.body.removeChild(a)
-            window.URL.revokeObjectURL(url)
-            
-            toast.success("CSV exported successfully")
+        onSuccess: (blob, variables) => {
+
+            console.log("========== MUTATION SUCCESS ==========")
+
+            console.log("Blob:", blob)
+
+            console.log("Blob instanceof Blob:", blob instanceof Blob)
+
+            console.log("Blob Size:", blob.size)
+
+            console.log("Blob Type:", blob.type)
+
+            downloadExport(blob, variables.exportFormat)
+
+            toast.success(`${variables.exportFormat} exported successfully`)
         },
         onError: () => {
             toast.error("Failed to export transactions")
