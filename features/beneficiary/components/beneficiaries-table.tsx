@@ -14,7 +14,6 @@ interface Props {
   beneficiaries: {
     content: BeneficiaryResponse[]
   }
-  loading: boolean
   onView: (id: number) => void
   onEdit: (id: number) => void
   onDelete: (id: number) => void
@@ -23,7 +22,6 @@ interface Props {
 
 export default function BeneficiariesTable({
   beneficiaries,
-  loading,
   onView,
   onEdit,
   onDelete,
@@ -93,41 +91,6 @@ export default function BeneficiariesTable({
       </tr>
     </thead>
   )
-
-  if (loading) {
-    return (
-      <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <div className="min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[1050px] border-collapse">
-            <TableHeader />
-            <tbody>
-              {Array.from({ length: 10 }).map((_, i) => (
-                <tr key={i} className="border-b border-slate-100">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-slate-200 animate-pulse" />
-                      <div className="h-4 w-32 bg-slate-200 animate-pulse rounded" />
-                    </div>
-                  </td>
-                  <td className="px-6 py-4"><div className="h-4 w-24 bg-slate-200 animate-pulse rounded" /></td>
-                  <td className="px-6 py-4"><div className="h-4 w-24 bg-slate-200 animate-pulse rounded" /></td>
-                  <td className="px-6 py-4"><div className="h-4 w-20 bg-slate-200 animate-pulse rounded" /></td>
-                  <td className="px-6 py-4"><div className="h-6 w-12 bg-slate-200 animate-pulse rounded-full" /></td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-8 w-8 bg-slate-200 animate-pulse rounded-lg" />
-                      <div className="h-8 w-8 bg-slate-200 animate-pulse rounded-lg" />
-                      <div className="h-8 w-8 bg-slate-200 animate-pulse rounded-lg" />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
