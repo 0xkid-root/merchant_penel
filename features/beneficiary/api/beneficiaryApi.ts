@@ -33,7 +33,9 @@ export const beneficiaryApi = {
      */
     getBeneficiaries: async (
         page = 0,
-        size = 10
+        size = 10,
+        search?: string,
+        status?: string
     ): Promise<BeneficiaryListResponse> => {
         const response = await apiClient.get<BeneficiaryListResponse>(
             API_ENDPOINTS.BENEFICIARIES.GET_ALL,
@@ -41,6 +43,8 @@ export const beneficiaryApi = {
                 params: {
                     page,
                     size,
+                    ...(search && { search }),
+                    ...(status && { status }),
                 },
             }
         )
