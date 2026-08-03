@@ -33,6 +33,26 @@ export const API_ENDPOINTS = {
     GET_STATEMENT: '/api/v1/wallet-ledger/statement',
     EXPORT: '/api/v1/wallet-ledger/export',
   },
+  BANK_VERIFICATION: {
+    VERIFY_BANK: '/api/v1/bank-verification/verify',
+  },
+  BENEFICIARIES: {
+    CREATE: '/api/v1/beneficiaries',
 
-  
+    GET_ALL: '/api/v1/beneficiaries/getAllBeneficiaries',
+
+    GET_BY_ID: (id: number) =>
+      `/api/v1/beneficiaries/${id}`,
+
+    UPDATE: (id: number) =>
+      `/api/v1/beneficiaries/${id}`,
+
+    UPDATE_STATUS: (id: number) =>
+      `/api/v1/beneficiaries/${id}/status`,
+
+    DELETE: (id: number) =>
+      `/api/v1/beneficiaries/${id}`,
+  },
+
+
 } as const

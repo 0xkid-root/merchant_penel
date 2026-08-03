@@ -7,8 +7,6 @@ interface Props {
   setSearch: (value: string) => void
   status: string
   setStatus: (value: string) => void
-  bank: string
-  setBank: (value: string) => void
   onReset: () => void
 }
 
@@ -17,13 +15,11 @@ export default function BeneficiariesFilters({
   setSearch,
   status,
   setStatus,
-  bank,
-  setBank,
   onReset,
 }: Props) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-4">
         <div className="lg:col-span-2">
           <div className="flex h-11 items-center rounded-xl border border-slate-300 px-4 transition focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-100">
             <Search className="mr-3 h-4 w-4 shrink-0 text-slate-400" />
@@ -42,22 +38,9 @@ export default function BeneficiariesFilters({
           onChange={(e) => setStatus(e.target.value)}
           className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
         >
-          <option value="All Status">All Status</option>
-          <option value="Verified">Verified</option>
-          <option value="Pending">Pending</option>
-          <option value="Failed">Failed</option>
-        </select>
-
-        <select
-          value={bank}
-          onChange={(e) => setBank(e.target.value)}
-          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
-        >
-          <option value="All Banks">All Banks</option>
-          <option value="SBI">State Bank of India</option>
-          <option value="HDFC">HDFC Bank</option>
-          <option value="ICICI">ICICI Bank</option>
-          <option value="Axis">Axis Bank</option>
+          <option value="">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
         </select>
 
         <button
@@ -71,4 +54,4 @@ export default function BeneficiariesFilters({
       </div>
     </div>
   )
-}
+}
