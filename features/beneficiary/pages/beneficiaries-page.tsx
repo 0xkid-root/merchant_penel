@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useBeneficiaryList } from '../hooks/useBeneficiaryList'
 
 import BeneficiariesHeader from '../components/beneficiaries-header'
@@ -10,6 +10,7 @@ import BeneficiariesTable from '../components/beneficiaries-table'
 import Pagination from '@/components/common/pagination/Pagination'
 import { useDeleteBeneficiary } from '../hooks/useDeleteBeneficiary'
 import { useUpdateBeneficiaryStatus } from '../hooks/useUpdateBeneficiaryStatus'
+import { BeneficiariesPageSkeleton } from '../components/beneficiaries-page-skeleton'
 
 export default function BeneficiariesPage() {
   const router = useRouter()
@@ -26,12 +27,10 @@ export default function BeneficiariesPage() {
     status,
   } as any)
 
-  const beneficiaries = beneficiariesResponse?.data || {
-    content: [],
-    number: 0,
-    size: 10,
-    totalElements: 0,
-    totalPages: 0
+  const hasLoadedInitialData = useRef(false)
+
+  if (beneficiariesResponse) {
+    hasLoadedInitialData.current = true
   }
 
   const deleteBeneficiaryMutation = useDeleteBeneficiary()
@@ -66,6 +65,18 @@ export default function BeneficiariesPage() {
     refetch()
   }
 
+  if (!hasLoadedInitialData.current && isLoading) {
+    return <BeneficiariesPageSkeleton />
+  }
+
+  const beneficiaries = beneficiariesResponse?.data || {
+    content: [],
+    number: 0,
+    size: 10,
+    totalElements: 0,
+    totalPages: 0
+  }
+
   return (
     <div className="space-y-6 p-6">
       <BeneficiariesHeader
@@ -87,7 +98,6 @@ export default function BeneficiariesPage() {
 
       <BeneficiariesTable
         beneficiaries={beneficiaries}
-        loading={isLoading}
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
