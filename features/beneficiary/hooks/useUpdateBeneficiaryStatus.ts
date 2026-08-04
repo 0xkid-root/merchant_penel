@@ -2,32 +2,31 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { beneficiaryApi } from '../api/beneficiaryApi'
+import { UpdateBeneficiaryStatusRequest } from '../types/beneficiary.types'
 
-export const useUpdateBeneficiaryStatus =
-    () => {
-        return useMutation({
-            mutationFn: ({
+export const useUpdateBeneficiaryStatus = () => {
+    return useMutation({
+        mutationFn: ({
+            id,
+            payload,
+        }: {
+            id: number
+            payload: UpdateBeneficiaryStatusRequest
+        }) =>
+            beneficiaryApi.updateBeneficiaryStatus(
                 id,
-                payload,
-            }: {
-                id: number
-                payload: any
-            }) =>
-                beneficiaryApi.updateBeneficiaryStatus(
-                    id,
-                    payload
-                ),
+                payload
+            ),
 
-            onSuccess: () => {
-                toast.success(
-                    'Status updated successfully'
-                )
-            },
+        onSuccess: (response) => {
+            toast.success(response.message)
+        },
 
-            onError: () => {
-                toast.error(
-                    'Failed to update status'
-                )
-            },
-        })
-    }
+        onError: (error: any) => {
+            toast.error(
+                error?.response?.data?.message ??
+                'Something went wrong'
+            )
+        },
+    })
+}

@@ -5,18 +5,16 @@ import { beneficiaryApi } from '../api/beneficiaryApi'
 
 export const useCreateBeneficiary = () => {
     return useMutation({
-        mutationFn:
-            beneficiaryApi.createBeneficiary,
+        mutationFn: beneficiaryApi.createBeneficiary,
 
-        onSuccess: () => {
-            toast.success(
-                'Beneficiary created successfully'
-            )
+        onSuccess: (response) => {
+            toast.success(response.message)
         },
 
-        onError: () => {
+        onError: (error: any) => {
             toast.error(
-                'Failed to create beneficiary'
+                error?.response?.data?.message ??
+                'Something went wrong'
             )
         },
     })

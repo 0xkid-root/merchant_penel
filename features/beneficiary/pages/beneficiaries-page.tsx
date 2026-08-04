@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 import { useBeneficiaryList } from '../hooks/useBeneficiaryList'
+import { useDebounce } from '@/hooks/use-debounce'
 
 import BeneficiariesHeader from '../components/beneficiaries-header'
 import BeneficiariesFilters from '../components/beneficiaries-filters'
@@ -20,12 +21,14 @@ export default function BeneficiariesPage() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
 
+  const debouncedSearch = useDebounce(search, 400)
+
   const { data: beneficiariesResponse, isLoading, refetch } = useBeneficiaryList({
     page,
     size: 10,
-    search,
+    search: debouncedSearch,
     status,
-  } as any)
+  })
 
   const hasLoadedInitialData = useRef(false)
 
@@ -61,7 +64,7 @@ export default function BeneficiariesPage() {
   }
 
   const handleStatusToggle = async (id: number, newStatus: string) => {
-    await updateStatusMutation.mutateAsync({ id, payload: { status: newStatus } })
+    await updateStatusMutation.mutateAsync({ id, payload: { status: newStatus as 'ACTIVE' | 'INACTIVE' | 'DELETED' } })
     refetch()
   }
 

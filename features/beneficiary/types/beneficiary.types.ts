@@ -6,18 +6,11 @@
  */
 
 export interface CreateBeneficiaryRequest {
-    merchantId: number
-
     verificationId: string
-
     beneficiaryName: string
-
     bankName: string
-
     accountType: string
-
     mobile: string
-
     email: string
 }
 

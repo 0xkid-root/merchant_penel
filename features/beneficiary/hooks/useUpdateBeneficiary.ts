@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { beneficiaryApi } from '../api/beneficiaryApi'
+import { UpdateBeneficiaryRequest } from '../types/beneficiary.types'
 
 export const useUpdateBeneficiary = () => {
     return useMutation({
@@ -10,22 +11,21 @@ export const useUpdateBeneficiary = () => {
             payload,
         }: {
             id: number
-            payload: any
+            payload: UpdateBeneficiaryRequest
         }) =>
             beneficiaryApi.updateBeneficiary(
                 id,
                 payload
             ),
 
-        onSuccess: () => {
-            toast.success(
-                'Beneficiary updated successfully'
-            )
+        onSuccess: (response) => {
+            toast.success(response.message)
         },
 
-        onError: () => {
+        onError: (error: any) => {
             toast.error(
-                'Failed to update beneficiary'
+                error?.response?.data?.message ??
+                'Something went wrong'
             )
         },
     })

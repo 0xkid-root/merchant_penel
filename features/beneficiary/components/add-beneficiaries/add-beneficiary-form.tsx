@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useState, useEffect } from 'react'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 
 import {
   addBeneficiarySchema,
@@ -11,13 +13,12 @@ import {
 } from '../../schema/add-beneficiary.schema'
 
 import BeneficiaryBasicDetails from './beneficiary-basic-details'
-import BeneficiaryVerificationBanner from './beneficiary-verification-banner'
-import BeneficiaryBankDetails from './beneficiary-bank-details'
 import BeneficiaryOptionalDetails from './beneficiary-optional-details'
 import BeneficiaryActions from './beneficiary-actions'
 import BeneficiarySidebar from './beneficiary-sidebar'
 
-import { BankDetails } from '../types'
+import { useBankVerification } from '../../hooks/useBankVerification'
+import { useCreateBeneficiary } from '../../hooks/useCreateBeneficiary'
 
 interface Props {
   onSuccess?: () => void
@@ -26,27 +27,43 @@ interface Props {
 export default function AddBeneficiaryForm({
   onSuccess,
 }: Props) {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
   const methods = useForm<AddBeneficiaryFormData>({
     resolver: zodResolver(addBeneficiarySchema),
-
     defaultValues: {
       beneficiaryName: '',
       accountNumber: '',
       confirmAccountNumber: '',
       ifscCode: '',
+      accountType: 'SAVINGS',
+      bankName: '',
       mobileNumber: '',
       emailId: '',
-      remarks: '',
     },
-
     mode: 'onBlur',
   })
 
-  const [isVerifying, setIsVerifying] = useState(false)
+  const [verificationData, setVerificationData] = useState<{
+    verificationId: string
+    accountName: string
+    bankTxnStatus: boolean
+  } | null>(null)
 
-  const [isVerified, setIsVerified] = useState(true)
+  const { mutateAsync: verifyBank, isPending: isVerifying } = useBankVerification()
+  const { mutateAsync: createBeneficiary, isPending: isSaving } = useCreateBeneficiary()
 
-  const [bankDetails, setBankDetails] = useState<BankDetails | null>(null)
+  const isVerified = verificationData?.bankTxnStatus === true
+
+  const watchedAccountNumber = useWatch({ control: methods.control, name: 'accountNumber' })
+  const watchedIfscCode = useWatch({ control: methods.control, name: 'ifscCode' })
+
+  useEffect(() => {
+    if (isVerified) {
+      setVerificationData(null)
+    }
+  }, [watchedAccountNumber, watchedIfscCode])
 
   //-----------------------------------
   // Verify Account
@@ -62,42 +79,25 @@ export default function AddBeneficiaryForm({
 
     if (!isValid) return
 
+    const formData = methods.getValues()
+
     try {
-      setIsVerifying(true)
+      const response = await verifyBank({
+        accountNumber: formData.accountNumber,
+        ifsc: formData.ifscCode,
+      })
 
-      // --------------------------------
-      // Penny Drop API
-      // Replace later
-      // --------------------------------
-
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1500)
-      )
-
-      const response: BankDetails = {
-        accountHolderName: 'Rahul Sharma',
-
-        bankName: 'HDFC Bank',
-
-        branchName:
-          'Noida Sector 18, Uttar Pradesh',
-
-        accountType: 'Savings',
-
-        upiId: 'rahulsharma@okhdfcbank',
-
-        verificationStatus: 'Verified',
+      if (response.data.bankTxnStatus) {
+        setVerificationData({
+          verificationId: response.data.verificationId,
+          accountName: response.data.accountName,
+          bankTxnStatus: response.data.bankTxnStatus,
+        })
+      } else {
+        setVerificationData(null)
       }
-
-      setBankDetails(response)
-
-      setIsVerified(true)
-
-      toast.success('Account Verified Successfully')
-    } catch (error) {
-      toast.error('Verification Failed')
-    } finally {
-      setIsVerifying(false)
+    } catch (error: any) {
+      setVerificationData(null)
     }
   }
 
@@ -108,16 +108,26 @@ export default function AddBeneficiaryForm({
   const onSubmit = async (
     data: AddBeneficiaryFormData
   ) => {
-    if (!isVerified) {
-      toast.error('Please verify account first')
+    if (!isVerified || !verificationData) {
       return
     }
 
-    console.log(data)
+    try {
+      await createBeneficiary({
+        verificationId: verificationData.verificationId,
+        beneficiaryName: data.beneficiaryName,
+        bankName: data.bankName,
+        accountType: data.accountType,
+        mobile: data.mobileNumber || '',
+        email: data.emailId || '',
+      })
 
-    toast.success('Beneficiary Added Successfully')
-
-    onSuccess?.()
+      queryClient.invalidateQueries({ queryKey: ['beneficiaries'] })
+      router.push('/beneficiaries')
+      onSuccess?.()
+    } catch (error) {
+      // Error handled by hook
+    }
   }
 
   //-----------------------------------
@@ -126,11 +136,7 @@ export default function AddBeneficiaryForm({
 
   const handleCancel = () => {
     methods.reset()
-
-    setBankDetails(null)
-
-    setIsVerified(false)
-
+    setVerificationData(null)
     onSuccess?.()
   }
 
@@ -142,35 +148,50 @@ export default function AddBeneficiaryForm({
       >
         {/* LEFT SIDE */}
 
-        {/* LEFT SIDE */}
-
         <div className="col-span-12 xl:col-span-9">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-8">
-
             {/* Basic Details */}
-            <BeneficiaryBasicDetails />
+            <BeneficiaryBasicDetails isVerified={isVerified} />
+
+            {/* Verify Button */}
+            {!isVerified && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleVerify}
+                  disabled={isVerifying}
+                  className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {isVerifying ? 'Verifying...' : 'Verify Bank'}
+                </button>
+              </div>
+            )}
 
             {/* Verification Result */}
-            {isVerified && bankDetails && (
-              <>
-                <BeneficiaryVerificationBanner />
-
-                <BeneficiaryBankDetails
-                  bankDetails={bankDetails}
-                />
-              </>
+            {isVerified && verificationData && (
+              <div className="rounded-xl border border-green-200 bg-green-50 p-6">
+                <div className="flex items-center gap-3 text-green-700 mb-4">
+                  <span className="text-xl">✓</span>
+                  <h3 className="font-semibold">Account Verified Successfully</h3>
+                </div>
+                <div className="grid grid-cols-1 gap-4 text-sm text-slate-700">
+                  <div>
+                    <span className="font-medium">Verified Account Name:</span>
+                    <p className="mt-1 font-semibold text-slate-900">{verificationData.accountName}</p>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Always Visible */}
             <BeneficiaryOptionalDetails />
 
-
             {/* Footer Buttons */}
             <BeneficiaryActions
               isVerified={isVerified}
+              isSaving={isSaving}
               onCancel={handleCancel}
             />
-
           </div>
         </div>
 
