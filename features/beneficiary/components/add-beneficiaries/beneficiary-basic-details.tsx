@@ -16,7 +16,7 @@ export default function BeneficiaryBasicDetails() {
 
       <div className="mb-6">
         <label className="mb-2 block text-sm font-medium text-slate-900">
-          Beneficiary Name
+          Beneficiary Name 
         </label>
 
         <input

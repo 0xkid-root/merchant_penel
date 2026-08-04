@@ -11,8 +11,6 @@ import {
 } from '../../schema/add-beneficiary.schema'
 
 import BeneficiaryBasicDetails from './beneficiary-basic-details'
-import BeneficiaryVerificationBanner from './beneficiary-verification-banner'
-import BeneficiaryBankDetails from './beneficiary-bank-details'
 import BeneficiaryOptionalDetails from './beneficiary-optional-details'
 import BeneficiaryActions from './beneficiary-actions'
 import BeneficiarySidebar from './beneficiary-sidebar'
@@ -149,17 +147,6 @@ export default function AddBeneficiaryForm({
 
             {/* Basic Details */}
             <BeneficiaryBasicDetails />
-
-            {/* Verification Result */}
-            {isVerified && bankDetails && (
-              <>
-                <BeneficiaryVerificationBanner />
-
-                <BeneficiaryBankDetails
-                  bankDetails={bankDetails}
-                />
-              </>
-            )}
 
             {/* Always Visible */}
             <BeneficiaryOptionalDetails />
