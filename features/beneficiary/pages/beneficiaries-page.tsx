@@ -64,7 +64,7 @@ export default function BeneficiariesPage() {
   }
 
   const handleStatusToggle = async (id: number, newStatus: string) => {
-    await updateStatusMutation.mutateAsync({ id, payload: { status: newStatus } })
+    await updateStatusMutation.mutateAsync({ id, payload: { status: newStatus as 'ACTIVE' | 'INACTIVE' | 'DELETED' } })
     refetch()
   }
 
