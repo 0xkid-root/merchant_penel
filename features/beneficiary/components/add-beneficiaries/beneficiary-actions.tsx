@@ -2,11 +2,13 @@
 
 interface Props {
   isVerified: boolean
+  isSaving?: boolean
   onCancel: () => void
 }
 
 export default function BeneficiaryActions({
   isVerified,
+  isSaving,
   onCancel,
 }: Props) {
   return (
@@ -26,14 +28,14 @@ export default function BeneficiaryActions({
 
       <button
         type="submit"
-        disabled={!isVerified}
+        disabled={!isVerified || isSaving}
         className={`rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition ${
-          isVerified
+          isVerified && !isSaving
             ? 'bg-indigo-600 hover:bg-indigo-700'
             : 'cursor-not-allowed bg-slate-400'
         }`}
       >
-        Save Beneficiary
+        {isSaving ? 'Saving...' : 'Save Beneficiary'}
       </button>
 
     </div>

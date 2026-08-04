@@ -58,10 +58,15 @@ export const addBeneficiarySchema = z
         }
       ),
 
-    remarks: z
+    bankName: z
       .string()
-      .max(200, "Remarks cannot exceed 200 characters")
-      .optional(),
+      .trim()
+      .min(2, "Please enter bank name")
+      .max(100, "Bank name is too long"),
+
+    accountType: z.enum(["SAVINGS", "CURRENT"], {
+      message: "Please select an account type",
+    }),
   })
 
   .refine(
