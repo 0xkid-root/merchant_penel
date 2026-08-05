@@ -11,7 +11,7 @@ import EditBeneficiaryBasicDetails from './EditBeneficiaryBasicDetails'
 import EditBeneficiaryOptionalDetails from './EditBeneficiaryOptionalDetails'
 import EditBeneficiarySidebar from './EditBeneficiarySidebar'
 import EditBeneficiaryActions from './EditBeneficiaryActions'
-import { BeneficiaryDetailsSkeleton } from '../beneficiary-details/beneficiary-details-skeleton'
+import EditBeneficiarySkeleton from './EditBeneficiarySkeleton'
 
 import { useBeneficiaryDetails } from '../../hooks/useBeneficiaryDetails'
 import { useUpdateBeneficiary } from '../../hooks/useUpdateBeneficiary'
@@ -68,7 +68,7 @@ export default function EditBeneficiaryForm({ beneficiaryId }: Props) {
   }
 
   if (isLoading || isQueryPending) {
-    return <BeneficiaryDetailsSkeleton />
+    return <EditBeneficiarySkeleton />
   }
 
   if (isError || !response?.data) {
@@ -92,7 +92,7 @@ export default function EditBeneficiaryForm({ beneficiaryId }: Props) {
 
             <hr className="border-slate-200" />
 
-            <EditBeneficiaryOptionalDetails />
+            <EditBeneficiaryOptionalDetails isSaving={isUpdating} />
 
             <EditBeneficiaryActions onCancel={handleCancel} isSaving={isUpdating} />
           </div>

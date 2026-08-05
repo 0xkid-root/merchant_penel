@@ -3,7 +3,11 @@
 import { useFormContext } from 'react-hook-form'
 import { EditBeneficiaryFormData } from '../../schema/edit-beneficiary.schema'
 
-export default function EditBeneficiaryOptionalDetails() {
+interface Props {
+  isSaving?: boolean
+}
+
+export default function EditBeneficiaryOptionalDetails({ isSaving }: Props) {
   const { register, formState: { errors } } = useFormContext<EditBeneficiaryFormData>()
 
   return (
@@ -19,8 +23,9 @@ export default function EditBeneficiaryOptionalDetails() {
           <input
             {...register('mobile')}
             type="text"
+            disabled={isSaving}
             placeholder="Enter mobile number"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600 disabled:opacity-50 disabled:bg-slate-50"
           />
           {errors.mobile && (
             <p className="mt-1 text-xs text-red-500">
@@ -37,8 +42,9 @@ export default function EditBeneficiaryOptionalDetails() {
           <input
             {...register('email')}
             type="email"
+            disabled={isSaving}
             placeholder="Enter email ID"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600 disabled:opacity-50 disabled:bg-slate-50"
           />
           {errors.email && (
             <p className="mt-1 text-xs text-red-500">
