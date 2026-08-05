@@ -22,10 +22,7 @@ export interface CreateBeneficiaryRequest {
  */
 
 export interface UpdateBeneficiaryRequest {
-    beneficiaryName?: string
-
     mobile?: string
-
     email?: string
 }
 
