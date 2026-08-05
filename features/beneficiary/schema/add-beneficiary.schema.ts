@@ -34,29 +34,19 @@ export const addBeneficiarySchema = z
     mobileNumber: z
       .string()
       .trim()
-      .optional()
-      .or(z.literal(""))
+      .min(1, "Please enter mobile number")
       .refine(
-        (value) =>
-          !value || /^[6-9]\d{9}$/.test(value),
+        (value) => /^[6-9]\d{9}$/.test(value),
         {
-          message: "Please enter a valid mobile number",
+          message: "Please enter a valid 10-digit mobile number",
         }
       ),
 
     emailId: z
       .string()
       .trim()
-      .optional()
-      .or(z.literal(""))
-      .refine(
-        (value) =>
-          !value ||
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-        {
-          message: "Please enter a valid email address",
-        }
-      ),
+      .min(1, "Please enter email ID")
+      .email("Please enter a valid email address"),
 
     bankName: z
       .string()

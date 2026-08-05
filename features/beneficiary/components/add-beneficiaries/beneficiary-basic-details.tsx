@@ -48,7 +48,7 @@ export default function BeneficiaryBasicDetails({ isVerified }: Props) {
             {...register('bankName')}
             disabled={isVerified}
             placeholder="Enter bank name"
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600 disabled:opacity-50 disabled:bg-slate-50"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
           />
 
           {errors.bankName && (
@@ -126,8 +126,7 @@ export default function BeneficiaryBasicDetails({ isVerified }: Props) {
           )}
 
           <p className="mt-2 text-xs text-slate-500">
-            Enter correct IFSC code to auto-verify account.
-          </p>
+            Bank verification requires a valid Account Number and IFSC Code.          </p>
         </div>
 
         {/* Account Type */}
@@ -138,8 +137,7 @@ export default function BeneficiaryBasicDetails({ isVerified }: Props) {
 
           <select
             {...register('accountType')}
-            disabled={isVerified}
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600 disabled:opacity-50 disabled:bg-slate-50"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
           >
             <option value="SAVINGS">Savings Account</option>
             <option value="CURRENT">Current Account</option>

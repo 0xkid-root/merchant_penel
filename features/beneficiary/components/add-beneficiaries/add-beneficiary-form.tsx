@@ -93,6 +93,14 @@ export default function AddBeneficiaryForm({
           accountName: response.data.accountName,
           bankTxnStatus: response.data.bankTxnStatus,
         })
+        methods.setValue(
+          "beneficiaryName",
+          response.data.accountName,
+          {
+            shouldValidate: true,
+            shouldDirty: true
+          }
+        );
       } else {
         setVerificationData(null)
       }
