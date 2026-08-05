@@ -54,5 +54,20 @@ export const API_ENDPOINTS = {
       `/api/v1/beneficiaries/${id}`,
   },
 
+  WALLET_WHITELIST: {
+    CREATE: '/api/v1/wallet-whitelist',
+
+    GET_ALL: '/api/v1/wallet-whitelist',
+
+    GET_BY_ID: (id: number) =>
+      `/api/v1/wallet-whitelist/${id}`,
+
+    UPDATE: (id: number) =>
+      `/api/v1/wallet-whitelist/${id}`,
+
+    DELETE: (id: number) =>
+      `/api/v1/wallet-whitelist/${id}`,
+  },
+
 
 } as const

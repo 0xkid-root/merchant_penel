@@ -1,13 +1,13 @@
 /**
  * ============================================
- * Create Beneficiary
- * POST /api/v1/beneficiaries
+ * Create Wallet Whitelist
+ * POST /api/v1/wallet-whitelist
  * ============================================
  */
 
-export interface CreateBeneficiaryRequest {
+export interface CreateWalletWhitelistRequest {
     verificationId: string
-    beneficiaryName: string
+    walletHolderName: string
     bankName: string
     accountType: string
     mobile: string
@@ -16,52 +16,60 @@ export interface CreateBeneficiaryRequest {
 
 /**
  * ============================================
- * Update Beneficiary
- * PUT /api/v1/beneficiaries/{id}
+ * Update Wallet Whitelist
+ * PUT /api/v1/wallet-whitelist/{id}
  * ============================================
  */
 
-export interface UpdateBeneficiaryRequest {
+export interface UpdateWalletWhitelistRequest {
     mobile?: string
+
     email?: string
 }
 
 /**
  * ============================================
- * Update Beneficiary Status
- * PATCH /api/v1/beneficiaries/{id}/status
+ * Wallet Whitelist Status
  * ============================================
  */
 
-export interface UpdateBeneficiaryStatusRequest {
-    status: BeneficiaryStatus
-}
-
-/**
- * ============================================
- * Beneficiary Status
- * ============================================
- */
-
-export type BeneficiaryStatus =
-    | 'ACTIVE'
-    | 'INACTIVE'
+export type WalletWhitelistStatus =
+    | 'PENDING'
+    | 'APPROVED'
+    | 'REJECTED'
     | 'DELETED'
 
 /**
  * ============================================
- * Beneficiary Response
+ * Wallet Whitelist Rejection Reason
  * ============================================
  */
 
-export interface BeneficiaryResponse {
+export type WalletWhitelistRejectionReason =
+    | 'KYC_INCOMPLETE'
+    | 'DUPLICATE_REQUEST'
+    | 'COMPLIANCE_FAILED'
+    | 'RISK_CHECK_FAILED'
+    | 'ACCOUNT_UNDER_REVIEW'
+    | 'BUSINESS_POLICY'
+    | 'ADDITIONAL_VERIFICATION_REQUIRED'
+    | 'ADMIN_REJECTED'
+    | 'OTHER'
+
+/**
+ * ============================================
+ * Wallet Whitelist Response
+ * ============================================
+ */
+
+export interface WalletWhitelistResponse {
     id: number
 
     merchantId: number
 
     merchantName: string
 
-    beneficiaryName: string
+    walletHolderName: string
 
     accountNumber: string
 
@@ -75,11 +83,19 @@ export interface BeneficiaryResponse {
 
     email: string
 
-    status: BeneficiaryStatus
-
     bankVerified: boolean
 
     verifiedAccountName: string
+
+    status: WalletWhitelistStatus
+
+    reviewedBy: number | null
+
+    reviewedAt: string | null
+
+    rejectionReason: WalletWhitelistRejectionReason | null
+
+    customRejectionReason: string | null
 }
 
 /**
@@ -122,54 +138,45 @@ export interface PageableResponse<T> {
 
 /**
  * ============================================
- * Beneficiary List Response
+ * Wallet Whitelist List Response
  * ============================================
  */
 
-export type BeneficiaryListResponse =
-    ApiResponse<PageableResponse<BeneficiaryResponse>>
+export type WalletWhitelistListResponse =
+    ApiResponse<PageableResponse<WalletWhitelistResponse>>
 
 /**
  * ============================================
- * Beneficiary Details Response
+ * Wallet Whitelist Details Response
  * ============================================
  */
 
-export type BeneficiaryDetailsResponse =
-    ApiResponse<BeneficiaryResponse>
+export type WalletWhitelistDetailsResponse =
+    ApiResponse<WalletWhitelistResponse>
 
 /**
  * ============================================
- * Create Beneficiary Response
+ * Create Wallet Whitelist Response
  * ============================================
  */
 
-export type CreateBeneficiaryResponse =
-    ApiResponse<BeneficiaryResponse>
+export type CreateWalletWhitelistResponse =
+    ApiResponse<WalletWhitelistResponse>
 
 /**
  * ============================================
- * Update Beneficiary Response
+ * Update Wallet Whitelist Response
  * ============================================
  */
 
-export type UpdateBeneficiaryResponse =
-    ApiResponse<BeneficiaryResponse>
+export type UpdateWalletWhitelistResponse =
+    ApiResponse<WalletWhitelistResponse>
 
 /**
  * ============================================
- * Delete Response
+ * Delete Wallet Whitelist Response
  * ============================================
  */
 
-export type DeleteBeneficiaryResponse =
-    ApiResponse<null>
-
-/**
- * ============================================
- * Status Update Response
- * ============================================
- */
-
-export type UpdateBeneficiaryStatusResponse =
+export type DeleteWalletWhitelistResponse =
     ApiResponse<null>
