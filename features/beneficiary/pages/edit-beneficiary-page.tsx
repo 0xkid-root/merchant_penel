@@ -4,7 +4,11 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import EditBeneficiaryForm from '../components/edit-beneficiary/EditBeneficiaryForm'
 
-export default function EditBeneficiaryPage() {
+interface Props {
+  beneficiaryId: number
+}
+
+export default function EditBeneficiaryPage({ beneficiaryId }: Props) {
   const router = useRouter()
 
   return (
@@ -26,7 +30,7 @@ export default function EditBeneficiaryPage() {
       </div>
 
       <div className="mt-6">
-        <EditBeneficiaryForm />
+        <EditBeneficiaryForm beneficiaryId={beneficiaryId} />
       </div>
     </div>
   )

@@ -1,6 +1,12 @@
 'use client'
 
-export default function EditBeneficiaryBasicDetails() {
+import { BeneficiaryResponse } from '../../types/beneficiary.types'
+
+interface Props {
+  beneficiary: BeneficiaryResponse
+}
+
+export default function EditBeneficiaryBasicDetails({ beneficiary }: Props) {
   return (
     <div className="space-y-8">
       {/* SECTION 1: Beneficiary Information */}
@@ -14,20 +20,22 @@ export default function EditBeneficiaryBasicDetails() {
             </label>
             <input
               type="text"
-              defaultValue="Gaurav Kumar"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+              value={beneficiary.beneficiaryName || ''}
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none cursor-default"
             />
           </div>
 
           {/* Bank Name */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-900">
-              Bank Name <span className="text-red-500">*</span>
+              Bank Name
             </label>
             <input
               type="text"
-              defaultValue="KVB Bank"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+              value={beneficiary.bankName || ''}
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none cursor-default"
             />
           </div>
 
@@ -36,13 +44,12 @@ export default function EditBeneficiaryBasicDetails() {
             <label className="mb-2 block text-sm font-medium text-slate-900">
               Account Type
             </label>
-            <select
-              defaultValue="SAVINGS"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
-            >
-              <option value="SAVINGS">Savings Account</option>
-              <option value="CURRENT">Current Account</option>
-            </select>
+            <input
+              type="text"
+              value={beneficiary.accountType || ''}
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none cursor-default"
+            />
           </div>
         </div>
       </div>
@@ -60,8 +67,9 @@ export default function EditBeneficiaryBasicDetails() {
             </label>
             <input
               type="text"
-              defaultValue="123456789012"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+              value={beneficiary.accountNumber || ''}
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none cursor-default"
             />
           </div>
 
@@ -72,8 +80,9 @@ export default function EditBeneficiaryBasicDetails() {
             </label>
             <input
               type="text"
-              defaultValue="123456789012"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-indigo-600"
+              value={beneficiary.accountNumber || ''} // Reusing account number for confirm
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none cursor-default"
             />
           </div>
 
@@ -84,8 +93,9 @@ export default function EditBeneficiaryBasicDetails() {
             </label>
             <input
               type="text"
-              defaultValue="KVBL0001234"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 uppercase text-sm outline-none transition focus:border-indigo-600"
+              value={beneficiary.ifscCode || ''}
+              readOnly
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 uppercase text-sm text-slate-700 outline-none cursor-default"
             />
           </div>
         </div>
