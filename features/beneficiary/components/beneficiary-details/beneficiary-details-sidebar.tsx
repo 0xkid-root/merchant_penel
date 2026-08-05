@@ -11,7 +11,7 @@ export default function BeneficiaryDetailsSidebar() {
 
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
             <Info className="h-5 w-5 text-indigo-600" />
           </div>
           <div>
