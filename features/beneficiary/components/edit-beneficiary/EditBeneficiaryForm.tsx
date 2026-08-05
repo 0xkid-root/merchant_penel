@@ -51,11 +51,7 @@ export default function EditBeneficiaryForm({ beneficiaryId }: Props) {
           email: data.email,
         }
       })
-
-      toast.success('Beneficiary updated successfully')
-
       queryClient.invalidateQueries({ queryKey: ['beneficiaries'] })
-      queryClient.invalidateQueries({ queryKey: ['beneficiary', beneficiaryId] })
 
       router.push('/beneficiaries')
     } catch (error) {
