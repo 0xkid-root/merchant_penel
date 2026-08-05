@@ -12,74 +12,62 @@ import {
 } from 'lucide-react'
 
 import { SecondaryButton } from '@/components/buttons/secondary-button'
-
-import { walletWhitelistData } from '../data/wallet-whitelist-data'
-import WalletWhitelistPagination from './wallet-whitelist-pagination'
-
-type WalletWhitelistStatus = 'Approved' | 'Pending' | 'Rejected'
-
-const PAGE_SIZE = 10
+import Pagination from '@/components/common/pagination/Pagination'
+import { useWalletWhitelistList } from '../hooks/useWalletWhitelistList'
+import WalletWhitelistTableSkeleton from './wallet-whitelist-table-skeleton'
+import { WalletWhitelistStatus } from '../types/wallet-whitelist.types'
 
 export default function WalletWhitelistTable() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [page, setPage] = useState(0)
+  const size = 10
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | WalletWhitelistStatus>(
-    'all',
-  )
+  const [statusFilter, setStatusFilter] = useState<'all' | 'Approved' | 'Pending' | 'Rejected'>('all')
+
+  const { data, isLoading, isFetching, isError } = useWalletWhitelistList({
+    page,
+    size,
+  })
+
+  const rawData = data?.data.content ?? []
 
   const filteredData = useMemo(() => {
     const query = search.trim().toLowerCase()
 
-    return walletWhitelistData.filter((item) => {
+    return rawData.filter((item) => {
       const matchesSearch =
         query.length === 0 ||
         item.bankName.toLowerCase().includes(query) ||
-        item.accountHolderName.toLowerCase().includes(query) ||
+        item.verifiedAccountName.toLowerCase().includes(query) ||
         item.accountNumber.toLowerCase().includes(query) ||
         item.ifscCode.toLowerCase().includes(query)
 
       const matchesStatus =
-        statusFilter === 'all' || item.status === statusFilter
+        statusFilter === 'all' || item.status.toUpperCase() === statusFilter.toUpperCase()
 
       return matchesSearch && matchesStatus
     })
-  }, [search, statusFilter])
-
-  const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE))
-
-  const safeCurrentPage = Math.min(currentPage, totalPages)
-
-  const paginatedData = useMemo(() => {
-    const startIndex = (safeCurrentPage - 1) * PAGE_SIZE
-
-    return filteredData.slice(startIndex, startIndex + PAGE_SIZE)
-  }, [filteredData, safeCurrentPage])
-
-  const startRecord =
-    filteredData.length === 0 ? 0 : (safeCurrentPage - 1) * PAGE_SIZE + 1
-
-  const endRecord = Math.min(safeCurrentPage * PAGE_SIZE, filteredData.length)
+  }, [search, statusFilter, rawData])
 
   const hasActiveFilters = search.trim() !== '' || statusFilter !== 'all'
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
-    setCurrentPage(1)
+    setPage(0)
   }
 
-  const handleStatusChange = (value: 'all' | WalletWhitelistStatus) => {
+  const handleStatusChange = (value: 'all' | 'Approved' | 'Pending' | 'Rejected') => {
     setStatusFilter(value)
-    setCurrentPage(1)
+    setPage(0)
   }
 
   const handleClearFilters = () => {
     setSearch('')
     setStatusFilter('all')
-    setCurrentPage(1)
+    setPage(0)
   }
 
   const getStatusBadge = (status: WalletWhitelistStatus) => {
-    if (status === 'Approved') {
+    if (status === 'APPROVED') {
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -88,7 +76,7 @@ export default function WalletWhitelistTable() {
       )
     }
 
-    if (status === 'Pending') {
+    if (status === 'PENDING') {
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
           <Clock3 className="h-3.5 w-3.5" />
@@ -102,6 +90,18 @@ export default function WalletWhitelistTable() {
         <XCircle className="h-3.5 w-3.5" />
         Rejected
       </span>
+    )
+  }
+
+  if (isLoading || isFetching) {
+    return <WalletWhitelistTableSkeleton />
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+        <p className="text-sm font-medium text-slate-500">Failed to load wallet whitelist.</p>
+      </div>
     )
   }
 
@@ -120,8 +120,8 @@ export default function WalletWhitelistTable() {
           </div>
 
           <p className="text-sm font-medium text-slate-500">
-            Showing {filteredData.length} account
-            {filteredData.length !== 1 ? 's' : ''}
+            Showing {data?.data.totalElements ?? 0} account
+            {data?.data.totalElements !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function WalletWhitelistTable() {
                 value={statusFilter}
                 onChange={(event) =>
                   handleStatusChange(
-                    event.target.value as 'all' | WalletWhitelistStatus,
+                    event.target.value as 'all' | 'Approved' | 'Pending' | 'Rejected',
                   )
                 }
                 className="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white py-0 pl-10 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-44"
@@ -185,7 +185,7 @@ export default function WalletWhitelistTable() {
         </div>
       </div>
 
-      {paginatedData.length === 0 ? (
+      {filteredData.length === 0 ? (
         <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
             <Filter className="h-5 w-5 text-slate-400" />
@@ -209,7 +209,7 @@ export default function WalletWhitelistTable() {
                 </th>
 
                 <th className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Account Holder
+                  Verified Account Name
                 </th>
 
                 <th className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -224,10 +224,6 @@ export default function WalletWhitelistTable() {
                   Status
                 </th>
 
-                <th className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Default
-                </th>
-
                 <th className="whitespace-nowrap px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Action
                 </th>
@@ -235,7 +231,7 @@ export default function WalletWhitelistTable() {
             </thead>
 
             <tbody className="divide-y divide-slate-200 bg-white">
-              {paginatedData.map((bank) => (
+              {filteredData.map((bank) => (
                 <tr
                   key={bank.id}
                   className="transition hover:bg-slate-50/80"
@@ -246,7 +242,7 @@ export default function WalletWhitelistTable() {
 
                   <td className="px-5 py-4">
                     <p className="max-w-[220px] truncate text-sm font-medium text-slate-900">
-                      {bank.accountHolderName}
+                      {bank.verifiedAccountName}
                     </p>
                   </td>
 
@@ -259,25 +255,17 @@ export default function WalletWhitelistTable() {
                   </td>
 
                   <td className="whitespace-nowrap px-5 py-4">
-                    {getStatusBadge(bank.status as WalletWhitelistStatus)}
-                  </td>
-
-                  <td className="whitespace-nowrap px-5 py-4">
-                    {bank.isDefault ? (
-                      <span className="inline-flex rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-                        Default
-                      </span>
-                    ) : (
-                      <span className="text-sm text-slate-500">No</span>
-                    )}
+                    {getStatusBadge(bank.status)}
                   </td>
 
                   <td className="px-5 py-4 text-center">
                     <button
                       type="button"
                       className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
-                      aria-label={`Manage ${bank.accountHolderName}`}
+                      aria-label={`Manage ${bank.verifiedAccountName}`}
+                      title="Manage"
                     >
+                      {/* TODO: Integrate View, Edit, Delete */}
                       <SlidersHorizontal className="h-4 w-4" />
                     </button>
                   </td>
@@ -288,16 +276,14 @@ export default function WalletWhitelistTable() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-6">
-        <p className="text-sm text-slate-500">
-          Showing {startRecord} to {endRecord} of {filteredData.length} bank
-          account{filteredData.length !== 1 ? 's' : ''}
-        </p>
-
-        <WalletWhitelistPagination
-          currentPage={safeCurrentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
+      <div className="border-t border-slate-200">
+        <Pagination
+          page={page}
+          totalPages={data?.data.totalPages ?? 0}
+          totalElements={data?.data.totalElements ?? 0}
+          pageSize={size}
+          itemName="bank accounts"
+          onPageChange={setPage}
         />
       </div>
     </div>
