@@ -24,7 +24,7 @@ export default function BeneficiaryDetailsPage({ beneficiaryId }: Props) {
 
   if (isError || !response?.data) {
     return (
-      <div className="flex h-[400px] items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex h-[400px] items-center justify-center rounded-2xl border border-slate-200 bg-white p-6">
         <div className="text-center">
           <p className="text-slate-500">Failed to load beneficiary details. Please try again later.</p>
           <p className="text-xs mt-2 text-slate-400">ID: {beneficiaryId}</p>
@@ -55,7 +55,7 @@ export default function BeneficiaryDetailsPage({ beneficiaryId }: Props) {
 
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 xl:col-span-9">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-5 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-5 ">
             <BeneficiaryDetailsCard beneficiary={beneficiary} />
             <hr className="border-slate-200" />
             <BeneficiaryBankDetails beneficiary={beneficiary} />

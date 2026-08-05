@@ -4,7 +4,7 @@ import { Info } from 'lucide-react'
 
 export default function BeneficiaryDetailsSidebar() {
   return (
-    <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-6 ">
       <h3 className="mb-6 text-lg font-semibold text-slate-900">
         Beneficiary Information
       </h3>
