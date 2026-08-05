@@ -35,7 +35,7 @@ export default function BeneficiariesTable({
     if (currentStatus !== 'ACTIVE' && currentStatus !== 'INACTIVE') return
 
     const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
-    
+
     // Optimistic update
     setOptimisticStatuses((prev) => ({ ...prev, [id]: newStatus }))
     setLoadingToggles((prev) => ({ ...prev, [id]: true }))
@@ -143,18 +143,16 @@ export default function BeneficiariesTable({
                         type="button"
                         onClick={() => handleToggle(item.id, displayStatus)}
                         disabled={isToggleDisabled}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-colors duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed ${
-                          isActive ? 'bg-green-500' : 'bg-slate-300'
-                        }`}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-colors duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed ${isActive ? 'bg-green-500' : 'bg-slate-300'
+                          }`}
                         role="switch"
                         aria-checked={isActive}
                       >
                         <span className="sr-only">Toggle status</span>
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            isActive ? 'translate-x-2.5' : '-translate-x-2.5'
-                          }`}
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isActive ? 'translate-x-2.5' : '-translate-x-2.5'
+                            }`}
                         />
                       </button>
                     </td>
@@ -166,6 +164,7 @@ export default function BeneficiariesTable({
                           onClick={() => onView(item.id)}
                           className="rounded-lg p-2 transition hover:bg-slate-100"
                           aria-label="View beneficiary"
+                          title="View Beneficiary"
                         >
                           <Eye className="h-4 w-4 text-slate-600" />
                         </button>
@@ -175,26 +174,27 @@ export default function BeneficiariesTable({
                           onClick={() => onEdit(item.id)}
                           className="rounded-lg p-2 transition hover:bg-slate-100"
                           aria-label="Edit beneficiary"
+                          title="Edit Beneficiary"
                         >
                           <Pencil className="h-4 w-4 text-indigo-600" />
                         </button>
 
-                        <button
+                        {/* <button
                           type="button"
                           onClick={() => onDelete(item.id)}
                           className="rounded-lg p-2 transition hover:bg-slate-100"
                           aria-label="Delete beneficiary"
                         >
                           <Trash2 className="h-4 w-4 text-red-600" />
-                        </button>
+                        </button> */}
 
-                        <button
+                        {/* <button
                           type="button"
                           className="rounded-lg p-2 transition hover:bg-slate-100"
                           aria-label="More actions"
                         >
                           <MoreVertical className="h-4 w-4 text-slate-600" />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>
