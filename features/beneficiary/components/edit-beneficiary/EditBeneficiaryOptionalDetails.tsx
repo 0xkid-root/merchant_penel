@@ -10,7 +10,7 @@ export default function EditBeneficiaryOptionalDetails() {
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-slate-900">Contact Details</h3>
       
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Mobile Number */}
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-900">

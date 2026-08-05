@@ -51,12 +51,12 @@ export default function EditBeneficiaryForm({ beneficiaryId }: Props) {
           email: data.email,
         }
       })
-      
+
       toast.success('Beneficiary updated successfully')
-      
+
       queryClient.invalidateQueries({ queryKey: ['beneficiaries'] })
       queryClient.invalidateQueries({ queryKey: ['beneficiary', beneficiaryId] })
-      
+
       router.push('/beneficiaries')
     } catch (error) {
       // Error is handled by the hook
@@ -86,8 +86,8 @@ export default function EditBeneficiaryForm({ beneficiaryId }: Props) {
       <form onSubmit={methods.handleSubmit(onSubmit)} className="grid grid-cols-12 gap-6">
         {/* LEFT SIDE */}
         <div className="col-span-12 xl:col-span-9">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-8 shadow-sm">
-            
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-5">
+
             <EditBeneficiaryBasicDetails beneficiary={response.data} />
 
             <hr className="border-slate-200" />
