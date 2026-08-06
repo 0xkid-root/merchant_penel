@@ -16,7 +16,14 @@ export interface FileUploadResponse {
     data: FileUploadData
 }
 
+export type UploadFolder =
+    | 'wallet-whitelist'
+    | 'beneficiary'
+    | 'kyc'
+    | 'merchant'
+    | 'documents'
+
 export interface FileUploadRequest {
     file: File
-    folder: string
+    folder: UploadFolder
 }
