@@ -9,7 +9,9 @@ import {
   SlidersHorizontal,
   X,
   XCircle,
+  Eye,
 } from 'lucide-react'
+import Link from 'next/link'
 
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 import Pagination from '@/components/common/pagination/Pagination'
@@ -259,15 +261,14 @@ export default function WalletWhitelistTable() {
                   </td>
 
                   <td className="px-5 py-4 text-center">
-                    <button
-                      type="button"
+                    <Link
+                      href={`/wallet-whitelist/${bank.id}`}
                       className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
-                      aria-label={`Manage ${bank.verifiedAccountName}`}
-                      title="Manage"
+                      aria-label={`View ${bank.verifiedAccountName}`}
+                      title="View"
                     >
-                      {/* TODO: Integrate View, Edit, Delete */}
-                      <SlidersHorizontal className="h-4 w-4" />
-                    </button>
+                      <Eye className="h-4 w-4" />
+                    </Link>
                   </td>
                 </tr>
               ))}
