@@ -6,8 +6,6 @@ import {
     WalletWhitelistDetailsResponse,
     CreateWalletWhitelistRequest,
     CreateWalletWhitelistResponse,
-    UpdateWalletWhitelistRequest,
-    UpdateWalletWhitelistResponse,
     DeleteWalletWhitelistResponse,
 } from '../types/wallet-whitelist.types'
 
@@ -68,23 +66,6 @@ export const walletWhitelistApi = {
         return response.data
     },
 
-    /**
-     * ============================================
-     * Update Wallet Whitelist
-     * ============================================
-     */
-    updateWalletWhitelist: async (
-        id: number,
-        payload: UpdateWalletWhitelistRequest
-    ): Promise<UpdateWalletWhitelistResponse> => {
-        const response =
-            await apiClient.put<UpdateWalletWhitelistResponse>(
-                API_ENDPOINTS.WALLET_WHITELIST.UPDATE(id),
-                payload
-            )
-
-        return response.data
-    },
 
     /**
      * ============================================

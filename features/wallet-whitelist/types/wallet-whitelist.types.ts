@@ -10,22 +10,10 @@ export interface CreateWalletWhitelistRequest {
     walletHolderName: string
     bankName: string
     accountType: string
-    mobile: string
-    email: string
+    documentPath: string
+    documentType: WalletWhitelistDocumentType
 }
 
-/**
- * ============================================
- * Update Wallet Whitelist
- * PUT /api/v1/wallet-whitelist/{id}
- * ============================================
- */
-
-export interface UpdateWalletWhitelistRequest {
-    mobile?: string
-
-    email?: string
-}
 
 /**
  * ============================================
@@ -62,6 +50,10 @@ export type WalletWhitelistRejectionReason =
  * ============================================
  */
 
+export type WalletWhitelistDocumentType =
+    | 'PASSBOOK'
+    | 'CANCELLED_CHEQUE'
+
 export interface WalletWhitelistResponse {
     id: number
 
@@ -79,10 +71,6 @@ export interface WalletWhitelistResponse {
 
     accountType: string
 
-    mobile: string
-
-    email: string
-
     bankVerified: boolean
 
     verifiedAccountName: string
@@ -96,6 +84,12 @@ export interface WalletWhitelistResponse {
     rejectionReason: WalletWhitelistRejectionReason | null
 
     customRejectionReason: string | null
+
+    documentPath: string
+
+    documentType: WalletWhitelistDocumentType
+
+    documentPreviewUrl: string
 }
 
 /**
@@ -163,14 +157,6 @@ export type WalletWhitelistDetailsResponse =
 export type CreateWalletWhitelistResponse =
     ApiResponse<WalletWhitelistResponse>
 
-/**
- * ============================================
- * Update Wallet Whitelist Response
- * ============================================
- */
-
-export type UpdateWalletWhitelistResponse =
-    ApiResponse<WalletWhitelistResponse>
 
 /**
  * ============================================
@@ -180,3 +166,4 @@ export type UpdateWalletWhitelistResponse =
 
 export type DeleteWalletWhitelistResponse =
     ApiResponse<null>
+
