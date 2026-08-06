@@ -8,6 +8,7 @@ import {
   Info,
   Trash2,
   UploadCloud,
+  Eye,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -148,14 +149,30 @@ export default function BankAccountUpload() {
             <CheckCircle2 className="h-5 w-5 shrink-0 text-green-600" />
           </div>
 
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-red-600 transition hover:bg-red-100"
-            aria-label="Remove uploaded file"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const url = URL.createObjectURL(selectedFile)
+                window.open(url, '_blank')
+              }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-indigo-600 transition hover:bg-indigo-100"
+              aria-label="Preview uploaded file"
+              title="Preview"
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-red-600 transition hover:bg-red-100"
+              aria-label="Remove uploaded file"
+              title="Remove"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       )}
 
