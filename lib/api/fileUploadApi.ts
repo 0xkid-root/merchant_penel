@@ -1,19 +1,19 @@
-import { apiClient } from '@/lib/api/client'
-import { FileUploadResponse } from '../types/wallet-whitelist.types'
+import { apiClient } from './client'
+import { FileUploadResponse, FileUploadRequest } from '../types/file-upload.types'
 
-export const walletWhitelistUploadApi = {
+export const fileUploadApi = {
     /**
      * ============================================
-     * Upload Document for Wallet Whitelist
+     * Generic Document Upload
      * ============================================
      */
-    uploadDocument: async (file: File): Promise<FileUploadResponse> => {
+    uploadFile: async ({ file, folder }: FileUploadRequest): Promise<FileUploadResponse> => {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('folder', 'wallet-whitelist')
+        formData.append('folder', folder)
 
         const response = await apiClient.post<FileUploadResponse>(
-            '/api/v1/upload', 
+            '/api/file/upload', 
             formData,
             {
                 headers: {
