@@ -1,7 +1,5 @@
 import { z } from 'zod'
 
-const optionalText = z.string().trim().optional().or(z.literal(''))
-
 export const addBankAccountSchema = z
   .object({
     accountHolderName: z
@@ -13,7 +11,7 @@ export const addBankAccountSchema = z
     bankName: z
       .string()
       .trim()
-      .min(1, 'Please select a bank'),
+      .min(1, 'Please enter a bank name'),
 
     accountNumber: z
       .string()
@@ -36,11 +34,16 @@ export const addBankAccountSchema = z
         'Enter a valid IFSC code, for example HDFC0001234'
       ),
 
-    branchName: optionalText
-      .refine(
-        (value) => !value || value.length <= 100,
-        'Branch name cannot exceed 100 characters'
-      ),
+    accountType: z
+      .string()
+      .trim()
+      .min(1, 'Please select account type'),
+
+    verificationId: z.string().optional(),
+
+    documentPath: z.string().optional(),
+
+    documentType: z.enum(['PASSBOOK', 'CANCELLED_CHEQUE']).optional(),
 
     cancelledCheque: z
       .instanceof(File)

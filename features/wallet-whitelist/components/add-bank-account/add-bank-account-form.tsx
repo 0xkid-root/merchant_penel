@@ -13,6 +13,8 @@ import {
 
 import BankAccountFields from './bank-account-fields'
 import BankAccountUpload from './bank-account-upload'
+import { useCreateWalletWhitelist } from '../../hooks/useCreateWalletWhitelist'
+import { useFileUpload } from '@/hooks/common/useFileUpload'
 
 export default function AddBankAccountForm() {
   const router = useRouter()
@@ -26,10 +28,23 @@ export default function AddBankAccountForm() {
       accountNumber: '',
       confirmAccountNumber: '',
       ifscCode: '',
-      branchName: '',
+      accountType: '',
+      verificationId: '',
+      documentPath: '',
+      documentType: 'CANCELLED_CHEQUE',
       cancelledCheque: null,
     },
   })
+
+  const { watch } = methods
+
+  const verificationId = watch('verificationId')
+  const cancelledCheque = watch('cancelledCheque')
+  
+  const isBankVerified = !!verificationId
+
+  const createWalletWhitelistMutation = useCreateWalletWhitelist()
+  const uploadMutation = useFileUpload()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -39,21 +54,46 @@ export default function AddBankAccountForm() {
   }
 
   const onSubmit = async (data: AddBankAccountFormData) => {
+    if (!isBankVerified || !data.verificationId) {
+      toast.error('Please verify your bank account first')
+      return
+    }
+
+    if (!data.cancelledCheque) {
+      toast.error('Please upload a supporting document')
+      return
+    }
+
     try {
       setIsSubmitting(true)
 
-      console.log('Add Bank Account Data:', data)
+      // 1. Upload document
+      const uploadRes = await uploadMutation.mutateAsync({
+        file: data.cancelledCheque,
+        folder: 'wallet-whitelist'
+      })
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const relativePath = uploadRes.data.relativePath
 
-      toast.success('Bank account request submitted successfully')
+      // 2. Create Wallet Whitelist
+      await createWalletWhitelistMutation.mutateAsync({
+        verificationId: data.verificationId,
+        walletHolderName: data.accountHolderName,
+        bankName: data.bankName,
+        accountType: data.accountType,
+        documentPath: relativePath,
+        documentType: data.documentType || 'CANCELLED_CHEQUE',
+      })
+
       router.push('/wallet-whitelist')
     } catch {
-      toast.error('Unable to submit bank account request')
+      // Errors are already handled by hooks
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const isSubmitDisabled = isSubmitting || !isBankVerified || !cancelledCheque
 
   return (
     <FormProvider {...methods}>
@@ -65,7 +105,6 @@ export default function AddBankAccountForm() {
           <h2 className="text-base font-semibold text-slate-900">
             Bank Account Details
           </h2>
-
           <p className="mt-1 text-sm text-slate-500">
             Enter the account details exactly as registered with your bank.
           </p>
@@ -89,7 +128,7 @@ export default function AddBankAccountForm() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitDisabled}
             className="h-11 w-full rounded-xl bg-indigo-600 px-6 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {isSubmitting ? 'Submitting...' : 'Submit Request'}
