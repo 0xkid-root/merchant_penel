@@ -6,7 +6,7 @@ import SinglePayoutRow from './single-payout-row'
 
 interface SinglePayoutTableProps {
   transactions: SinglePayoutTransaction[]
-  onViewDetails: (payoutId: string) => void
+  onViewDetails: (payoutId: number) => void
 }
 
 export default function SinglePayoutTable({

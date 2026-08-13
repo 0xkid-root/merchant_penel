@@ -18,7 +18,7 @@ import PayoutStatusBadge from './payout-status-badge'
 
 interface SinglePayoutRowProps {
   transaction: SinglePayoutTransaction
-  onViewDetails: (payoutId: string) => void
+  onViewDetails: (payoutId: number) => void
 }
 
 export default function SinglePayoutRow({
@@ -102,9 +102,9 @@ export default function SinglePayoutRow({
       <td className="px-4 py-4 text-center">
         <button
           type="button"
-          onClick={() => onViewDetails(transaction.transactionId)}
+          onClick={() => onViewDetails(transaction.id)}
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
-          aria-label={`View payout ${transaction.transactionId}`}
+          aria-label={`View payout ${transaction.id}`}
         >
           <Eye className="h-4 w-4" />
         </button>

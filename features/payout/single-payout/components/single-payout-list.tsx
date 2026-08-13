@@ -38,8 +38,8 @@ export default function SinglePayoutList() {
     router.push('/payout/single/create')
   }
 
-  const handleViewDetails = (payoutId: string) => {
-    router.push(`/payouts/${payoutId}`)
+  const handleViewDetails = (payoutId: number) => {
+    router.push(`/payout/single/${payoutId}`)
   }
 
   const handleSearchChange = (value: string) => {
