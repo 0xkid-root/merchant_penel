@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '@/lib/api/endpoints'
 
 import {
     SinglePayoutListResponse,
+    SinglePayoutTransaction,
 } from '../types/single-payout.types'
 
 export const singlePayoutApi = {
@@ -28,6 +29,20 @@ export const singlePayoutApi = {
                         ...(status && { status }),
                     },
                 }
+            )
+
+        return response.data
+    },
+
+    /**
+     * Get Single Payout Details By ID
+     */
+    getSinglePayoutById: async (
+        id: number
+    ): Promise<SinglePayoutTransaction> => {
+        const response =
+            await apiClient.get<SinglePayoutTransaction>(
+                API_ENDPOINTS.PAYOUTS.SINGLE.GET_BY_ID(id)
             )
 
         return response.data
