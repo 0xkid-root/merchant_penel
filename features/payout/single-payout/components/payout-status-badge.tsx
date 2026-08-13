@@ -12,23 +12,28 @@ const STATUS_CONFIG: Record<
     icon: typeof CheckCircle2
   }
 > = {
-  success: {
+  SUCCESS: {
     label: 'Success',
     className: 'bg-green-100 text-green-700',
     icon: CheckCircle2,
   },
-  pending: {
+  PENDING: {
     label: 'Pending',
     className: 'bg-amber-100 text-amber-700',
     icon: Clock3,
   },
-  processing: {
+  PROCESSING: {
     label: 'Processing',
     className: 'bg-blue-100 text-blue-700',
     icon: Clock3,
   },
-  failed: {
+  FAILED: {
     label: 'Failed',
+    className: 'bg-red-100 text-red-700',
+    icon: XCircle,
+  },
+  REJECTED: {
+    label: 'Rejected',
     className: 'bg-red-100 text-red-700',
     icon: XCircle,
   },
@@ -41,7 +46,7 @@ interface PayoutStatusBadgeProps {
 export default function PayoutStatusBadge({
   status,
 }: PayoutStatusBadgeProps) {
-  const config = STATUS_CONFIG[status]
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG.PENDING
   const Icon = config.icon
 
   return (

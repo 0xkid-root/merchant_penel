@@ -41,11 +41,11 @@ export default function SinglePayoutFilters({
           }
           className="h-11 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:min-w-40"
         >
-          <option value="all">All Status</option>
-          <option value="success">Success</option>
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
-          <option value="failed">Failed</option>
+          <option value="SUCCESS">Success</option>
+          <option value="PENDING">Pending</option>
+          <option value="PROCESSING">Processing</option>
+          <option value="FAILED">Failed</option>
+          <option value="REJECTED">Rejected</option>
         </select>
 
         <button

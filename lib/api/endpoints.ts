@@ -69,5 +69,32 @@ export const API_ENDPOINTS = {
       `/api/v1/wallet-whitelist/${id}`,
   },
 
+  PAYOUTS: {
+    SINGLE: {
+      LIST: '/api/v1/payouts/single',
+      GET_BY_ID: (id: number) =>
+        `/api/v1/payouts/single/${id}`,
+      SEND_OTP: '/api/v1/payouts/send-otp',
+      CREATE: '/api/v1/payouts/single',
+    },
+
+    DIRECT: {
+      LIST: '/api/v1/payouts/direct',
+      GET_BY_ID: (id: number) =>
+        `/api/v1/payouts/direct/${id}`,
+      SEND_OTP: '/api/v1/payouts/direct/send-otp',
+      CREATE: '/api/v1/payouts/direct',
+    },
+
+    BULK: {
+      LIST: '/api/v1/payouts/bulk',
+      GET_BY_ID: (id: number) =>
+        `/api/v1/payouts/bulk/${id}`,
+      PREVIEW: '/api/v1/payouts/bulk/preview',
+      CREATE: '/api/v1/payouts/bulk/create',
+      SEND_OTP: '/api/v1/payouts/bulk/send-otp',
+    },
+  },
+
 
 } as const

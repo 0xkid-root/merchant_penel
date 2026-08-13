@@ -43,60 +43,7 @@ export const SINGLE_PAYOUT_BENEFICIARIES: SinglePayoutBeneficiary[] = [
   },
 ]
 
-export const SINGLE_PAYOUT_TRANSACTIONS: SinglePayoutTransaction[] = [
-  {
-    payoutId: 'SP-20260618-001',
-    beneficiaryName: 'Durgesh Kumar Tiwari',
-    bankName: 'HDFC Bank',
-    maskedAccountNumber: 'XXXXXX5678',
-    ifscCode: 'HDFC0001234',
-    amount: 15000,
-    charges: 0,
-    totalDebit: 15000,
-    remarks: 'Monthly vendor payment',
-    status: 'success',
-    createdAt: '18 Jun 2026, 10:30 AM',
-  },
-  {
-    payoutId: 'SP-20260617-002',
-    beneficiaryName: 'Mr. Bhushan Anilrao Barbuddhe',
-    bankName: 'State Bank of India',
-    maskedAccountNumber: 'XXXXXX9012',
-    ifscCode: 'SBIN0004567',
-    amount: 8500,
-    charges: 0,
-    totalDebit: 8500,
-    remarks: 'Service payment',
-    status: 'success',
-    createdAt: '17 Jun 2026, 04:15 PM',
-  },
-  {
-    payoutId: 'SP-20260616-003',
-    beneficiaryName: 'Apex Solutions Private Limited',
-    bankName: 'ICICI Bank',
-    maskedAccountNumber: 'XXXXXX7890',
-    ifscCode: 'ICIC0000789',
-    amount: 22000,
-    charges: 0,
-    totalDebit: 22000,
-    remarks: 'Invoice settlement',
-    status: 'pending',
-    createdAt: '16 Jun 2026, 02:40 PM',
-  },
-  {
-    payoutId: 'SP-20260615-004',
-    beneficiaryName: 'Durgesh Kumar Tiwari',
-    bankName: 'HDFC Bank',
-    maskedAccountNumber: 'XXXXXX5678',
-    ifscCode: 'HDFC0001234',
-    amount: 5000,
-    charges: 0,
-    totalDebit: 5000,
-    remarks: 'Reimbursement',
-    status: 'failed',
-    createdAt: '15 Jun 2026, 11:20 AM',
-  },
-]
+
 
 export const getSinglePayoutBeneficiaryById = (
   beneficiaryId: number,

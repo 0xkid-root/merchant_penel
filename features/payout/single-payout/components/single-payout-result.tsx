@@ -27,7 +27,7 @@ export default function SinglePayoutResult({
   onMakeAnotherPayout,
   onBackToHistory,
 }: SinglePayoutResultProps) {
-  const isFailed = result.status === 'failed'
+  const isFailed = result.status === 'FAILED'
 
   if (isFailed) {
     return (
@@ -58,13 +58,13 @@ export default function SinglePayoutResult({
     <div className="space-y-6">
       <PayoutSuccessCard
         title={
-          result.status === 'pending'
+          result.status === 'PENDING'
             ? 'Payout Is Being Processed'
             : 'Payout Submitted Successfully'
         }
         description={
           result.message ||
-          (result.status === 'pending'
+          (result.status === 'PENDING'
             ? 'Your payout request has been submitted and is currently being processed.'
             : 'Your payout request has been submitted. You can track its status from the Payout History.')
         }
