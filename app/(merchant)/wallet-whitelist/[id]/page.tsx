@@ -5,6 +5,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> | { i
   // Handle both Next.js 14 and 15 paradigms where params might be a Promise
   const resolvedParams = params instanceof Promise ? use(params) : params;
   const id = resolvedParams?.id ? Number(resolvedParams.id) : 0;
-  
+
   return <WalletWhitelistDetailsPage walletWhitelistId={id} />
 }

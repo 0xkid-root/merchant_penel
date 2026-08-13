@@ -5,42 +5,44 @@ import { useRouter } from 'next/navigation'
 
 import PayoutWalletBalance from '../../components/payout-wallet-balance'
 
-import {
-  SINGLE_PAYOUT_TRANSACTIONS,
-  SINGLE_PAYOUT_WALLET_BALANCE,
-} from '../data/single-payout-data'
+import { SINGLE_PAYOUT_WALLET_BALANCE } from '../data/single-payout-data'
+import { useSinglePayoutList } from '../hooks/useSinglePayoutList'
 
 import type { PayoutStatus } from '../types/single-payout.types'
 
 import SinglePayoutFilters from './single-payout-filters'
 import SinglePayoutHeader from './single-payout-header'
-import SinglePayoutPagination from './single-payout-pagination'
 import SinglePayoutTable from './single-payout-table'
+import Pagination from '@/components/common/pagination/Pagination'
+import { SinglePayoutTableSkeleton } from './single-payout-table-skeleton'
 
 export default function SinglePayoutList() {
   const router = useRouter()
 
   const [searchValue, setSearchValue] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | PayoutStatus>('all')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [page, setPage] = useState(0)
+
+  const { data: payoutListResponse, isLoading } = useSinglePayoutList({ page, size: 10 })
 
   const filteredTransactions = useMemo(() => {
+    if (!payoutListResponse?.content) return []
+    
     const query = searchValue.trim().toLowerCase()
 
-    return SINGLE_PAYOUT_TRANSACTIONS.filter((transaction) => {
+    return payoutListResponse.content.filter((transaction) => {
       const matchesSearch =
         query.length === 0 ||
-        transaction.payoutId.toLowerCase().includes(query) ||
-        transaction.beneficiaryName.toLowerCase().includes(query) ||
-        transaction.bankName.toLowerCase().includes(query) ||
-        transaction.maskedAccountNumber.toLowerCase().includes(query)
+        transaction.transactionId?.toLowerCase().includes(query) ||
+        transaction.beneficiaryName?.toLowerCase().includes(query) ||
+        transaction.accountNumber?.toLowerCase().includes(query)
 
       const matchesStatus =
-        statusFilter === 'all' || transaction.status === statusFilter
+        statusFilter === 'all' || transaction.payoutStatus?.toLowerCase() === statusFilter?.toLowerCase()
 
       return matchesSearch && matchesStatus
     })
-  }, [searchValue, statusFilter])
+  }, [searchValue, statusFilter, payoutListResponse?.content])
 
   const handleCreatePayout = () => {
     router.push('/payout/single/create')
@@ -52,12 +54,12 @@ export default function SinglePayoutList() {
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value)
-    setCurrentPage(1)
+    setPage(0)
   }
 
   const handleStatusChange = (value: 'all' | PayoutStatus) => {
     setStatusFilter(value)
-    setCurrentPage(1)
+    setPage(0)
   }
 
   return (
@@ -85,17 +87,25 @@ export default function SinglePayoutList() {
           onMoreFilters={() => console.log('Open more filters')}
         />
 
-        <SinglePayoutTable
-          transactions={filteredTransactions}
-          onViewDetails={handleViewDetails}
-        />
+        {isLoading ? (
+          <SinglePayoutTableSkeleton />
+        ) : (
+          <SinglePayoutTable
+            transactions={filteredTransactions}
+            onViewDetails={handleViewDetails}
+          />
+        )}
 
-        <SinglePayoutPagination
-          currentPage={currentPage}
-          totalItems={filteredTransactions.length}
-          totalPayouts={SINGLE_PAYOUT_TRANSACTIONS.length}
-          onPageChange={setCurrentPage}
-        />
+        {payoutListResponse && (
+          <Pagination
+            page={payoutListResponse.number}
+            totalPages={payoutListResponse.totalPages}
+            totalElements={payoutListResponse.totalElements}
+            pageSize={payoutListResponse.size}
+            onPageChange={setPage}
+            itemName="payouts"
+          />
+        )}
       </section>
     </div>
   )

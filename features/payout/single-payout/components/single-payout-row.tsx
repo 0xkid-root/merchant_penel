@@ -24,12 +24,12 @@ export default function SinglePayoutRow({
   return (
     <tr className="border-b border-slate-100 transition-colors hover:bg-slate-50">
       <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-indigo-600">
-        {transaction.payoutId}
+        {transaction.transactionId}
       </td>
 
       <td className="min-w-[190px] px-4 py-4">
         <div className="flex items-center gap-3">
-          <BeneficiaryAvatar name={transaction.beneficiaryName} />
+          <BeneficiaryAvatar name={transaction.beneficiaryName || ''} />
 
           <p className="text-sm font-medium text-slate-900">
             {transaction.beneficiaryName}
@@ -39,9 +39,8 @@ export default function SinglePayoutRow({
 
       <td className="min-w-[230px] px-4 py-4">
         <p className="whitespace-nowrap text-sm font-medium text-slate-900">
-          {transaction.bankName}{' '}
           <span className="text-slate-500">
-            •••• {transaction.maskedAccountNumber.slice(-4)}
+            A/c: {transaction.accountNumber ? `•••• ${transaction.accountNumber.slice(-4)}` : 'N/A'}
           </span>
         </p>
 
@@ -59,15 +58,15 @@ export default function SinglePayoutRow({
       </td>
 
       <td className="whitespace-nowrap px-4 py-4">
-        <PayoutStatusBadge status={transaction.status} />
+        <PayoutStatusBadge status={transaction.payoutStatus?.toLowerCase() as any} />
       </td>
 
       <td className="px-4 py-4 text-center">
         <button
           type="button"
-          onClick={() => onViewDetails(transaction.payoutId)}
+          onClick={() => onViewDetails(transaction.transactionId)}
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
-          aria-label={`View payout ${transaction.payoutId}`}
+          aria-label={`View payout ${transaction.transactionId}`}
         >
           <MoreVertical className="h-4 w-4" />
         </button>
