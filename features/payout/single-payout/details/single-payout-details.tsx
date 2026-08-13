@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
-import { toast } from 'sonner'
 import PageHeader from '@/components/layout/page-header'
 import PayoutStatusBadge from '../components/payout-status-badge'
 import { formatIndianCurrency, formatPayoutDateTime } from '../data/single-payout-data'
@@ -34,10 +33,9 @@ function CopyableDetailItem({ label, value }: { label: string; value: string | n
     try {
       await navigator.clipboard.writeText(value)
       setCopied(true)
-      toast.success('Copied to clipboard')
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      toast.error('Unable to copy')
+      // no toast
     }
   }
 
