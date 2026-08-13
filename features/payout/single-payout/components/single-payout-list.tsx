@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import PayoutWalletBalance from '../../components/payout-wallet-balance'
@@ -11,7 +11,9 @@ import { useSinglePayoutList } from '../hooks/useSinglePayoutList'
 import type { PayoutStatus } from '../types/single-payout.types'
 
 import SinglePayoutFilters from './single-payout-filters'
-import SinglePayoutHeader from './single-payout-header'
+import { Plus } from 'lucide-react'
+import { PrimaryButton } from '@/components/buttons/primary-button'
+import PageHeader from '@/components/layout/page-header'
 import SinglePayoutTable from './single-payout-table'
 import Pagination from '@/components/common/pagination/Pagination'
 import { SinglePayoutTableSkeleton } from './single-payout-table-skeleton'
@@ -23,26 +25,14 @@ export default function SinglePayoutList() {
   const [statusFilter, setStatusFilter] = useState<'all' | PayoutStatus>('all')
   const [page, setPage] = useState(0)
 
-  const { data: payoutListResponse, isLoading } = useSinglePayoutList({ page, size: 10 })
+  const apiStatus = statusFilter === 'all' ? undefined : statusFilter
 
-  const filteredTransactions = useMemo(() => {
-    if (!payoutListResponse?.content) return []
-    
-    const query = searchValue.trim().toLowerCase()
-
-    return payoutListResponse.content.filter((transaction) => {
-      const matchesSearch =
-        query.length === 0 ||
-        transaction.transactionId?.toLowerCase().includes(query) ||
-        transaction.beneficiaryName?.toLowerCase().includes(query) ||
-        transaction.accountNumber?.toLowerCase().includes(query)
-
-      const matchesStatus =
-        statusFilter === 'all' || transaction.payoutStatus?.toLowerCase() === statusFilter?.toLowerCase()
-
-      return matchesSearch && matchesStatus
-    })
-  }, [searchValue, statusFilter, payoutListResponse?.content])
+  const { data: payoutListResponse, isLoading } = useSinglePayoutList({ 
+    page, 
+    size: 10,
+    search: searchValue,
+    status: apiStatus
+  })
 
   const handleCreatePayout = () => {
     router.push('/payout/single/create')
@@ -64,7 +54,19 @@ export default function SinglePayoutList() {
 
   return (
     <div className="min-w-0 space-y-6 p-4 sm:p-6 lg:p-8">
-      <SinglePayoutHeader onCreatePayout={handleCreatePayout} />
+      <PageHeader
+        title="Single Payout"
+        subtitle="Send money to your saved beneficiaries securely."
+        actions={
+          <PrimaryButton
+            onClick={handleCreatePayout}
+            className="h-11 w-full justify-center sm:w-auto"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Single Payout
+          </PrimaryButton>
+        }
+      />
 
       <PayoutWalletBalance
         balance={SINGLE_PAYOUT_WALLET_BALANCE}
@@ -72,7 +74,7 @@ export default function SinglePayoutList() {
         onAddFunds={() => router.push('/add-funds')}
       />
 
-      <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-200 px-4 py-5 sm:px-6">
           <h2 className="text-lg font-semibold text-slate-900">
             Recent Single Payouts
@@ -91,7 +93,7 @@ export default function SinglePayoutList() {
           <SinglePayoutTableSkeleton />
         ) : (
           <SinglePayoutTable
-            transactions={filteredTransactions}
+            transactions={payoutListResponse?.content ?? []}
             onViewDetails={handleViewDetails}
           />
         )}

@@ -12,7 +12,9 @@ export const singlePayoutApi = {
      */
     getSinglePayouts: async (
         page = 0,
-        size = 10
+        size = 10,
+        search?: string,
+        status?: string
     ): Promise<SinglePayoutListResponse> => {
 
         const response =
@@ -22,6 +24,8 @@ export const singlePayoutApi = {
                     params: {
                         page,
                         size,
+                        ...(search?.trim() && { search: search.trim() }),
+                        ...(status && { status }),
                     },
                 }
             )
