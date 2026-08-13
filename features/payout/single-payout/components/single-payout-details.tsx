@@ -11,20 +11,7 @@ interface SinglePayoutDetailsProps {
   id: number
 }
 
-function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-200 px-6 py-5">
-        <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-      </div>
-      <div className="p-6">
-        <dl className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
-          {children}
-        </dl>
-      </div>
-    </section>
-  )
-}
+
 
 function DetailItem({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -49,8 +36,7 @@ export default function SinglePayoutDetails({ id }: SinglePayoutDetailsProps) {
             <Skeleton className="mt-2 h-5 w-64 sm:w-80" />
           </div>
         </div>
-        <Skeleton className="h-48 w-full rounded-2xl" />
-        <Skeleton className="h-48 w-full rounded-2xl" />
+        <Skeleton className="h-[600px] w-full rounded-2xl" />
       </div>
     )
   }
@@ -85,31 +71,47 @@ export default function SinglePayoutDetails({ id }: SinglePayoutDetailsProps) {
         backLabel="Back to Single Payouts"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-center items-center text-center">
-          <p className="text-sm font-medium text-slate-500 mb-2">Total Amount</p>
-          <p className="text-3xl font-bold text-slate-900">{formatIndianCurrency(data.amount)}</p>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-center items-center text-center">
-          <p className="text-sm font-medium text-slate-500 mb-2">Payout Status</p>
-          <PayoutStatusBadge status={data.payoutStatus} />
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="p-6 sm:p-8">
+          {/* Top Summary Area */}
+          <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+            <DetailItem label="Transaction ID" value={data.transactionId} />
+            <div className="flex flex-col gap-1">
+              <dt className="text-sm font-medium text-slate-500">Payout Status</dt>
+              <dd className="text-sm font-semibold text-slate-900 break-all">
+                <PayoutStatusBadge status={data.payoutStatus} />
+              </dd>
+            </div>
+            <DetailItem label="Amount" value={formatIndianCurrency(data.amount)} />
+            <DetailItem label="Payment Mode" value={data.paymentMode} />
+          </div>
+
+          <hr className="my-8 border-slate-200" />
+
+          {/* Transaction Details */}
+          <div>
+            <h3 className="mb-6 text-base font-semibold text-slate-900">Transaction Details</h3>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+              <DetailItem label="UTR Number" value={data.utrNumber} />
+              <DetailItem label="Payout Type" value={data.payoutType} />
+              <DetailItem label="Created At" value={formatPayoutDateTime(data.createdAt)} />
+            </div>
+          </div>
+
+          <hr className="my-8 border-slate-200" />
+
+          {/* Beneficiary / Bank Details */}
+          <div>
+            <h3 className="mb-6 text-base font-semibold text-slate-900">Beneficiary / Bank Details</h3>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+              <DetailItem label="Beneficiary Name" value={data.beneficiaryName} />
+              <DetailItem label="Merchant Name" value={data.merchantName} />
+              <DetailItem label="Account Number" value={data.accountNumber} />
+              <DetailItem label="IFSC Code" value={data.ifscCode} />
+            </div>
+          </div>
         </div>
       </div>
-
-      <SectionCard title="Transaction Details">
-        <DetailItem label="Transaction ID" value={data.transactionId} />
-        <DetailItem label="UTR Number" value={data.utrNumber} />
-        <DetailItem label="Payout Type" value={data.payoutType} />
-        <DetailItem label="Payment Mode" value={data.paymentMode} />
-        <DetailItem label="Created At" value={formatPayoutDateTime(data.createdAt)} />
-      </SectionCard>
-
-      <SectionCard title="Beneficiary / Bank Details">
-        <DetailItem label="Beneficiary Name" value={data.beneficiaryName} />
-        <DetailItem label="Merchant Name" value={data.merchantName} />
-        <DetailItem label="Account Number" value={data.accountNumber} />
-        <DetailItem label="IFSC Code" value={data.ifscCode} />
-      </SectionCard>
     </div>
   )
 }
