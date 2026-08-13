@@ -1,4 +1,4 @@
-import SinglePayoutDetails from '@/features/payout/single-payout/components/single-payout-details'
+import SinglePayoutDetails from '@/features/payout/single-payout/details/single-payout-details'
 
 interface PageProps {
   params: Promise<{
