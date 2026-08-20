@@ -23,6 +23,7 @@ export default function LoginForm() {
   const router = useRouter()
   const { mutateAsync: login, isPending } = useLogin()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const user = useAuthStore((state) => state.user)
 
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -43,9 +44,13 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/dashboard')
+      if (user?.forcePasswordChange) {
+        router.replace('/change-password')
+      } else {
+        router.replace('/dashboard')
+      }
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, user, router])
 
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberEmail')

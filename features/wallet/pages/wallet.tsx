@@ -30,22 +30,24 @@ export default function WalletPage() {
 
   if (isError || !data) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center p-6">
-        <div className="flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-            <AlertCircle className="h-6 w-6 text-red-600" />
+      <div className="flex min-h-[450px] w-full items-center justify-center p-6">
+        <div className="group flex w-full max-w-md flex-col items-center gap-5 rounded-3xl border border-slate-100 bg-white p-10 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 transition-transform group-hover:scale-105">
+            <AlertCircle className="h-8 w-8 text-red-500" strokeWidth={1.5} />
           </div>
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">Unable to load wallet dashboard</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              Please try again.
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold tracking-tight text-slate-900">
+              Dashboard Unavailable
+            </h3>
+            <p className="mx-auto max-w-[280px] text-sm leading-relaxed text-slate-500">
+              We encountered a temporary issue while fetching your wallet details.
             </p>
           </div>
           <button
             onClick={() => refetch()}
-            className="mt-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+            className="mt-4 rounded-xl bg-slate-900 px-8 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md active:scale-[0.98]"
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>
