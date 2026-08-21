@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
 
   WALLET: {
     GET_DASHBOARD: '/api/v1/wallet/dashboard',
+    GET_BALANCE: '/api/v1/wallet/balance',
   },
 
   // Existing (keep it because Wallet module uses it)

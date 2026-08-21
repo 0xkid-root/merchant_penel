@@ -12,4 +12,12 @@ export const walletApi = {
 
         return response.data.data;
     },
+
+    getWalletBalance: async (): Promise<number> => {
+        const response = await apiClient.get<{ data: number }>(
+            API_ENDPOINTS.WALLET.GET_BALANCE
+        );
+
+        return response.data.data;
+    }
 };
