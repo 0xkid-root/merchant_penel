@@ -97,3 +97,28 @@ export interface SinglePayoutState {
   isLoading: boolean
   result: SinglePayoutResult | null
 }
+
+export interface SinglePayoutSendOtpRequest {
+  beneficiaryId: number
+  amount: number
+  paymentMode: string
+  remarks: string
+  email: string
+}
+
+export interface SinglePayoutSendOtpResponse {
+  success: boolean
+  message: string
+  data: {
+    otpSent: boolean
+    remainingSeconds: number
+  }
+}
+
+export interface ProcessSinglePayoutResponse {
+  id: number
+  message: string
+  status: string
+  transactionId: string
+  utrNumber: string
+}

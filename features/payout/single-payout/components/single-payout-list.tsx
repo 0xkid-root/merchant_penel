@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import PayoutWalletBalance from '../../components/payout-wallet-balance'
 
-import { SINGLE_PAYOUT_WALLET_BALANCE } from '../data/single-payout-data'
+import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 import { useSinglePayoutList } from '../hooks/useSinglePayoutList'
 
 import type { PayoutStatus } from '../types/single-payout.types'
@@ -20,6 +20,8 @@ import { SinglePayoutTableSkeleton } from './single-payout-table-skeleton'
 
 export default function SinglePayoutList() {
   const router = useRouter()
+  
+  const { data: balance = 0 } = useWalletBalance()
 
   const [searchValue, setSearchValue] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | PayoutStatus>('all')
@@ -69,7 +71,7 @@ export default function SinglePayoutList() {
       />
 
       <PayoutWalletBalance
-        balance={SINGLE_PAYOUT_WALLET_BALANCE}
+        balance={balance}
         className="w-full"
         onAddFunds={() => router.push('/add-funds')}
       />

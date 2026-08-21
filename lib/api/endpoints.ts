@@ -15,12 +15,17 @@ export const API_ENDPOINTS = {
 
   WALLET: {
     GET_DASHBOARD: '/api/v1/wallet/dashboard',
+    GET_BALANCE: '/api/v1/wallet/balance',
   },
 
   // Existing (keep it because Wallet module uses it)
   WALLET_LEDGER: {
     GET_LEDGER_DETAILS: (ledgerId: number) =>
       `/api/v1/wallet-ledger/${ledgerId}`,
+  },
+
+  OTP: {
+    VERIFY: '/otp/verify',
   },
 
   // New (Wallet Transactions feature)
@@ -72,6 +77,7 @@ export const API_ENDPOINTS = {
   PAYOUTS: {
     SINGLE: {
       LIST: '/api/v1/payouts/single',
+      
       GET_BY_ID: (id: number) =>
         `/api/v1/payouts/single/${id}`,
       SEND_OTP: '/api/v1/payouts/send-otp',

@@ -8,8 +8,9 @@ import {
     SINGLE_PAYOUT_CHARGES,
     SINGLE_PAYOUT_MAX_AMOUNT,
     SINGLE_PAYOUT_MIN_AMOUNT,
-    SINGLE_PAYOUT_WALLET_BALANCE,
 } from '../data/single-payout-data'
+
+import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 
 import type {
     SinglePayoutFormData,
@@ -37,6 +38,8 @@ const INITIAL_STATE: SinglePayoutState = {
 export function useSinglePayout() {
     const [state, setState] = useState<SinglePayoutState>(INITIAL_STATE)
     const [error, setError] = useState<string | null>(null)
+
+    const { data: walletBalance = 0 } = useWalletBalance()
 
     const amountNumber = Number(state.formData.amount || 0)
 
@@ -103,7 +106,7 @@ export function useSinglePayout() {
             return false
         }
 
-        if (totalDebit > SINGLE_PAYOUT_WALLET_BALANCE) {
+        if (totalDebit > walletBalance) {
             setError('Insufficient wallet balance for this payout.')
             return false
         }
@@ -242,7 +245,7 @@ export function useSinglePayout() {
         state,
         error,
 
-        walletBalance: SINGLE_PAYOUT_WALLET_BALANCE,
+        walletBalance,
         minAmount: SINGLE_PAYOUT_MIN_AMOUNT,
         maxAmount: SINGLE_PAYOUT_MAX_AMOUNT,
         charges: SINGLE_PAYOUT_CHARGES,
