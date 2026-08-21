@@ -28,6 +28,7 @@ export default function SinglePayoutCreatePage() {
     goToReview,
     goBackToForm,
     sendOtp,
+    resendOtp,
     goBackToReview,
     verifyOtpAndCreatePayout,
     resetPayout,
@@ -69,6 +70,7 @@ export default function SinglePayoutCreatePage() {
         <SinglePayoutReview
           beneficiary={state.selectedBeneficiary}
           amount={amountNumber}
+          paymentMode={state.formData.paymentMode}
           remarks={state.formData.remarks}
           charges={charges}
           totalDebit={totalDebit}
@@ -82,8 +84,10 @@ export default function SinglePayoutCreatePage() {
     if (state.currentStep === 'otp') {
       return (
         <SinglePayoutOtp
+          remainingSeconds={state.remainingSeconds}
           onBack={goBackToReview}
           onVerify={verifyOtpAndCreatePayout}
+          onResend={resendOtp}
         />
       )
     }

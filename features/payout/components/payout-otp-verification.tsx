@@ -22,7 +22,8 @@ interface PayoutOtpVerificationProps {
   verificationNote?: string
   onBack: () => void
   onVerify: (otp: string) => void | Promise<void>
-  onResend?: () => void | Promise<void>
+  onResend?: () => void | Promise<number | void>
+  initialSecondsLeft?: number
 }
 
 const OTP_LENGTH = 6
@@ -37,9 +38,10 @@ export default function PayoutOtpVerification({
   onBack,
   onVerify,
   onResend,
+  initialSecondsLeft = RESEND_SECONDS,
 }: PayoutOtpVerificationProps) {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''))
-  const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS)
+  const [secondsLeft, setSecondsLeft] = useState(initialSecondsLeft)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
@@ -118,10 +120,10 @@ export default function PayoutOtpVerification({
     if (secondsLeft > 0) return
 
     try {
-      await onResend?.()
+      const newSecondsLeft = await onResend?.()
 
       setOtp(Array(OTP_LENGTH).fill(''))
-      setSecondsLeft(RESEND_SECONDS)
+      setSecondsLeft(typeof newSecondsLeft === 'number' ? newSecondsLeft : RESEND_SECONDS)
       inputRefs.current[0]?.focus()
 
       toast.success('A new OTP has been sent')

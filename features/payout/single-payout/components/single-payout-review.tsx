@@ -15,13 +15,14 @@ import {
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 
-import { formatIndianCurrency } from '../data/single-payout-data'
+import { formatIndianCurrency } from '../utils/single-payout-utils'
 
-import type { SinglePayoutBeneficiary } from '../types/single-payout.types'
+import type { BeneficiaryResponse } from '@/features/beneficiary/types/beneficiary.types'
 
 interface SinglePayoutReviewProps {
-  beneficiary: SinglePayoutBeneficiary
+  beneficiary: BeneficiaryResponse
   amount: number
+  paymentMode: string
   remarks: string
   charges: number
   totalDebit: number
@@ -33,6 +34,7 @@ interface SinglePayoutReviewProps {
 export default function SinglePayoutReview({
   beneficiary,
   amount,
+  paymentMode,
   remarks,
   charges,
   totalDebit,
@@ -100,7 +102,7 @@ export default function SinglePayoutReview({
                   </p>
 
                   <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {beneficiary.accountHolderName}
+                    {beneficiary.verifiedAccountName || beneficiary.beneficiaryName}
                   </p>
                 </div>
 
@@ -131,7 +133,9 @@ export default function SinglePayoutReview({
                   </p>
 
                   <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {beneficiary.maskedAccountNumber}
+                    {beneficiary.accountNumber
+                      ? `XXXXXX${beneficiary.accountNumber.slice(-4)}`
+                      : 'N/A'}
                   </p>
                 </div>
 
@@ -194,6 +198,22 @@ export default function SinglePayoutReview({
 
                 <p className="text-sm font-semibold text-slate-900">
                   {formatIndianCurrency(charges)}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
+                <div>
+                  <p className="text-sm font-medium text-slate-600">
+                    Payment Mode
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    Transfer network
+                  </p>
+                </div>
+
+                <p className="text-sm font-semibold text-slate-900">
+                  {paymentMode}
                 </p>
               </div>
 

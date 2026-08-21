@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import PageHeader from '@/components/layout/page-header'
 import PayoutStatusBadge from '../components/payout-status-badge'
-import { formatIndianCurrency, formatPayoutDateTime } from '../data/single-payout-data'
+import { formatIndianCurrency, formatPayoutDateTime } from '../utils/single-payout-utils'
 import { useSinglePayoutDetails } from '../hooks/use-single-payout-details'
 import { SinglePayoutDetailsSkeleton } from './single-payout-details-skeleton'
 
