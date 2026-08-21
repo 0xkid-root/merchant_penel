@@ -23,6 +23,10 @@ export const API_ENDPOINTS = {
       `/api/v1/wallet-ledger/${ledgerId}`,
   },
 
+  OTP: {
+    VERIFY: '/otp/verify',
+  },
+
   // New (Wallet Transactions feature)
   WALLET_TRANSACTIONS: {
     GET_TRANSACTIONS: '/api/v1/wallet-ledger',
@@ -72,6 +76,7 @@ export const API_ENDPOINTS = {
   PAYOUTS: {
     SINGLE: {
       LIST: '/api/v1/payouts/single',
+      
       GET_BY_ID: (id: number) =>
         `/api/v1/payouts/single/${id}`,
       SEND_OTP: '/api/v1/payouts/send-otp',
