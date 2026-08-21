@@ -1,16 +1,19 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { singlePayoutApi } from '../api/singlePayoutApi'
+import { otpApi } from '../../api/otpApi'
 
 import {
     calculateSinglePayoutTotalDebit,
-    getSinglePayoutBeneficiaryById,
     SINGLE_PAYOUT_CHARGES,
     SINGLE_PAYOUT_MAX_AMOUNT,
     SINGLE_PAYOUT_MIN_AMOUNT,
-} from '../data/single-payout-data'
+} from '../utils/single-payout-utils'
 
 import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
+import { useAuthStore } from '@/lib/store/authStore'
 
 import type {
     SinglePayoutFormData,
@@ -23,6 +26,7 @@ import { StringifyOptions } from 'querystring'
 const INITIAL_FORM_DATA: SinglePayoutFormData = {
     beneficiaryId: null,
     amount: '',
+    paymentMode: 'IMPS',
     remarks: '',
 }
 
@@ -33,9 +37,12 @@ const INITIAL_STATE: SinglePayoutState = {
     otp: '',
     isLoading: false,
     result: null,
+    remainingSeconds: 0,
 }
 
 export function useSinglePayout() {
+    const queryClient = useQueryClient()
+    const user = useAuthStore((s) => s.user)
     const [state, setState] = useState<SinglePayoutState>(INITIAL_STATE)
     const [error, setError] = useState<string | null>(null)
 
@@ -62,17 +69,15 @@ export function useSinglePayout() {
         }))
     }
 
-    const selectBeneficiary = (beneficiaryId: number) => {
-        const beneficiary = getSinglePayoutBeneficiaryById(beneficiaryId)
-
+    const selectBeneficiary = (beneficiary: any | null) => {
         setError(null)
 
         setState((previous) => ({
             ...previous,
-            selectedBeneficiary: beneficiary ?? null,
+            selectedBeneficiary: beneficiary,
             formData: {
                 ...previous.formData,
-                beneficiaryId,
+                beneficiaryId: beneficiary?.id ?? null,
             },
         }))
     }
@@ -137,29 +142,68 @@ export function useSinglePayout() {
     }
 
     const sendOtp = async () => {
-        setError(null)
+        if (!state.formData.beneficiaryId) return
 
+        setError(null)
         setState((previous) => ({
             ...previous,
             isLoading: true,
         }))
 
         try {
-            // TODO: Replace this timeout with your backend send OTP API.
-            await new Promise((resolve) => setTimeout(resolve, 800))
+            const response = await singlePayoutApi.sendOtp({
+                beneficiaryId: state.formData.beneficiaryId,
+                amount: amountNumber,
+                paymentMode: state.formData.paymentMode || 'IMPS',
+                remarks: state.formData.remarks || '',
+                email: user?.email || '',
+            })
 
+            if (response.success) {
+                setState((previous) => ({
+                    ...previous,
+                    currentStep: 'otp',
+                    isLoading: false,
+                    remainingSeconds: response.data.remainingSeconds || 180,
+                }))
+            } else {
+                throw new Error(response.message || 'Failed to send OTP')
+            }
+        } catch (err: any) {
             setState((previous) => ({
                 ...previous,
-                currentStep: 'otp',
                 isLoading: false,
             }))
-        } catch {
-            setState((previous) => ({
-                ...previous,
-                isLoading: false,
-            }))
+            setError(err.message || 'Unable to send OTP. Please try again.')
+        }
+    }
 
-            setError('Unable to send OTP. Please try again.')
+    const resendOtp = async (): Promise<number> => {
+        if (!state.formData.beneficiaryId) throw new Error('No beneficiary selected')
+
+        setError(null)
+        try {
+            const response = await singlePayoutApi.sendOtp({
+                beneficiaryId: state.formData.beneficiaryId,
+                amount: amountNumber,
+                paymentMode: state.formData.paymentMode || 'IMPS',
+                remarks: state.formData.remarks || '',
+                email: user?.email || '',
+            })
+
+            if (response.success) {
+                const newRemaining = response.data.remainingSeconds || 180
+                setState((previous) => ({
+                    ...previous,
+                    remainingSeconds: newRemaining,
+                }))
+                return newRemaining
+            } else {
+                throw new Error(response.message || 'Failed to resend OTP')
+            }
+        } catch (err: any) {
+            setError(err.message || 'Unable to resend OTP. Please try again.')
+            throw err
         }
     }
 
@@ -183,48 +227,84 @@ export function useSinglePayout() {
     }
 
     const verifyOtpAndCreatePayout = async (otp: string) => {
+        if (!state.formData.beneficiaryId) {
+            throw new Error('No beneficiary selected')
+        }
+
         if (otp.length !== 6) {
-            setError('Please enter the 6-digit OTP.')
-            return
+            throw new Error('Please enter the 6-digit OTP.')
         }
 
         setError(null)
-
         setState((previous) => ({
             ...previous,
             isLoading: true,
         }))
 
         try {
-            // Later: send `otp` in your backend API request.
-            await new Promise((resolve) => setTimeout(resolve, 1200))
+            // 1. Verify OTP
+            const otpResponse = await otpApi.verifyOtp({
+                email: user?.email || '',
+                otp,
+                moduleName: 'PAYOUT',
+            })
 
-            const result: SinglePayoutResult = {
-                status: 'SUCCESS',
-                payoutId: `SP-${Date.now()}`,
-                message: 'Your payout has been processed successfully.',
+            if (!otpResponse.success) {
+                throw new Error(otpResponse.message || 'Invalid OTP')
             }
 
-            setState((previous) => ({
-                ...previous,
-                currentStep: 'result',
-                isLoading: false,
-                result,
-            }))
-        } catch {
-            const result: SinglePayoutResult = {
-                status: 'FAILED',
-                payoutId: '',
-                message:
-                    'We could not process this payout. Please check the details and try again.',
-            }
+            // 2. Process Payout (Since OTP succeeded)
+            try {
+                const payoutResponse = await singlePayoutApi.processSinglePayout({
+                    beneficiaryId: state.formData.beneficiaryId,
+                    amount: amountNumber,
+                    paymentMode: state.formData.paymentMode || 'IMPS',
+                    remarks: state.formData.remarks || '',
+                })
 
+                if (payoutResponse.status === 'SUCCESS' || payoutResponse.status === 'PENDING') {
+                    const result: SinglePayoutResult = {
+                        status: (payoutResponse.status as any) || 'SUCCESS',
+                        payoutId: payoutResponse.transactionId || `SP-${Date.now()}`,
+                        message: payoutResponse.message || 'Your payout has been processed successfully.',
+                    }
+
+                    setState((previous) => ({
+                        ...previous,
+                        currentStep: 'result',
+                        isLoading: false,
+                        result,
+                    }))
+
+                    // Invalidate queries to refresh wallet balance and recent payouts list in the UI
+                    queryClient.invalidateQueries({ queryKey: ['wallet-balance'] })
+                    queryClient.invalidateQueries({ queryKey: ['single-payouts'] })
+                } else {
+                    throw new Error(payoutResponse.message || 'Payout processing failed')
+                }
+            } catch (payoutErr: any) {
+                // OTP was correct, but payout failed -> Go to result screen with FAILED status
+                const result: SinglePayoutResult = {
+                    status: 'FAILED',
+                    payoutId: '',
+                    message: payoutErr.message || 'We could not process this payout. Please check the details and try again.',
+                    failureReason: payoutErr.message,
+                }
+
+                setState((previous) => ({
+                    ...previous,
+                    currentStep: 'result',
+                    isLoading: false,
+                    result,
+                }))
+            }
+        } catch (otpErr: any) {
+            // OTP verification failed -> Throw to let UI show toast and keep user on OTP screen
             setState((previous) => ({
                 ...previous,
-                currentStep: 'result',
                 isLoading: false,
-                result,
             }))
+            throw otpErr
         }
     }
     const resetPayout = () => {
@@ -260,6 +340,7 @@ export function useSinglePayout() {
         goBackToForm,
 
         sendOtp,
+        resendOtp,
         goBackToReview,
         verifyOtpAndCreatePayout,
 

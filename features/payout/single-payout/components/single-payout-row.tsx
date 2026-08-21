@@ -9,7 +9,7 @@ import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 import {
   formatIndianCurrency,
   formatPayoutDateTime,
-} from '../data/single-payout-data'
+} from '../utils/single-payout-utils'
 
 import type { SinglePayoutTransaction } from '../types/single-payout.types'
 

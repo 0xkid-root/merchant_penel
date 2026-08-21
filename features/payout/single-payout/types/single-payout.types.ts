@@ -50,36 +50,23 @@ export interface SinglePayoutListResponse {
 
 
 
-//old tyhpes is pasting here 
+import type { BeneficiaryResponse } from '@/features/beneficiary/types/beneficiary.types'
 
 export type SinglePayoutStep = 'form' | 'review' | 'otp' | 'result'
-
-
-
-export interface SinglePayoutBeneficiary {
-  id: number
-  beneficiaryName: string
-  accountHolderName: string
-  bankName: string
-  accountNumber: string
-  maskedAccountNumber: string
-  ifscCode: string
-  accountType: string
-}
 
 export interface SinglePayoutFormData {
   beneficiaryId: number | null
   amount: string
+  paymentMode: 'IMPS' | 'NEFT' | 'RTGS' | ''
   remarks: string
 }
 
 export interface SinglePayoutRequest {
   beneficiaryId: number
   amount: number
+  paymentMode: string
   remarks: string
 }
-
-
 
 export interface SinglePayoutResult {
   status: PayoutStatus
@@ -91,11 +78,12 @@ export interface SinglePayoutResult {
 
 export interface SinglePayoutState {
   currentStep: SinglePayoutStep
-  selectedBeneficiary: SinglePayoutBeneficiary | null
+  selectedBeneficiary: BeneficiaryResponse | null
   formData: SinglePayoutFormData
   otp: string
   isLoading: boolean
   result: SinglePayoutResult | null
+  remainingSeconds: number
 }
 
 export interface SinglePayoutSendOtpRequest {

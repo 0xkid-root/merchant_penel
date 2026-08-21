@@ -2,14 +2,12 @@
 
 import { FileText } from 'lucide-react'
 import PayoutSuccessCard from '../../components/payout-success-card'
-import type {
-  SinglePayoutBeneficiary,
-  SinglePayoutResult,
-} from '../types/single-payout.types'
+import type { BeneficiaryResponse } from '@/features/beneficiary/types/beneficiary.types'
+import type { SinglePayoutResult } from '../types/single-payout.types'
 
 interface SinglePayoutResultProps {
   result: SinglePayoutResult
-  beneficiary: SinglePayoutBeneficiary
+  beneficiary: BeneficiaryResponse
   amount: number
   remarks: string
   charges: number
