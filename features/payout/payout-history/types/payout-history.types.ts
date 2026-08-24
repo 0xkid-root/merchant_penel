@@ -1,3 +1,6 @@
+export type PayoutStatus = 'SUCCESS' | 'PENDING' | 'FAILED' | 'PROCESSING' | 'REJECTED' | 'success' | 'pending' | 'failed'
+export type PayoutType = 'SINGLE' | 'DIRECT' | 'BULK' | 'single' | 'direct' | 'bulk'
+
 export interface PayoutHistoryTransaction {
   id: number
   transactionId: string

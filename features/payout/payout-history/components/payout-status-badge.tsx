@@ -7,7 +7,7 @@ interface PayoutStatusBadgeProps {
 }
 
 const STATUS_CONFIG: Record<
-    PayoutStatus,
+    string,
     {
         label: string
         className: string
@@ -25,12 +25,21 @@ const STATUS_CONFIG: Record<
         label: 'Failed',
         className: 'bg-red-50 text-red-700 ring-red-100',
     },
+    processing: {
+        label: 'Processing',
+        className: 'bg-indigo-50 text-indigo-700 ring-indigo-100',
+    },
+    rejected: {
+        label: 'Rejected',
+        className: 'bg-rose-50 text-rose-700 ring-rose-100',
+    },
 }
 
 export default function PayoutStatusBadge({
     status,
 }: PayoutStatusBadgeProps) {
-    const config = STATUS_CONFIG[status]
+    const normalizedStatus = status?.toLowerCase() || 'pending'
+    const config = STATUS_CONFIG[normalizedStatus] || STATUS_CONFIG.pending
 
     return (
         <span

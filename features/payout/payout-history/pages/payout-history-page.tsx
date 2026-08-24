@@ -1,76 +1,59 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useState } from 'react'
 import {
   ChevronDown,
   Filter,
-  History,
   Search,
   SlidersHorizontal,
   X,
-
 } from 'lucide-react'
 import PageHeader from '@/components/layout/page-header'
+import Pagination from '@/components/common/pagination/Pagination'
 
 import PayoutHistoryTable from '../components/payout-history-table'
+import { usePayoutHistoryList } from '../hooks/usePayoutHistoryList'
+import type { PayoutHistoryTransaction } from '../types/payout-history.types'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
-import { usePayoutHistory } from '../hooks/use-payout-history'
 
-import type {
-  PayoutStatus,
-  PayoutType,
-} from '../types/payout-history.types'
-
-const PAYOUT_TYPE_OPTIONS: Array<{
-  value: 'all' | PayoutType
-  label: string
-}> = [
-    { value: 'all', label: 'All Types' },
-    { value: 'single', label: 'Single Payout' },
-    { value: 'direct', label: 'Direct Payout' },
-    { value: 'bulk', label: 'Bulk Payout' },
-  ]
-
-const PAYOUT_STATUS_OPTIONS: Array<{
-  value: 'all' | PayoutStatus
-  label: string
-}> = [
-    { value: 'all', label: 'All Status' },
-    { value: 'success', label: 'Success' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'failed', label: 'Failed' },
-  ]
 
 export default function PayoutHistoryPage() {
-  const {
-    payouts,
-    search,
-    statusFilter,
-    typeFilter,
-    selectedPayout,
-    setSearch,
-    setStatusFilter,
-    setTypeFilter,
-    setSelectedPayout,
-  } = usePayoutHistory()
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('ALL')
+  const [typeFilter, setTypeFilter] = useState('ALL')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  const [page, setPage] = useState(0)
+  const [size, setSize] = useState(10)
+
+  const [selectedPayout, setSelectedPayout] = useState<PayoutHistoryTransaction | null>(null)
+
+  const { data: historyData, isLoading, isError } = usePayoutHistoryList({
+    page,
+    size,
+    search: search.trim() !== '' ? search.trim() : undefined,
+    status: statusFilter !== 'ALL' ? statusFilter : undefined,
+    payoutType: typeFilter !== 'ALL' ? typeFilter : undefined,
+    fromDate: fromDate || undefined,
+    toDate: toDate || undefined,
+  })
+
+  const transactions = historyData?.content || []
 
   const hasActiveFilters =
     search.trim() !== '' ||
-    statusFilter !== 'all' ||
-    typeFilter !== 'all'
-
-  const summaryText = useMemo(() => {
-    if (payouts.length === 1) {
-      return 'Showing 1 payout'
-    }
-
-    return `Showing ${payouts.length} payouts`
-  }, [payouts.length])
+    statusFilter !== 'ALL' ||
+    typeFilter !== 'ALL' ||
+    fromDate !== '' ||
+    toDate !== ''
 
   const clearFilters = () => {
     setSearch('')
-    setStatusFilter('all')
-    setTypeFilter('all')
+    setStatusFilter('ALL')
+    setTypeFilter('ALL')
+    setFromDate('')
+    setToDate('')
   }
 
   return (
@@ -96,7 +79,8 @@ export default function PayoutHistoryPage() {
               </div>
 
               <p className="text-sm font-medium text-slate-500">
-                {summaryText}
+                Showing {historyData?.totalElements || 0} transaction
+                {historyData?.totalElements !== 1 ? 's' : ''}
               </p>
             </div>
           </div>
@@ -132,17 +116,14 @@ export default function PayoutHistoryPage() {
                   <select
                     value={typeFilter}
                     onChange={(event) =>
-                      setTypeFilter(
-                        event.target.value as 'all' | PayoutType,
-                      )
+                      setTypeFilter(event.target.value)
                     }
                     className="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white py-0 pl-10 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-44"
                   >
-                    {PAYOUT_TYPE_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                    <option value="ALL">All Types</option>
+                    <option value="SINGLE">Single Payout</option>
+                    <option value="DIRECT">Direct Payout</option>
+                    <option value="BULK">Bulk Payout</option>
                   </select>
 
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -154,17 +135,16 @@ export default function PayoutHistoryPage() {
                   <select
                     value={statusFilter}
                     onChange={(event) =>
-                      setStatusFilter(
-                        event.target.value as 'all' | PayoutStatus,
-                      )
+                      setStatusFilter(event.target.value)
                     }
                     className="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white py-0 pl-10 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-40"
                   >
-                    {PAYOUT_STATUS_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                    <option value="ALL">All Status</option>
+                    <option value="SUCCESS">Success</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="PROCESSING">Processing</option>
+                    <option value="FAILED">Failed</option>
+                    <option value="REJECTED">Rejected</option>
                   </select>
 
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -184,10 +164,29 @@ export default function PayoutHistoryPage() {
             </div>
           </div>
 
-          <PayoutHistoryTable
-            payouts={payouts}
-            onViewDetails={(payout: any) => setSelectedPayout(payout)}
-          />
+          {isLoading ? (
+            <div className="flex min-h-64 items-center justify-center">Loading transactions...</div>
+          ) : (
+            <>
+              <PayoutHistoryTable
+                transactions={transactions}
+                copiedPayoutId={null}
+                onCopyPayoutId={() => {}}
+              />
+              
+              {/* Pagination Controls */}
+              {historyData && historyData.totalPages > 1 && (
+                <Pagination
+                  page={page}
+                  totalPages={historyData.totalPages}
+                  totalElements={historyData.totalElements}
+                  pageSize={size}
+                  onPageChange={setPage}
+                  itemName="transactions"
+                />
+              )}
+            </>
+          )}
         </div>
 
         {selectedPayout ? (
@@ -200,7 +199,7 @@ export default function PayoutHistoryPage() {
                   </p>
 
                   <h3 className="mt-1 text-lg font-bold text-slate-900">
-                    {selectedPayout.payoutId}
+                    {selectedPayout.transactionId}
                   </h3>
                 </div>
 
@@ -243,7 +242,7 @@ export default function PayoutHistoryPage() {
 
                     <p className="mt-1 text-sm font-semibold text-slate-900">
                       {selectedPayout.bankName}{' '}
-                      {selectedPayout.maskedAccountNumber}
+                      {selectedPayout.accountNumber}
                     </p>
                   </div>
 
@@ -263,32 +262,10 @@ export default function PayoutHistoryPage() {
                     </p>
 
                     <p className="mt-1 text-sm font-bold text-slate-900">
-                      ₹{selectedPayout.amount.toLocaleString('en-IN')}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-medium text-slate-500">
-                      Total Debit
-                    </p>
-
-                    <p className="mt-1 text-sm font-bold text-indigo-600">
-                      ₹{selectedPayout.totalDebit.toLocaleString('en-IN')}
+                      {formatCurrency(selectedPayout.amount)}
                     </p>
                   </div>
                 </div>
-
-                {selectedPayout.remarks ? (
-                  <div className="rounded-xl bg-slate-50 p-4">
-                    <p className="text-xs font-medium text-slate-500">
-                      Remarks
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-700">
-                      {selectedPayout.remarks}
-                    </p>
-                  </div>
-                ) : null}
               </div>
 
               <div className="flex justify-end border-t border-slate-200 px-6 py-4">
