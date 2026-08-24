@@ -15,7 +15,7 @@ import {
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 
-import { formatIndianCurrency } from '../utils/single-payout-utils'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 import type { BeneficiaryResponse } from '@/features/beneficiary/types/beneficiary.types'
 
@@ -181,7 +181,7 @@ export default function SinglePayoutReview({
                 </div>
 
                 <p className="text-lg font-bold text-slate-900">
-                  {formatIndianCurrency(amount)}
+                  {formatCurrency(amount)}
                 </p>
               </div>
 
@@ -197,7 +197,7 @@ export default function SinglePayoutReview({
                 </div>
 
                 <p className="text-sm font-semibold text-slate-900">
-                  {formatIndianCurrency(charges)}
+                  {formatCurrency(charges)}
                 </p>
               </div>
 
@@ -229,7 +229,7 @@ export default function SinglePayoutReview({
                 </div>
 
                 <p className="text-lg font-bold text-indigo-700">
-                  {formatIndianCurrency(totalDebit)}
+                  {formatCurrency(totalDebit)}
                 </p>
               </div>
             </div>

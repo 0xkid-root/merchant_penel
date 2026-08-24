@@ -84,6 +84,7 @@ export interface SinglePayoutState {
   isLoading: boolean
   result: SinglePayoutResult | null
   remainingSeconds: number
+  otpExpiryTime: number | null
 }
 
 export interface SinglePayoutSendOtpRequest {

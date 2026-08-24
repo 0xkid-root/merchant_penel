@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import PageHeader from '@/components/layout/page-header'
 import PayoutStatusBadge from '../components/payout-status-badge'
-import { formatIndianCurrency, formatPayoutDateTime } from '../utils/single-payout-utils'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDateTime } from '@/lib/utils/formatDate'
 import { useSinglePayoutDetails } from '../hooks/use-single-payout-details'
 import { SinglePayoutDetailsSkeleton } from './single-payout-details-skeleton'
 
@@ -109,7 +110,7 @@ export default function SinglePayoutDetails({ id }: SinglePayoutDetailsProps) {
                 <PayoutStatusBadge status={data.payoutStatus} />
               </dd>
             </div>
-            <DetailItem label="Amount" value={formatIndianCurrency(data.amount)} />
+            <DetailItem label="Amount" value={formatCurrency(data.amount)} />
             <DetailItem label="Payment Mode" value={data.paymentMode} />
           </div>
 
@@ -121,7 +122,7 @@ export default function SinglePayoutDetails({ id }: SinglePayoutDetailsProps) {
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
               <CopyableDetailItem label="UTR Number" value={data.utrNumber} />
               <DetailItem label="Payout Type" value={data.payoutType} />
-              <DetailItem label="Created At" value={formatPayoutDateTime(data.createdAt)} />
+              <DetailItem label="Created At" value={formatDateTime(data.createdAt)} />
             </div>
           </div>
 

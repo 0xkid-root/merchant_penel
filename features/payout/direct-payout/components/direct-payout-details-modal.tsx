@@ -2,16 +2,18 @@
 
 import { X } from 'lucide-react'
 
-import type { DirectPayoutItem } from '../types/direct-payout.types'
+import type { DirectPayoutTransaction } from '../types/direct-payout.types'
 
 import {
-  formatIndianCurrency,
-  getDirectPayoutStatusLabel,
-  getDirectPayoutStatusStyles,
-} from '../utils/direct-payout.utils'
+  getPayoutStatusLabel,
+  getPayoutStatusStyles,
+} from '../../utils/payout.utils'
+
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDateTime } from '@/lib/utils/formatDate'
 
 interface DirectPayoutDetailsModalProps {
-  payout: DirectPayoutItem | null
+  payout: DirectPayoutTransaction | null
   onClose: () => void
 }
 
@@ -41,7 +43,7 @@ export default function DirectPayoutDetailsModal({
               id="direct-payout-details-title"
               className="mt-1 text-lg font-bold text-slate-900"
             >
-              {payout.payoutId}
+              {payout.transactionId}
             </h3>
           </div>
 
@@ -63,7 +65,7 @@ export default function DirectPayoutDetailsModal({
               </p>
 
               <p className="mt-1 text-sm font-semibold text-slate-900">
-                {payout.accountHolderName}
+                {payout.beneficiaryName}
               </p>
             </div>
 
@@ -74,22 +76,22 @@ export default function DirectPayoutDetailsModal({
 
               <div className="mt-1">
                 <span
-                  className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getDirectPayoutStatusStyles(
-                    payout.status,
+                  className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getPayoutStatusStyles(
+                    payout.payoutStatus,
                   )}`}
                 >
-                  {getDirectPayoutStatusLabel(payout.status)}
+                  {getPayoutStatusLabel(payout.payoutStatus)}
                 </span>
               </div>
             </div>
 
             <div>
               <p className="text-xs font-medium text-slate-500">
-                Bank Name
+                Payment Mode
               </p>
 
               <p className="mt-1 text-sm font-semibold text-slate-900">
-                {payout.bankName}
+                {payout.paymentMode}
               </p>
             </div>
 
@@ -99,7 +101,7 @@ export default function DirectPayoutDetailsModal({
               </p>
 
               <p className="mt-1 text-sm font-semibold text-slate-900">
-                {payout.maskedAccountNumber}
+                {payout.accountNumber}
               </p>
             </div>
 
@@ -119,7 +121,7 @@ export default function DirectPayoutDetailsModal({
               </p>
 
               <p className="mt-1 text-sm font-semibold text-slate-900">
-                {payout.createdAt}
+                {formatDateTime(payout.createdAt)}
               </p>
             </div>
 
@@ -129,32 +131,21 @@ export default function DirectPayoutDetailsModal({
               </p>
 
               <p className="mt-1 text-sm font-bold text-slate-900">
-                {formatIndianCurrency(payout.amount)}
+                {formatCurrency(payout.amount)}
               </p>
             </div>
 
             <div>
               <p className="text-xs font-medium text-slate-500">
-                Total Debit
+                UTR Number
               </p>
 
               <p className="mt-1 text-sm font-bold text-indigo-600">
-                {formatIndianCurrency(payout.totalDebit)}
+                {payout.utrNumber || 'N/A'}
               </p>
             </div>
           </div>
 
-          {payout.remarks ? (
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
-                Remarks
-              </p>
-
-              <p className="mt-1 text-sm text-slate-700">
-                {payout.remarks}
-              </p>
-            </div>
-          ) : null}
         </div>
 
         <div className="flex justify-end border-t border-slate-200 px-6 py-4">

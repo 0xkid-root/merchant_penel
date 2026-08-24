@@ -3,28 +3,30 @@
 import { Building2, Check, Copy, Eye } from 'lucide-react'
 
 import type {
-  DirectPayoutItem,
+  DirectPayoutTransaction,
   DirectPayoutStatus,
 } from '../types/direct-payout.types'
 
+import {
+  getPayoutStatusLabel,
+  getPayoutStatusStyles,
+  maskAccountNumber,
+} from '../../utils/payout.utils'
+
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDateTime } from '@/lib/utils/formatDate'
+
 interface DirectPayoutTableProps {
-  payouts: DirectPayoutItem[]
+  payouts: DirectPayoutTransaction[]
   copiedPayoutId: string | null
-  onViewDetails: (payout: DirectPayoutItem) => void
+  onViewDetails: (payout: DirectPayoutTransaction) => void
   onCopyPayoutId: (
     event: React.MouseEvent<HTMLButtonElement>,
     payoutId: string,
   ) => void
 }
 
-function formatIndianCurrency(amount: number) {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
-}
+
 
 function getShortPayoutId(payoutId: string) {
   if (payoutId.length <= 10) return payoutId
@@ -42,23 +44,7 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-function getStatusStyles(status: DirectPayoutStatus) {
-  if (status === 'success') {
-    return 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-  }
 
-  if (status === 'pending') {
-    return 'border border-amber-200 bg-amber-50 text-amber-700'
-  }
-
-  return 'border border-red-200 bg-red-50 text-red-700'
-}
-
-function getStatusLabel(status: DirectPayoutStatus) {
-  if (status === 'success') return 'Success'
-  if (status === 'pending') return 'Pending'
-  return 'Failed'
-}
 
 export default function DirectPayoutTable({
   payouts,
@@ -103,7 +89,7 @@ export default function DirectPayoutTable({
 
         <tbody className="divide-y divide-slate-200 bg-white">
           {payouts.map((payout) => {
-            const isCopied = copiedPayoutId === payout.payoutId
+            const isCopied = copiedPayoutId === payout.transactionId
 
             return (
               <tr
@@ -115,18 +101,18 @@ export default function DirectPayoutTable({
                     <button
                       type="button"
                       onClick={() => onViewDetails(payout)}
-                      title={payout.payoutId}
+                      title={payout.transactionId}
                       className="text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
                     >
-                      {getShortPayoutId(payout.payoutId)}
+                      {getShortPayoutId(payout.transactionId)}
                     </button>
 
                     <button
                       type="button"
                       onClick={(event) =>
-                        onCopyPayoutId(event, payout.payoutId)
+                        onCopyPayoutId(event, payout.transactionId)
                       }
-                      aria-label={`Copy ${payout.payoutId}`}
+                      aria-label={`Copy ${payout.transactionId}`}
                       title={isCopied ? 'Copied' : 'Copy payout ID'}
                       className="rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
                     >
@@ -142,15 +128,15 @@ export default function DirectPayoutTable({
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
-                      {getInitials(payout.accountHolderName)}
+                      {getInitials(payout.beneficiaryName)}
                     </div>
 
                     <div className="min-w-0">
                       <p
-                        title={payout.accountHolderName}
+                        title={payout.beneficiaryName}
                         className="max-w-[230px] truncate text-sm font-semibold text-slate-900"
                       >
-                        {payout.accountHolderName}
+                        {payout.beneficiaryName}
                       </p>
 
                       <p className="mt-0.5 text-xs text-slate-500">
@@ -162,10 +148,10 @@ export default function DirectPayoutTable({
 
                 <td className="px-5 py-4">
                   <p className="flex items-center whitespace-nowrap gap-1.5 text-sm font-medium text-slate-900">
-                    <span>{payout.bankName}</span>
+                    <span>{payout.paymentMode}</span>
 
                     <span className="text-slate-400">
-                      {payout.maskedAccountNumber}
+                      {maskAccountNumber(payout.accountNumber)}
                     </span>
                   </p>
 
@@ -176,25 +162,21 @@ export default function DirectPayoutTable({
 
                 <td className="px-5 py-4 text-right">
                   <p className="text-sm font-bold text-slate-900">
-                    {formatIndianCurrency(payout.amount)}
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Debit: {formatIndianCurrency(payout.totalDebit)}
+                    {formatCurrency(payout.amount)}
                   </p>
                 </td>
 
                 <td className="px-5 py-4 text-sm text-slate-600">
-                  {payout.createdAt}
+                  {formatDateTime(payout.createdAt)}
                 </td>
 
                 <td className="px-5 py-4">
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusStyles(
-                      payout.status,
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getPayoutStatusStyles(
+                      payout.payoutStatus
                     )}`}
                   >
-                    {getStatusLabel(payout.status)}
+                    {getPayoutStatusLabel(payout.payoutStatus)}
                   </span>
                 </td>
 
@@ -202,7 +184,7 @@ export default function DirectPayoutTable({
                   <button
                     type="button"
                     onClick={() => onViewDetails(payout)}
-                    aria-label={`View details for ${payout.payoutId}`}
+                    aria-label={`View details for ${payout.transactionId}`}
                     title="View payout details"
                     className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
                   >

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   ChevronDown,
@@ -17,10 +17,10 @@ import PageHeader from '@/components/layout/page-header'
 import DirectPayoutTable from './direct-payout-table'
 import DirectPayoutDetailsModal from './direct-payout-details-modal'
 
-import { DIRECT_PAYOUTS } from '../data/direct-payout-data'
+import { useDirectPayoutList } from '../hooks/useDirectPayoutList'
 
 import type {
-  DirectPayoutItem,
+  DirectPayoutTransaction,
   DirectPayoutStatus,
 } from '../types/direct-payout.types'
 
@@ -37,11 +37,27 @@ const STATUS_OPTIONS: Array<{
 export default function DirectPayoutList() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<
-    'all' | DirectPayoutStatus
+    'all' | string
   >('all')
+  const [page, setPage] = useState(0)
+  const [size, setSize] = useState(10)
+
+  // Reset to first page when search or status filters change
+  useEffect(() => {
+    setPage(0)
+  }, [search, statusFilter])
+
+  const { data: payoutsData, isLoading, isError } = useDirectPayoutList({
+    page,
+    size,
+    search: search.trim() !== '' ? search.trim() : undefined,
+    status: statusFilter !== 'all' ? statusFilter.toUpperCase() : undefined
+  })
+
+  const payouts = payoutsData?.content || []
 
   const [selectedPayout, setSelectedPayout] =
-    useState<DirectPayoutItem | null>(null)
+    useState<DirectPayoutTransaction | null>(null)
 
   const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
 
@@ -65,24 +81,7 @@ export default function DirectPayoutList() {
     }
   }
 
-  const filteredPayouts = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase()
-
-    return DIRECT_PAYOUTS.filter((payout) => {
-      const matchesSearch =
-        normalizedSearch === '' ||
-        payout.payoutId.toLowerCase().includes(normalizedSearch) ||
-        payout.accountHolderName.toLowerCase().includes(normalizedSearch) ||
-        payout.bankName.toLowerCase().includes(normalizedSearch) ||
-        payout.maskedAccountNumber.toLowerCase().includes(normalizedSearch) ||
-        payout.ifscCode.toLowerCase().includes(normalizedSearch)
-
-      const matchesStatus =
-        statusFilter === 'all' || payout.status === statusFilter
-
-      return matchesSearch && matchesStatus
-    })
-  }, [search, statusFilter])
+  const filteredPayouts = payouts
 
   const hasActiveFilters = search.trim() !== '' || statusFilter !== 'all'
 
@@ -121,8 +120,8 @@ export default function DirectPayoutList() {
             </div>
 
             <p className="text-sm font-medium text-slate-500">
-              Showing {filteredPayouts.length} payout
-              {filteredPayouts.length !== 1 ? 's' : ''}
+              Showing {payoutsData?.totalElements || 0} payout
+              {payoutsData?.totalElements !== 1 ? 's' : ''}
             </p>
           </div>
         </div>
@@ -159,7 +158,7 @@ export default function DirectPayoutList() {
                   value={statusFilter}
                   onChange={(event) =>
                     setStatusFilter(
-                      event.target.value as 'all' | DirectPayoutStatus,
+                      event.target.value,
                     )
                   }
                   className="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white py-0 pl-10 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
@@ -188,7 +187,17 @@ export default function DirectPayoutList() {
           </div>
         </div>
 
-        {filteredPayouts.length === 0 ? (
+        {isLoading ? (
+          <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+            <h3 className="mt-4 text-base font-semibold text-slate-900">
+              Loading payouts...
+            </h3>
+          </div>
+        ) : isError ? (
+          <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center text-red-500">
+             Failed to load payouts.
+          </div>
+        ) : filteredPayouts.length === 0 ? (
           <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
               <Filter className="h-5 w-5 text-slate-400" />
@@ -203,12 +212,66 @@ export default function DirectPayoutList() {
             </p>
           </div>
         ) : (
-          <DirectPayoutTable
-            payouts={filteredPayouts}
-            copiedPayoutId={copiedPayoutId}
-            onViewDetails={setSelectedPayout}
-            onCopyPayoutId={handleCopyPayoutId}
-          />
+          <>
+            <DirectPayoutTable
+              payouts={filteredPayouts}
+              copiedPayoutId={copiedPayoutId}
+              onViewDetails={setSelectedPayout}
+              onCopyPayoutId={handleCopyPayoutId}
+            />
+            {payoutsData && payoutsData.totalPages > 1 && (
+              <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 sm:px-6">
+                 <div className="flex flex-1 justify-between sm:hidden">
+                    <button
+                      onClick={() => setPage(page - 1)}
+                      disabled={page === 0}
+                      className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => setPage(page + 1)}
+                      disabled={page >= payoutsData.totalPages - 1}
+                      className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm text-gray-700">
+                        Showing <span className="font-medium">{page * size + 1}</span> to <span className="font-medium">{Math.min((page + 1) * size, payoutsData.totalElements)}</span> of{' '}
+                        <span className="font-medium">{payoutsData.totalElements}</span> results
+                      </p>
+                    </div>
+                    <div>
+                      <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                        <button
+                          onClick={() => setPage(page - 1)}
+                          disabled={page === 0}
+                          className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        >
+                          <span className="sr-only">Previous</span>
+                          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setPage(page + 1)}
+                          disabled={page >= payoutsData.totalPages - 1}
+                          className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                        >
+                          <span className="sr-only">Next</span>
+                          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </nav>
+                    </div>
+                  </div>
+              </div>
+            )}
+          </>
         )}
       </section>
 
