@@ -21,7 +21,6 @@ import type {
     SinglePayoutState,
     SinglePayoutStep,
 } from '../types/single-payout.types'
-import { StringifyOptions } from 'querystring'
 
 const INITIAL_FORM_DATA: SinglePayoutFormData = {
     beneficiaryId: null,
@@ -38,6 +37,7 @@ const INITIAL_STATE: SinglePayoutState = {
     isLoading: false,
     result: null,
     remainingSeconds: 0,
+    otpExpiryTime: null,
 }
 
 export function useSinglePayout() {
@@ -144,6 +144,16 @@ export function useSinglePayout() {
     const sendOtp = async () => {
         if (!state.formData.beneficiaryId) return
 
+        if (state.otpExpiryTime && Date.now() < state.otpExpiryTime) {
+            const remaining = Math.floor((state.otpExpiryTime - Date.now()) / 1000)
+            setState((previous) => ({
+                ...previous,
+                currentStep: 'otp',
+                remainingSeconds: remaining > 0 ? remaining : 180,
+            }))
+            return
+        }
+
         setError(null)
         setState((previous) => ({
             ...previous,
@@ -160,11 +170,13 @@ export function useSinglePayout() {
             })
 
             if (response.success) {
+                const remaining = response.data.remainingSeconds || 180
                 setState((previous) => ({
                     ...previous,
                     currentStep: 'otp',
                     isLoading: false,
-                    remainingSeconds: response.data.remainingSeconds || 180,
+                    remainingSeconds: remaining,
+                    otpExpiryTime: Date.now() + remaining * 1000,
                 }))
             } else {
                 throw new Error(response.message || 'Failed to send OTP')
@@ -196,6 +208,7 @@ export function useSinglePayout() {
                 setState((previous) => ({
                     ...previous,
                     remainingSeconds: newRemaining,
+                    otpExpiryTime: Date.now() + newRemaining * 1000,
                 }))
                 return newRemaining
             } else {
