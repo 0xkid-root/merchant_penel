@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 
 import type { DirectPayoutFormValues } from './direct-payout-create-page'
-import { formatIndianCurrency } from '../utils/direct-payout.utils'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 interface DirectPayoutReviewProps {
   values: DirectPayoutFormValues
@@ -26,22 +26,22 @@ export default function DirectPayoutReview({
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-7"> 
+      <div className="mb-7">
         <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
-          <WalletCards className="h-5 w-5 text-indigo-600" />
-        </div>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50">
+            <WalletCards className="h-5 w-5 text-indigo-600" />
+          </div>
 
-        <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            Review Direct Payout
-          </h2>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">
+              Review Direct Payout
+            </h2>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Confirm bank account and payout details before OTP verification.
-          </p>
+            <p className="mt-1 text-sm text-slate-500">
+              Confirm bank account and payout details before OTP verification.
+            </p>
+          </div>
         </div>
-      </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -52,7 +52,7 @@ export default function DirectPayoutReview({
 
           <div className="mt-2 flex items-center justify-between gap-4">
             <p className="text-3xl font-bold text-slate-900">
-              {formatIndianCurrency(amount)}
+              {formatCurrency(amount)}
             </p>
 
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-sm">
@@ -99,7 +99,7 @@ export default function DirectPayoutReview({
               <Landmark className="h-4 w-4 text-indigo-600" />
 
               <h3 className="text-sm font-bold text-slate-900">
-                Bank Details 
+                Bank Details
               </h3>
             </div>
 
@@ -149,7 +149,7 @@ export default function DirectPayoutReview({
           {values.remarks ? (
             <section className="px-5 py-4 sm:px-6">
               <h3 className="text-sm font-bold text-slate-900">
-                Remarks 
+                Remarks
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-slate-600">
