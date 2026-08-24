@@ -6,10 +6,8 @@ import { toast } from 'sonner'
 
 import { formatTransactionId } from '@/lib/utils/maskTransactionId'
 
-import {
-  formatIndianCurrency,
-  formatPayoutDateTime,
-} from '../utils/single-payout-utils'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDateTime } from '@/lib/utils/formatDate'
 
 import type { SinglePayoutTransaction } from '../types/single-payout.types'
 
@@ -88,11 +86,11 @@ export default function SinglePayoutRow({
       </td>
 
       <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900">
-        {formatIndianCurrency(transaction.amount)}
+        {formatCurrency(transaction.amount)}
       </td>
 
       <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-600">
-        {formatPayoutDateTime(transaction.createdAt)}
+        {formatDateTime(transaction.createdAt)}
       </td>
 
       <td className="whitespace-nowrap px-4 py-4">

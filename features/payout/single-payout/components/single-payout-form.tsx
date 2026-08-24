@@ -11,9 +11,7 @@ import {
 
 import { PrimaryButton } from '@/components/buttons/primary-button'
 
-import {
-  formatIndianCurrency,
-} from '../utils/single-payout-utils'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 import type { BeneficiaryResponse } from '@/features/beneficiary/types/beneficiary.types'
 
@@ -94,14 +92,14 @@ export default function SinglePayoutForm({
               </p>
 
               <p className="mt-1 text-xl font-bold text-slate-900">
-                {formatIndianCurrency(walletBalance)}
+                {formatCurrency(walletBalance)}
               </p>
             </div>
           </div>
 
           <div className="rounded-lg border border-indigo-100 bg-white px-3 py-2 text-xs font-medium text-slate-600">
-            Payout limit: {formatIndianCurrency(minAmount)} to{' '}
-            {formatIndianCurrency(maxAmount)}
+            Payout limit: {formatCurrency(minAmount)} to{' '}
+            {formatCurrency(maxAmount)}
           </div>
         </div>
       </div>
@@ -150,8 +148,8 @@ export default function SinglePayoutForm({
 
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs text-slate-500">
-                Minimum {formatIndianCurrency(minAmount)} · Maximum{' '}
-                {formatIndianCurrency(maxAmount)}
+                Minimum {formatCurrency(minAmount)} · Maximum{' '}
+                {formatCurrency(maxAmount)}
               </p>
 
               {amountNumber > 0 && (
@@ -163,7 +161,7 @@ export default function SinglePayoutForm({
                   }`}
                 >
                   Balance after payout:{' '}
-                  {formatIndianCurrency(
+                  {formatCurrency(
                     Math.max(availableAfterPayout, 0),
                   )}
                 </p>

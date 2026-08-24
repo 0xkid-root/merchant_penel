@@ -12,6 +12,8 @@ import {
     SINGLE_PAYOUT_MIN_AMOUNT,
 } from '../utils/single-payout-utils'
 
+import { formatCurrency } from '@/lib/utils/formatCurrency'
+
 import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 import { useAuthStore } from '@/lib/store/authStore'
 
@@ -104,15 +106,17 @@ export function useSinglePayout() {
 
         if (amountNumber > SINGLE_PAYOUT_MAX_AMOUNT) {
             setError(
-                `Maximum payout amount is ₹${SINGLE_PAYOUT_MAX_AMOUNT.toLocaleString(
-                    'en-IN',
-                )}.`,
+                `Maximum payout amount is ${formatCurrency(SINGLE_PAYOUT_MAX_AMOUNT)}.`,
             )
             return false
         }
 
         if (totalDebit > walletBalance) {
-            setError('Insufficient wallet balance for this payout.')
+            setError(
+                `Insufficient wallet balance. You need ${formatCurrency(
+                    totalDebit - walletBalance,
+                )} more.`,
+            )
             return false
         }
 
