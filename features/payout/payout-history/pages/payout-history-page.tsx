@@ -166,6 +166,22 @@ export default function PayoutHistoryPage() {
 
           {isLoading ? (
             <div className="flex min-h-64 items-center justify-center">Loading transactions...</div>
+          ) : isError ? (
+            <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center text-red-500">
+              Failed to load transactions.
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+                <Search className="h-5 w-5 text-slate-400" />
+              </div>
+              <h3 className="mt-4 text-base font-semibold text-slate-900">
+                No transactions found
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Try changing your search or filters.
+              </p>
+            </div>
           ) : (
             <>
               <PayoutHistoryTable
