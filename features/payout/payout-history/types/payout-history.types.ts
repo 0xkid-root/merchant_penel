@@ -1,20 +1,44 @@
-export type PayoutType = 'single' | 'direct' | 'bulk'
-
-export type PayoutStatus = 'success' | 'pending' | 'failed'
-
-export interface PayoutHistoryItem {
+export interface PayoutHistoryTransaction {
   id: number
-  payoutId: string
-  payoutType: PayoutType
+  transactionId: string
+  utrNumber: string
   beneficiaryName: string
-  accountHolderName: string
-  maskedAccountNumber: string
-  bankName: string
+  accountNumber: string
   ifscCode: string
+  bankName?: string
+  merchantName?: string
   amount: number
-  charges: number
-  totalDebit: number
-  remarks: string
-  status: PayoutStatus
+  paymentMode: string | null
+  payoutType: string
+  payoutStatus: string
   createdAt: string
+}
+
+export interface PayoutHistoryListResponse {
+  content: PayoutHistoryTransaction[]
+  pageable: {
+    pageNumber: number
+    pageSize: number
+    sort: {
+      empty: boolean
+      sorted: boolean
+      unsorted: boolean
+    }
+    offset: number
+    paged: boolean
+    unpaged: boolean
+  }
+  last: boolean
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+  sort: {
+    empty: boolean
+    sorted: boolean
+    unsorted: boolean
+  }
+  first: boolean
+  numberOfElements: number
+  empty: boolean
 }

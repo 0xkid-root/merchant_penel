@@ -100,6 +100,10 @@ export const API_ENDPOINTS = {
       CREATE: '/api/v1/payouts/bulk/create',
       SEND_OTP: '/api/v1/payouts/bulk/send-otp',
     },
+
+    HISTORY: {
+      LIST: '/api/v1/payouts/transactions',
+    },
   },
 
 
