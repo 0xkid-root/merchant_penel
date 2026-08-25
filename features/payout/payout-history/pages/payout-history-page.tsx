@@ -8,10 +8,12 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import PageHeader from '@/components/layout/page-header'
 import Pagination from '@/components/common/pagination/Pagination'
 
 import PayoutHistoryTable from '../components/payout-history-table'
+import { PayoutHistoryTableSkeleton } from '../components/payout-history-table-skeleton'
 import { usePayoutHistoryList } from '../hooks/usePayoutHistoryList'
 import type { PayoutHistoryTransaction } from '../types/payout-history.types'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
@@ -28,6 +30,22 @@ export default function PayoutHistoryPage() {
   const [size, setSize] = useState(10)
 
   const [selectedPayout, setSelectedPayout] = useState<PayoutHistoryTransaction | null>(null)
+  const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
+
+  const handleCopyPayoutId = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    payoutId: string,
+  ) => {
+    event.stopPropagation()
+    try {
+      await navigator.clipboard.writeText(payoutId)
+      setCopiedPayoutId(payoutId)
+      toast.success('Transaction ID copied')
+      setTimeout(() => setCopiedPayoutId(null), 2000)
+    } catch (error) {
+      toast.error('Failed to copy transaction ID')
+    }
+  }
 
   const { data: historyData, isLoading, isError } = usePayoutHistoryList({
     page,
@@ -63,7 +81,7 @@ export default function PayoutHistoryPage() {
         <PageHeader
           title="Payout History"
           subtitle="View and track all single, direct, and bulk payout transactions."
-          
+
         />
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
           <div className="border-b border-slate-200 px-5 py-5 lg:px-6">
@@ -165,7 +183,7 @@ export default function PayoutHistoryPage() {
           </div>
 
           {isLoading ? (
-            <div className="flex min-h-64 items-center justify-center">Loading transactions...</div>
+            <PayoutHistoryTableSkeleton />
           ) : isError ? (
             <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center text-red-500">
               Failed to load transactions.
@@ -186,10 +204,10 @@ export default function PayoutHistoryPage() {
             <>
               <PayoutHistoryTable
                 transactions={transactions}
-                copiedPayoutId={null}
-                onCopyPayoutId={() => {}}
+                copiedPayoutId={copiedPayoutId}
+                onCopyPayoutId={handleCopyPayoutId}
               />
-              
+
               {/* Pagination Controls */}
               {historyData && historyData.totalPages > 1 && (
                 <Pagination

@@ -13,24 +13,16 @@ import DirectPayoutResult from './direct-payout-result'
 
 export type DirectPayoutStep = 'form' | 'review' | 'otp' | 'result'
 
-export interface DirectPayoutFormValues {
-    accountHolderName: string
-    accountNumber: string
-    confirmAccountNumber: string
-    ifscCode: string
-    bankName: string
-    branchName: string
-    amount: string
-    remarks: string
-}
+import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
 
-const INITIAL_FORM_VALUES: DirectPayoutFormValues = {
+const INITIAL_FORM_VALUES: DirectPayoutFormData = {
     accountHolderName: '',
     accountNumber: '',
     confirmAccountNumber: '',
     ifscCode: '',
     bankName: '',
     branchName: '',
+    paymentMode: 'IMPS',
     amount: '',
     remarks: '',
 }
@@ -38,8 +30,7 @@ const INITIAL_FORM_VALUES: DirectPayoutFormValues = {
 export default function DirectPayoutCreatePage() {
     const [step, setStep] = useState<DirectPayoutStep>('form')
 
-    const [formValues, setFormValues] =
-        useState<DirectPayoutFormValues>(INITIAL_FORM_VALUES)
+    const [formValues, setFormValues] = useState<DirectPayoutFormData>(INITIAL_FORM_VALUES)
 
     const [isSuccess, setIsSuccess] = useState(true)
 
@@ -122,7 +113,7 @@ export default function DirectPayoutCreatePage() {
                     <ChevronRight className="h-4 w-4 text-slate-400" />
 
                     <span className="font-semibold text-slate-900">
-                        Create Payout
+                        Create Payouthii
                     </span>
                 </div>
 
