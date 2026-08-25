@@ -8,6 +8,7 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import PageHeader from '@/components/layout/page-header'
 import Pagination from '@/components/common/pagination/Pagination'
 
@@ -29,6 +30,22 @@ export default function PayoutHistoryPage() {
   const [size, setSize] = useState(10)
 
   const [selectedPayout, setSelectedPayout] = useState<PayoutHistoryTransaction | null>(null)
+  const [copiedPayoutId, setCopiedPayoutId] = useState<string | null>(null)
+
+  const handleCopyPayoutId = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    payoutId: string,
+  ) => {
+    event.stopPropagation()
+    try {
+      await navigator.clipboard.writeText(payoutId)
+      setCopiedPayoutId(payoutId)
+      toast.success('Transaction ID copied')
+      setTimeout(() => setCopiedPayoutId(null), 2000)
+    } catch (error) {
+      toast.error('Failed to copy transaction ID')
+    }
+  }
 
   const { data: historyData, isLoading, isError } = usePayoutHistoryList({
     page,
@@ -187,8 +204,8 @@ export default function PayoutHistoryPage() {
             <>
               <PayoutHistoryTable
                 transactions={transactions}
-                copiedPayoutId={null}
-                onCopyPayoutId={() => { }}
+                copiedPayoutId={copiedPayoutId}
+                onCopyPayoutId={handleCopyPayoutId}
               />
 
               {/* Pagination Controls */}
