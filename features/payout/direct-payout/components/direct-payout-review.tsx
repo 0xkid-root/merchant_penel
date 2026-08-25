@@ -8,11 +8,11 @@ import {
   WalletCards,
 } from 'lucide-react'
 
-import type { DirectPayoutFormValues } from './direct-payout-create-page'
+import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 interface DirectPayoutReviewProps {
-  values: DirectPayoutFormValues
+  values: DirectPayoutFormData
   onBack: () => void
   onContinue: () => void
 }
@@ -141,6 +141,16 @@ export default function DirectPayoutReview({
 
                 <p className="mt-1 text-sm font-semibold text-slate-900">
                   Direct Bank Transfer
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-slate-500">
+                  Payment Mode
+                </p>
+
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {values.paymentMode}
                 </p>
               </div>
             </div>

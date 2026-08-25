@@ -4,10 +4,10 @@ import { Landmark } from 'lucide-react'
 
 import PayoutSuccessCard from '../../components/payout-success-card'
 
-import type { DirectPayoutFormValues } from './direct-payout-create-page'
+import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
 
 interface DirectPayoutResultProps {
-  values: DirectPayoutFormValues
+  values: DirectPayoutFormData
   payoutId: string
   onCreateAnother: () => void
   onBackToHistory: () => void
