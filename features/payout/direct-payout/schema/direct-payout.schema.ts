@@ -71,18 +71,6 @@ export const directPayoutSchema = z
         'Bank name cannot exceed 100 characters'
       ),
 
-    branchName: z
-      .string()
-      .trim()
-      .min(
-        1,
-        'Branch name is required'
-      )
-      .max(
-        100,
-        'Branch name cannot exceed 100 characters'
-      ),
-
     paymentMode: z.enum(
       ['IMPS', 'NEFT', 'RTGS'],
       {

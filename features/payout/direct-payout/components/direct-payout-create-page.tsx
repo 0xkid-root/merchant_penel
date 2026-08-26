@@ -2,129 +2,126 @@
 
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
-import { useState } from 'react'
 
 import PayoutStepper from '../../components/payout-stepper'
+
+import { useDirectPayout } from '../hooks/use-direct-payout'
 
 import DirectPayoutForm from './direct-payout-form'
 import DirectPayoutReview from './direct-payout-review'
 import DirectPayoutOtp from './direct-payout-otp'
 import DirectPayoutResult from './direct-payout-result'
 
-export type DirectPayoutStep = 'form' | 'review' | 'otp' | 'result'
-
-import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
-
-const INITIAL_FORM_VALUES: DirectPayoutFormData = {
-    accountHolderName: '',
-    accountNumber: '',
-    confirmAccountNumber: '',
-    ifscCode: '',
-    bankName: '',
-    branchName: '',
-    paymentMode: 'IMPS',
-    amount: '',
-    remarks: '',
-}
-
 export default function DirectPayoutCreatePage() {
-    const [step, setStep] = useState<DirectPayoutStep>('form')
+  const {
+    state,
+    error,
+    walletBalance,
+    amountNumber,
+    totalDebit,
+    charges,
+    updateFormData,
+    goToReview,
+    goBackToForm,
+    sendOtp,
+    resendOtp,
+    goBackToReview,
+    verifyOtpAndCreatePayout,
+    resetPayout,
+    setFormData,
+  } = useDirectPayout()
 
-    const [formValues, setFormValues] = useState<DirectPayoutFormData>(INITIAL_FORM_VALUES)
+  const handleBackToHistory = () => {
+    window.location.href = '/payout/direct'
+  }
 
-    const [isSuccess, setIsSuccess] = useState(true)
+  const handleCreateAnotherPayout = () => {
+    resetPayout()
+  }
 
-    const handleBackToHistory = () => {
-        window.location.href = '/payout/direct'
+  const renderStepContent = () => {
+    if (state.currentStep === 'form') {
+      return (
+        <DirectPayoutForm
+          values={state.formData}
+          onChange={setFormData}
+          onContinue={goToReview}
+        />
+      )
     }
 
-    const handleCreateAnotherPayout = () => {
-        setFormValues(INITIAL_FORM_VALUES)
-        setIsSuccess(true)
-        setStep('form')
+    if (state.currentStep === 'review') {
+      return (
+        <DirectPayoutReview
+          values={state.formData}
+          amount={amountNumber}
+          charges={charges}
+          totalDebit={totalDebit}
+          isLoading={state.isLoading}
+          onBack={goBackToForm}
+          onContinue={sendOtp}
+        />
+      )
     }
 
-    const handleVerifyOtp = () => {
-        // Later API call will come here.
-        // For now dummy success flow.
-        setIsSuccess(true)
-        setStep('result')
+    if (state.currentStep === 'otp') {
+      return (
+        <DirectPayoutOtp
+          remainingSeconds={state.remainingSeconds}
+          onBack={goBackToReview}
+          onVerify={verifyOtpAndCreatePayout}
+          onResend={resendOtp}
+        />
+      )
     }
 
-    const renderStepContent = () => {
-        if (step === 'form') {
-            return (
-                <DirectPayoutForm
-                    values={formValues}
-                    onChange={setFormValues}
-                    onContinue={() => setStep('review')}
-                />
-            )
-        }
-
-        if (step === 'review') {
-            return (
-                <DirectPayoutReview
-                    values={formValues}
-                    onBack={() => setStep('form')}
-                    onContinue={() => setStep('otp')}
-                />
-            )
-        }
-
-        if (step === 'otp') {
-            return (
-                <DirectPayoutOtp
-                    onBack={() => setStep('review')}
-                    onVerify={() => {
-                        setIsSuccess(true)
-                        setStep('result')
-                    }}
-                />
-
-            )
-        }
-
-        if (step === 'result') {
-            return (
-                <DirectPayoutResult
-                    values={formValues}
-                    payoutId="DP-20260704-001"
-                    onCreateAnother={handleCreateAnotherPayout}
-                    onBackToHistory={handleBackToHistory}
-                />
-            )
-        }
-
-        return null
+    if (state.currentStep === 'result' && state.result) {
+      return (
+        <DirectPayoutResult
+          values={state.formData}
+          payoutId={state.result.payoutId}
+          onCreateAnother={handleCreateAnotherPayout}
+          onBackToHistory={handleBackToHistory}
+        />
+      )
     }
 
-    return (
-        <div className="min-h-full bg-slate-50 px-4 py-2">
-            <div className="mx-auto max-w-[1180px]">
-                <div className="mb-7 flex items-center gap-2 text-sm">
-                    <Link
-                        href="/payout/direct"
-                        className="font-medium text-slate-500 transition hover:text-indigo-600"
-                    >
-                        Direct Payout
-                    </Link>
+    return null
+  }
 
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
+  return (
+    <div className="min-h-full bg-slate-50 px-4 py-2">
+      <div className="mx-auto max-w-[1180px]">
+        <div className="mb-7 flex items-center gap-2 text-sm">
+          <Link
+            href="/payout/direct"
+            className="font-medium text-slate-500 transition hover:text-indigo-600"
+          >
+            Direct Payout
+          </Link>
 
-                    <span className="font-semibold text-slate-900">
-                        Create Payouthii
-                    </span>
-                </div>
+          <ChevronRight className="h-4 w-4 text-slate-400" />
 
-                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                    <PayoutStepper currentStep={step} />
-
-                    <div className="px-6 py-10 lg:px-12 lg:py-12">
-                        {renderStepContent()}
-                    </div>
-                </div>
-            </div>
+          <span className="font-semibold text-slate-900">
+            Create Payout
+          </span>
         </div>
-    )
+
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <PayoutStepper currentStep={state.currentStep} />
+
+          <div className="px-6 py-10 lg:px-12 lg:py-12">
+            {/* Show global form validation error here if any */}
+            {error && state.currentStep === 'form' && (
+              <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm font-medium text-red-600">
+                {error}
+              </div>
+            )}
+            
+            {renderStepContent()}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }

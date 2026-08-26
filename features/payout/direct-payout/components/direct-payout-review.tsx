@@ -13,16 +13,23 @@ import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 interface DirectPayoutReviewProps {
   values: DirectPayoutFormData
+  amount: number
+  charges: number
+  totalDebit: number
+  isLoading: boolean
   onBack: () => void
   onContinue: () => void
 }
 
 export default function DirectPayoutReview({
   values,
+  amount,
+  charges,
+  totalDebit,
+  isLoading,
   onBack,
   onContinue,
 }: DirectPayoutReviewProps) {
-  const amount = Number(values.amount)
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -116,16 +123,6 @@ export default function DirectPayoutReview({
 
               <div>
                 <p className="text-xs font-medium text-slate-500">
-                  Branch Name
-                </p>
-
-                <p className="mt-1 text-sm font-semibold text-slate-900">
-                  {values.branchName}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs font-medium text-slate-500">
                   IFSC Code
                 </p>
 
@@ -182,10 +179,11 @@ export default function DirectPayoutReview({
           <button
             type="button"
             onClick={onContinue}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+            disabled={isLoading}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Continue to OTP
-            <ArrowRight className="h-4 w-4" />
+            {isLoading ? 'Sending OTP...' : 'Continue to OTP'}
+            {!isLoading && <ArrowRight className="h-4 w-4" />}
           </button>
         </div>
       </div>
