@@ -21,9 +21,7 @@ export default function DirectPayoutForm({
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
-    trigger,
     formState: { errors },
   } = useForm<DirectPayoutFormData>({
     resolver: zodResolver(directPayoutSchema),

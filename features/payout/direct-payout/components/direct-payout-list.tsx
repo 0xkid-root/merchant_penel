@@ -35,9 +35,9 @@ const STATUS_OPTIONS: Array<{
   label: string
 }> = [
     { value: 'all', label: 'All Status' },
-    { value: 'success', label: 'Success' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'failed', label: 'Failed' },
+    { value: 'SUCCESS', label: 'Success' },
+    { value: 'PENDING', label: 'Pending' },
+    { value: 'FAILED', label: 'Failed' },
   ]
 
 export default function DirectPayoutList() {
@@ -61,7 +61,7 @@ export default function DirectPayoutList() {
     page,
     size,
     search: search.trim() !== '' ? search.trim() : undefined,
-    status: statusFilter !== 'all' ? statusFilter.toUpperCase() : undefined
+    status: statusFilter !== 'all' ? (statusFilter as DirectPayoutStatus) : undefined
   })
 
   const payouts = payoutsData?.content || []

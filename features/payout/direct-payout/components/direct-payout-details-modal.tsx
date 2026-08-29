@@ -141,7 +141,7 @@ export default function DirectPayoutDetailsModal({
               </p>
 
               <p className="mt-1 text-sm font-bold text-indigo-600">
-                {payout.utrNumber || 'N/A'}
+                {payout.utrNumber ?? 'N/A'}
               </p>
             </div>
           </div>

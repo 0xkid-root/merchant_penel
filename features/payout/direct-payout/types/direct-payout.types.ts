@@ -4,36 +4,22 @@ export type { DirectPayoutFormData }
 
 export type DirectPayoutStep = 'form' | 'review' | 'otp' | 'result'
 
-export type DirectPayoutStatus = 'success' | 'pending' | 'failed'
+export type DirectPayoutStatus = 'SUCCESS' | 'PENDING' | 'FAILED'
+
+export type DirectPayoutPaymentMode = 'IMPS' | 'NEFT' | 'RTGS'
 
 export interface DirectPayoutTransaction {
   id: number
   transactionId: string
-  utrNumber: string
-  merchantName?: string
+  utrNumber?: string | null
+  merchantName?: string | null
   beneficiaryName: string
   accountNumber: string
   ifscCode: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   payoutType: string
-  payoutStatus: string
-  createdAt: string
-}
-
-
-
-export interface DirectPayoutItem {
-  id: number
-  payoutId: string
-  accountHolderName: string
-  maskedAccountNumber: string
-  bankName: string
-  ifscCode: string
-  amount: number
-  totalDebit: number
-  remarks: string
-  status: DirectPayoutStatus
+  payoutStatus: DirectPayoutStatus
   createdAt: string
 }
 
@@ -74,7 +60,7 @@ export interface DirectPayoutSendOtpRequest {
   bankName: string
   email: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   remarks?: string
 }
 
@@ -96,20 +82,20 @@ export interface DirectPayoutRequest {
   bankName: string
   ifscCode: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   remarks?: string
 }
 
 export interface ProcessDirectPayoutResponse {
   id: number
   transactionId: string
-  utrNumber: string
-  status: string
+  utrNumber: string | null
+  status: DirectPayoutStatus
   message: string
 }
 
 export interface DirectPayoutResultData {
-  status: 'SUCCESS' | 'PENDING' | 'FAILED'
+  status: DirectPayoutStatus
   payoutId: string
   message: string
   failureReason?: string

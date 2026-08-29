@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDebounce } from '@/hooks/use-debounce'
 import { directPayoutApi } from '../api/directPayoutApi'
-import { DirectPayoutListResponse } from '../types/direct-payout.types'
+import { DirectPayoutListResponse, DirectPayoutStatus } from '../types/direct-payout.types'
 
 interface UseDirectPayoutListParams {
   page?: number
   size?: number
   search?: string
-  status?: string
+  status?: DirectPayoutStatus
 }
 
 export const useDirectPayoutList = ({

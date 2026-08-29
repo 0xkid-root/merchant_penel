@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import { useVerifyOtp } from '../../hooks/useVerifyOtp'
 import { useProcessDirectPayout } from './useProcessDirectPayout'
 import { useDirectPayoutSendOtp } from './useDirectPayoutSendOtp'
@@ -12,17 +13,41 @@ import { useAuthStore } from '@/lib/store/authStore'
 
 import {
   DirectPayoutFormData,
-  DirectPayoutStep,
   DirectPayoutResultData,
   DirectPayoutState,
+  DirectPayoutStatus,
+  DirectPayoutPaymentMode,
   INITIAL_FORM_DATA,
   INITIAL_STATE,
 } from '../types/direct-payout.types'
 
-// Flat charge for direct payout
 const DIRECT_PAYOUT_CHARGES = 0 
 const DIRECT_PAYOUT_MIN_AMOUNT = 1
 const DIRECT_PAYOUT_MAX_AMOUNT = 1000000
+const FALLBACK_RESEND_SECONDS = 180
+
+function extractApiError(error: unknown): string {
+  if (isAxiosError(error)) {
+    const message = error.response?.data?.message
+    if (typeof message === 'string' && message.trim()) {
+      return message
+    }
+  }
+
+  if (error instanceof Error && error.message.trim()) {
+    return error.message
+  }
+
+  return 'An unexpected error occurred. Please try again.'
+}
+
+function normalizePayoutStatus(value: unknown): DirectPayoutStatus {
+  const normalized = String(value ?? '').trim().toUpperCase()
+  if (normalized === 'SUCCESS') return 'SUCCESS'
+  if (normalized === 'FAILED') return 'FAILED'
+  if (normalized === 'PENDING') return 'PENDING'
+  return 'PENDING' // Safe fallback
+}
 
 export function useDirectPayout() {
   const queryClient = useQueryClient()
@@ -36,23 +61,23 @@ export function useDirectPayout() {
 
   const { data: walletBalance = 0 } = useWalletBalance()
 
-  const amountNumber = Number(state.formData.amount || 0)
+  const amountNumber = Number(state.formData.amount)
+  const isAmountValid = Number.isFinite(amountNumber) && amountNumber > 0
 
-  // Direct Payout Total Debit calculation
   const totalDebit = useMemo(() => {
-    return amountNumber + DIRECT_PAYOUT_CHARGES
-  }, [amountNumber])
-
-
+    return isAmountValid ? amountNumber + DIRECT_PAYOUT_CHARGES : 0
+  }, [amountNumber, isAmountValid])
 
   const goToReview = (data: DirectPayoutFormData) => {
-    const currentAmount = Number(data.amount || 0)
-    const currentTotalDebit = currentAmount + DIRECT_PAYOUT_CHARGES
+    const amountString = data.amount.trim()
+    const currentAmount = Number(amountString)
 
-    if (!data.amount || currentAmount <= 0) {
-      setError('Please enter a valid payout amount.')
+    if (!Number.isFinite(currentAmount) || currentAmount <= 0 || !/^\d+(\.\d{1,2})?$/.test(amountString)) {
+      setError('Please enter a valid positive payout amount.')
       return
     }
+
+    const currentTotalDebit = currentAmount + DIRECT_PAYOUT_CHARGES
 
     if (currentAmount < DIRECT_PAYOUT_MIN_AMOUNT) {
       setError(`Minimum payout amount is ₹${DIRECT_PAYOUT_MIN_AMOUNT.toLocaleString('en-IN')}.`)
@@ -66,9 +91,7 @@ export function useDirectPayout() {
 
     if (currentTotalDebit > walletBalance) {
       setError(
-        `Insufficient wallet balance. You need ${formatCurrency(
-          currentTotalDebit - walletBalance,
-        )} more.`,
+        `Insufficient wallet balance. You need ${formatCurrency(currentTotalDebit - walletBalance)} more.`,
       )
       return
     }
@@ -90,13 +113,16 @@ export function useDirectPayout() {
   }
 
   const sendOtp = async () => {
+    if (state.isLoading) return
+
+    // If timer is still active, don't resend, just move to OTP step
     if (state.otpExpiryTime && Date.now() < state.otpExpiryTime) {
-      const remaining = Math.floor((state.otpExpiryTime - Date.now()) / 1000)
-      setState((previous) => ({
-        ...previous,
-        currentStep: 'otp',
-        remainingSeconds: remaining > 0 ? remaining : 180,
-      }))
+      setState((previous) => ({ ...previous, currentStep: 'otp' }))
+      return
+    }
+
+    if (!user?.email) {
+      setError('Authenticated user email is missing.')
       return
     }
 
@@ -110,32 +136,46 @@ export function useDirectPayout() {
         ifscCode: state.formData.ifscCode,
         bankName: state.formData.bankName,
         mobile: state.formData.mobile,
-        email: user?.email || '',
+        email: user.email,
         amount: amountNumber,
-        paymentMode: state.formData.paymentMode || 'IMPS',
-        remarks: state.formData.remarks || '',
+        paymentMode: (state.formData.paymentMode || 'IMPS') as DirectPayoutPaymentMode,
+        remarks: state.formData.remarks || undefined,
       })
 
       if (response.success) {
-        const remaining = response.data.remainingSeconds || 180
+        const remaining = response.data?.remainingSeconds ?? FALLBACK_RESEND_SECONDS
         setState((previous) => ({
           ...previous,
           currentStep: 'otp',
           isLoading: false,
           remainingSeconds: remaining,
           otpExpiryTime: Date.now() + remaining * 1000,
+          otp: '', // clear old OTP
         }))
       } else {
         throw new Error(response.message || 'Failed to send OTP')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setState((previous) => ({ ...previous, isLoading: false }))
-      setError(err.message || 'Unable to send OTP. Please try again.')
+      setError(extractApiError(err))
     }
   }
 
   const resendOtp = async (): Promise<number> => {
+    if (state.isLoading) return 0
+    if (state.otpExpiryTime && Date.now() < state.otpExpiryTime) {
+      return state.remainingSeconds
+    }
+
+    if (!user?.email) {
+      const msg = 'Authenticated user email is missing.'
+      setError(msg)
+      throw new Error(msg)
+    }
+
     setError(null)
+    setState((previous) => ({ ...previous, isLoading: true }))
+
     try {
       const response = await sendOtpMutation({
         beneficiaryName: state.formData.accountHolderName,
@@ -143,26 +183,30 @@ export function useDirectPayout() {
         ifscCode: state.formData.ifscCode,
         bankName: state.formData.bankName,
         mobile: state.formData.mobile,
-        email: user?.email || '',
+        email: user.email,
         amount: amountNumber,
-        paymentMode: state.formData.paymentMode || 'IMPS',
-        remarks: state.formData.remarks || '',
+        paymentMode: (state.formData.paymentMode || 'IMPS') as DirectPayoutPaymentMode,
+        remarks: state.formData.remarks || undefined,
       })
 
       if (response.success) {
-        const newRemaining = response.data.remainingSeconds || 180
+        const newRemaining = response.data?.remainingSeconds ?? FALLBACK_RESEND_SECONDS
         setState((previous) => ({
           ...previous,
+          isLoading: false,
           remainingSeconds: newRemaining,
           otpExpiryTime: Date.now() + newRemaining * 1000,
+          otp: '',
         }))
         return newRemaining
       } else {
         throw new Error(response.message || 'Failed to resend OTP')
       }
-    } catch (err: any) {
-      setError(err.message || 'Unable to resend OTP. Please try again.')
-      throw err
+    } catch (err: unknown) {
+      setState((previous) => ({ ...previous, isLoading: false }))
+      const extractedError = extractApiError(err)
+      setError(extractedError)
+      throw new Error(extractedError)
     }
   }
 
@@ -176,84 +220,136 @@ export function useDirectPayout() {
   }
 
   const verifyOtpAndCreatePayout = async (otp: string) => {
-    if (otp.length !== 6) {
-      throw new Error('Please enter the 6-digit OTP.')
+    if (state.isLoading) return
+
+    if (!/^\d{6}$/.test(otp)) {
+      const msg = 'Please enter a valid 6-digit numeric OTP.'
+      setError(msg)
+      throw new Error(msg)
     }
 
+    if (!user?.email) {
+      const msg = 'Authenticated user email is missing.'
+      setError(msg)
+      throw new Error(msg)
+    }
+
+    // Capture form data before async operations
+    const currentFormData = state.formData
+    const payoutAmount = Number(currentFormData.amount)
+
     setError(null)
-    setState((previous) => ({ ...previous, isLoading: true }))
+    setState((previous) => ({ ...previous, isLoading: true, otp }))
 
     try {
       // 1. Verify OTP
-      const otpResponse = await verifyOtpMutation({
-        email: user?.email || '',
-        otp,
-        moduleName: 'PAYOUT',
-      })
+      let otpResponse
+      try {
+        otpResponse = await verifyOtpMutation({
+          email: user.email,
+          otp,
+          moduleName: 'PAYOUT',
+        })
+      } catch (error) {
+        setState((previous) => ({
+          ...previous,
+          isLoading: false,
+        }))
+        const extracted = extractApiError(error)
+        setError(extracted)
+        throw new Error(extracted)
+      }
 
-      if (!otpResponse.success) {
-        throw new Error(otpResponse.message || 'Invalid OTP')
+      if (!otpResponse.success || otpResponse.data !== true) {
+        setState((previous) => ({
+          ...previous,
+          isLoading: false,
+        }))
+        const msg = otpResponse.message || 'Invalid OTP'
+        setError(msg)
+        throw new Error(msg)
       }
 
       // 2. Process Payout
-      try {
-        const payoutResponse = await processDirectPayoutMutation({
-          beneficiaryName: state.formData.accountHolderName,
-          accountNumber: state.formData.accountNumber,
-          confirmAccountNumber: state.formData.confirmAccountNumber,
-          bankName: state.formData.bankName,
-          ifscCode: state.formData.ifscCode,
-          amount: amountNumber,
-          paymentMode: state.formData.paymentMode || 'IMPS',
-          remarks: state.formData.remarks || '',
-          email: user?.email || '',
-          mobile: state.formData.mobile,
-        })
+      const payoutResponse = await processDirectPayoutMutation({
+        beneficiaryName: currentFormData.accountHolderName,
+        mobile: currentFormData.mobile,
+        email: user.email,
+        accountNumber: currentFormData.accountNumber,
+        confirmAccountNumber: currentFormData.confirmAccountNumber,
+        bankName: currentFormData.bankName,
+        ifscCode: currentFormData.ifscCode,
+        amount: payoutAmount,
+        paymentMode: (currentFormData.paymentMode || 'IMPS') as DirectPayoutPaymentMode,
+        remarks: currentFormData.remarks || undefined,
+      })
 
-        if (payoutResponse.status === 'SUCCESS' || payoutResponse.status === 'PENDING') {
-          const result: DirectPayoutResultData = {
-            status: (payoutResponse.status as any) || 'SUCCESS',
-            payoutId: payoutResponse.transactionId || `DP-${Date.now()}`,
-            message: payoutResponse.message || 'Your payout has been processed successfully.',
-          }
+      const normalizedStatus = normalizePayoutStatus(payoutResponse.status)
 
-          setState((previous) => ({
-            ...previous,
-            currentStep: 'result',
-            isLoading: false,
-            result,
-          }))
+      const result: DirectPayoutResultData = {
+        status: normalizedStatus,
+        payoutId: payoutResponse.transactionId || `DP-${Date.now()}`,
+        message: payoutResponse.message || 'Your payout has been processed.',
+      }
 
-          queryClient.invalidateQueries({ queryKey: ['wallet-balance'] })
-          queryClient.invalidateQueries({ queryKey: ['direct-payouts'] })
-        } else {
-          throw new Error(payoutResponse.message || 'Payout processing failed')
-        }
-      } catch (payoutErr: any) {
-        const result: DirectPayoutResultData = {
+      setState((previous) => ({
+        ...previous,
+        currentStep: 'result',
+        isLoading: false,
+        result,
+        otpExpiryTime: null,
+        remainingSeconds: 0
+      }))
+
+      queryClient.invalidateQueries({ queryKey: ['wallet-balance'] })
+      queryClient.invalidateQueries({ queryKey: ['direct-payouts'] })
+      
+    } catch (err: unknown) {
+      const extractedMsg = extractApiError(err)
+      
+      setState((previous) => ({
+        ...previous, 
+        isLoading: false,
+        result: {
           status: 'FAILED',
           payoutId: '',
-          message: payoutErr.message || 'We could not process this payout.',
-          failureReason: payoutErr.message,
-        }
-
-        setState((previous) => ({
-          ...previous,
-          currentStep: 'result',
-          isLoading: false,
-          result,
-        }))
-      }
-    } catch (otpErr: any) {
-      setState((previous) => ({ ...previous, isLoading: false }))
-      throw otpErr
+          message: 'We could not process this payout.',
+          failureReason: extractedMsg,
+        },
+        currentStep: 'result'
+      }))
     }
   }
 
   const resetPayout = () => {
     setError(null)
-    setState(INITIAL_STATE)
+    setState({
+      currentStep: 'form',
+      formData: { ...INITIAL_FORM_DATA },
+      otp: '',
+      isLoading: false,
+      result: null,
+      remainingSeconds: 0,
+      otpExpiryTime: null,
+    })
   }
+
+  // Timer Effect
+  useEffect(() => {
+    if (!state.otpExpiryTime) return
+
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((state.otpExpiryTime! - Date.now()) / 1000))
+      setState((prev) => {
+        if (prev.remainingSeconds === remaining) return prev
+        return { ...prev, remainingSeconds: remaining }
+      })
+    }
+
+    tick()
+    const interval = setInterval(tick, 1000)
+    return () => clearInterval(interval)
+  }, [state.otpExpiryTime])
 
   return {
     state,

@@ -111,7 +111,7 @@ export default function DirectPayoutCreatePage() {
 
           <div className="px-6 py-10 lg:px-12 lg:py-12">
             {/* Show global form validation error here if any */}
-            {error && state.currentStep === 'form' && (
+            {error && state.currentStep !== 'result' && (
               <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm font-medium text-red-600">
                 {error}
               </div>
