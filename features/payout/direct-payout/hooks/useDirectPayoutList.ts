@@ -19,7 +19,7 @@ export const useDirectPayoutList = ({
   const debouncedSearch = useDebounce(search, 400)
 
   return useQuery<DirectPayoutListResponse, Error>({
-    queryKey: ['directPayouts', page, size, debouncedSearch, status],
+    queryKey: ['direct-payouts', page, size, debouncedSearch, status],
     queryFn: () => directPayoutApi.getDirectPayouts(page, size, debouncedSearch, status),
   })
 }

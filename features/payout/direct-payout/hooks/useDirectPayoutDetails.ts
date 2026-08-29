@@ -6,6 +6,6 @@ export const useDirectPayoutDetails = (id: number | undefined) => {
   return useQuery<DirectPayoutTransaction, Error>({
     queryKey: ['directPayoutDetails', id],
     queryFn: () => directPayoutApi.getDirectPayoutById(id!),
-    enabled: !!id,
+    enabled: id !== undefined,
   })
 }

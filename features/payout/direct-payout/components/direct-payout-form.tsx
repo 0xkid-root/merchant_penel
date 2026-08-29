@@ -1,32 +1,23 @@
 'use client'
 
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  CheckCircle2,
   IndianRupee,
   Landmark,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { directPayoutSchema, type DirectPayoutFormData } from '../schema/direct-payout.schema'
-import { useBankVerification } from '../../../beneficiary/hooks/useBankVerification'
 
 interface DirectPayoutFormProps {
   values: DirectPayoutFormData
-  onChange: (values: DirectPayoutFormData) => void
-  onContinue: () => void
+  onContinue: (data: DirectPayoutFormData) => void
 }
 
 export default function DirectPayoutForm({
   values,
-  onChange,
   onContinue,
 }: DirectPayoutFormProps) {
-  const { mutateAsync: verifyBank, isPending: isVerifying } = useBankVerification()
-  const [isVerified, setIsVerified] = useState(false)
-
   const {
     register,
     handleSubmit,
@@ -45,36 +36,8 @@ export default function DirectPayoutForm({
   const remarks = watch('remarks')
   const accountNumber = watch('accountNumber')
 
-  const handleVerifyIfsc = async () => {
-    const isValid = await trigger(['accountNumber', 'ifscCode'])
-    if (!isValid) {
-      toast.error('Please enter a valid account number and IFSC code')
-      return
-    }
-
-    try {
-      const response = await verifyBank({
-        accountNumber,
-        ifsc: ifscCode.trim().toUpperCase(),
-      })
-
-      if (response.data.bankTxnStatus) {
-        setValue('accountHolderName', response.data.accountName, { shouldValidate: true })
-        setIsVerified(true)
-      }
-    } catch (error) {
-      // Error toast is handled inside the hook
-    }
-  }
-
-  const handleReset = () => {
-    setIsVerified(false)
-    setValue('accountHolderName', '', { shouldValidate: true })
-  }
-
   const onSubmit = (data: DirectPayoutFormData) => {
-    onChange(data)
-    onContinue()
+    onContinue(data)
   }
 
   return (
@@ -100,26 +63,51 @@ export default function DirectPayoutForm({
 
       {/* Form content */}
       <div className="space-y-7 py-7">
-        {/* Account holder */}
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Account Holder Name <span className="text-red-500">*</span>
-          </label>
+        {/* Account holder + Mobile */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Account Holder Name <span className="text-red-500">*</span>
+            </label>
 
-          <input
-            {...register('accountHolderName')}
-            disabled={isVerified}
-            placeholder="Enter account holder name"
-            className={`h-12 w-full rounded-xl border px-4 text-sm outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.accountHolderName
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
-                : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100 bg-white'
-              }`}
-          />
-          {errors.accountHolderName && (
-            <p className="mt-1.5 text-xs font-medium text-red-500">
-              {errors.accountHolderName.message}
-            </p>
-          )}
+            <input
+              {...register('accountHolderName')}
+              placeholder="Enter account holder name"
+              className={`h-12 w-full rounded-xl border px-4 text-sm outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.accountHolderName
+                  ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
+                  : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100 bg-white'
+                }`}
+            />
+            {errors.accountHolderName && (
+              <p className="mt-1.5 text-xs font-medium text-red-500">
+                {errors.accountHolderName.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Mobile Number <span className="text-red-500">*</span>
+            </label>
+
+            <input
+              {...register('mobile', {
+                onChange: (e) => {
+                  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                }
+              })}
+              placeholder="Enter 10-digit mobile number"
+              className={`h-12 w-full rounded-xl border px-4 text-sm outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.mobile
+                  ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
+                  : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100 bg-white'
+                }`}
+            />
+            {errors.mobile && (
+              <p className="mt-1.5 text-xs font-medium text-red-500">
+                {errors.mobile.message}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Account number */}
@@ -135,7 +123,6 @@ export default function DirectPayoutForm({
                   e.target.value = e.target.value.replace(/\D/g, '')
                 }
               })}
-              disabled={isVerified}
               placeholder="Enter account number"
               className={`h-12 w-full rounded-xl border px-4 text-sm text-slate-900 outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.accountNumber
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
@@ -160,7 +147,6 @@ export default function DirectPayoutForm({
                   e.target.value = e.target.value.replace(/\D/g, '')
                 }
               })}
-              disabled={isVerified}
               placeholder="Re-enter account number"
               className={`h-12 w-full rounded-xl border px-4 text-sm text-slate-900 outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.confirmAccountNumber
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
@@ -188,7 +174,6 @@ export default function DirectPayoutForm({
                   e.target.value = e.target.value.toUpperCase()
                 }
               })}
-              disabled={isVerified}
               placeholder="Example: HDFC0001234"
               className={`h-12 w-full rounded-xl border px-4 text-sm uppercase text-slate-900 outline-none transition focus:ring-4 disabled:opacity-60 disabled:bg-slate-50 ${errors.ifscCode
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-100 bg-white'
@@ -226,7 +211,7 @@ export default function DirectPayoutForm({
           </div>
         </div>
 
-        {/* Payment Mode + Verify Button */}
+        {/* Payment Mode + Amount */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -251,31 +236,6 @@ export default function DirectPayoutForm({
             )}
           </div>
 
-          <div className="flex items-end">
-            {!isVerified ? (
-              <button
-                type="button"
-                onClick={handleVerifyIfsc}
-                disabled={isVerifying}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Landmark className="h-4 w-4" />
-                {isVerifying ? 'Verifying...' : 'Verify Bank'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleReset}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-semibold text-red-600 transition hover:bg-red-100"
-              >
-                Reset Verification
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Amount + Remarks */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
               Payout Amount <span className="text-red-500">*</span>
@@ -302,7 +262,10 @@ export default function DirectPayoutForm({
               </p>
             )}
           </div>
+        </div>
 
+        {/* Remarks */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
               Remarks <span className="font-normal text-slate-400">(Optional)</span>
@@ -338,19 +301,12 @@ export default function DirectPayoutForm({
       {/* Footer */}
       <div className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-500">
-          {isVerified 
-            ? 'Bank details verified. You can now continue.' 
-            : 'Please verify bank details carefully before continuing.'}
+          Please verify bank details carefully before continuing.
         </p>
 
         <button
           type="submit"
-          disabled={!isVerified}
-          className={`inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white transition ${
-            !isVerified
-              ? 'bg-indigo-400 cursor-not-allowed opacity-70'
-              : 'bg-indigo-600 hover:bg-indigo-700'
-          }`}
+          className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white transition bg-indigo-600 hover:bg-indigo-700"
         >
           Continue to Review
         </button>

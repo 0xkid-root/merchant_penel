@@ -1,17 +1,10 @@
+import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
+
+export type { DirectPayoutFormData }
+
 export type DirectPayoutStep = 'form' | 'review' | 'otp' | 'result'
 
 export type DirectPayoutStatus = 'success' | 'pending' | 'failed'
-
-export interface DirectPayoutFormData {
-  accountHolderName: string
-  accountNumber: string
-  confirmAccountNumber: string
-  ifscCode: string
-  bankName: string
-  branchName: string
-  amount: string
-  remarks: string
-}
 
 export interface DirectPayoutTransaction {
   id: number
@@ -75,10 +68,10 @@ export interface DirectPayoutListResponse {
 
 export interface DirectPayoutSendOtpRequest {
   beneficiaryName: string
+  mobile: string
   accountNumber: string
   ifscCode: string
   bankName: string
-  mobile: string
   email: string
   amount: number
   paymentMode: string
@@ -96,8 +89,8 @@ export interface DirectPayoutSendOtpResponse {
 
 export interface DirectPayoutRequest {
   beneficiaryName: string
-  email: string
   mobile: string
+  email: string
   accountNumber: string
   confirmAccountNumber: string
   bankName: string
@@ -113,4 +106,43 @@ export interface ProcessDirectPayoutResponse {
   utrNumber: string
   status: string
   message: string
+}
+
+export interface DirectPayoutResultData {
+  status: 'SUCCESS' | 'PENDING' | 'FAILED'
+  payoutId: string
+  message: string
+  failureReason?: string
+}
+
+export interface DirectPayoutState {
+  currentStep: DirectPayoutStep
+  formData: DirectPayoutFormData
+  otp: string
+  isLoading: boolean
+  result: DirectPayoutResultData | null
+  remainingSeconds: number
+  otpExpiryTime: number | null
+}
+
+export const INITIAL_FORM_DATA: DirectPayoutFormData = {
+  mobile: '',
+  accountHolderName: '',
+  accountNumber: '',
+  confirmAccountNumber: '',
+  ifscCode: '',
+  bankName: '',
+  amount: '',
+  paymentMode: 'IMPS',
+  remarks: '',
+}
+
+export const INITIAL_STATE: DirectPayoutState = {
+  currentStep: 'form',
+  formData: INITIAL_FORM_DATA,
+  otp: '',
+  isLoading: false,
+  result: null,
+  remainingSeconds: 0,
+  otpExpiryTime: null,
 }

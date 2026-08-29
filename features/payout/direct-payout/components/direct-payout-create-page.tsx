@@ -20,7 +20,6 @@ export default function DirectPayoutCreatePage() {
     amountNumber,
     totalDebit,
     charges,
-    updateFormData,
     goToReview,
     goBackToForm,
     sendOtp,
@@ -28,7 +27,6 @@ export default function DirectPayoutCreatePage() {
     goBackToReview,
     verifyOtpAndCreatePayout,
     resetPayout,
-    setFormData,
   } = useDirectPayout()
 
   const handleBackToHistory = () => {
@@ -44,7 +42,6 @@ export default function DirectPayoutCreatePage() {
       return (
         <DirectPayoutForm
           values={state.formData}
-          onChange={setFormData}
           onContinue={goToReview}
         />
       )
@@ -80,6 +77,8 @@ export default function DirectPayoutCreatePage() {
         <DirectPayoutResult
           values={state.formData}
           payoutId={state.result.payoutId}
+          status={state.result.status}
+          message={state.result.message}
           onCreateAnother={handleCreateAnotherPayout}
           onBackToHistory={handleBackToHistory}
         />

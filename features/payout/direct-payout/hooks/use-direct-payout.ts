@@ -2,55 +2,22 @@
 
 import { useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { directPayoutApi } from '../api/directPayoutApi'
-import { otpApi } from '../../api/otpApi'
+import { useVerifyOtp } from '../../hooks/useVerifyOtp'
+import { useProcessDirectPayout } from './useProcessDirectPayout'
+import { useDirectPayoutSendOtp } from './useDirectPayoutSendOtp'
 
 import { formatCurrency } from '@/lib/utils/formatCurrency'
 import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 import { useAuthStore } from '@/lib/store/authStore'
 
-import type {
+import {
   DirectPayoutFormData,
   DirectPayoutStep,
+  DirectPayoutResultData,
+  DirectPayoutState,
+  INITIAL_FORM_DATA,
+  INITIAL_STATE,
 } from '../types/direct-payout.types'
-
-const INITIAL_FORM_DATA: DirectPayoutFormData = {
-  accountHolderName: '',
-  accountNumber: '',
-  confirmAccountNumber: '',
-  ifscCode: '',
-  bankName: '',
-  branchName: '', // Left for type compatibility if needed, though removed from form
-  amount: '',
-  remarks: '',
-}
-
-export interface DirectPayoutResultData {
-  status: 'SUCCESS' | 'PENDING' | 'FAILED'
-  payoutId: string
-  message: string
-  failureReason?: string
-}
-
-export interface DirectPayoutState {
-  currentStep: DirectPayoutStep
-  formData: DirectPayoutFormData
-  otp: string
-  isLoading: boolean
-  result: DirectPayoutResultData | null
-  remainingSeconds: number
-  otpExpiryTime: number | null
-}
-
-const INITIAL_STATE: DirectPayoutState = {
-  currentStep: 'form',
-  formData: INITIAL_FORM_DATA,
-  otp: '',
-  isLoading: false,
-  result: null,
-  remainingSeconds: 0,
-  otpExpiryTime: null,
-}
 
 // Flat charge for direct payout
 const DIRECT_PAYOUT_CHARGES = 0 
@@ -63,6 +30,10 @@ export function useDirectPayout() {
   const [state, setState] = useState<DirectPayoutState>(INITIAL_STATE)
   const [error, setError] = useState<string | null>(null)
 
+  const { mutateAsync: verifyOtpMutation } = useVerifyOtp()
+  const { mutateAsync: processDirectPayoutMutation } = useProcessDirectPayout()
+  const { mutateAsync: sendOtpMutation } = useDirectPayoutSendOtp()
+
   const { data: walletBalance = 0 } = useWalletBalance()
 
   const amountNumber = Number(state.formData.amount || 0)
@@ -72,53 +43,40 @@ export function useDirectPayout() {
     return amountNumber + DIRECT_PAYOUT_CHARGES
   }, [amountNumber])
 
-  const updateFormData = (
-    field: keyof DirectPayoutFormData,
-    value: string,
-  ) => {
-    setError(null)
-    setState((previous) => ({
-      ...previous,
-      formData: {
-        ...previous.formData,
-        [field]: value,
-      },
-    }))
-  }
 
-  const validatePayoutForm = () => {
-    if (!state.formData.amount || amountNumber <= 0) {
+
+  const goToReview = (data: DirectPayoutFormData) => {
+    const currentAmount = Number(data.amount || 0)
+    const currentTotalDebit = currentAmount + DIRECT_PAYOUT_CHARGES
+
+    if (!data.amount || currentAmount <= 0) {
       setError('Please enter a valid payout amount.')
-      return false
+      return
     }
 
-    if (amountNumber < DIRECT_PAYOUT_MIN_AMOUNT) {
+    if (currentAmount < DIRECT_PAYOUT_MIN_AMOUNT) {
       setError(`Minimum payout amount is ₹${DIRECT_PAYOUT_MIN_AMOUNT.toLocaleString('en-IN')}.`)
-      return false
+      return
     }
 
-    if (amountNumber > DIRECT_PAYOUT_MAX_AMOUNT) {
+    if (currentAmount > DIRECT_PAYOUT_MAX_AMOUNT) {
       setError(`Maximum payout amount is ${formatCurrency(DIRECT_PAYOUT_MAX_AMOUNT)}.`)
-      return false
+      return
     }
 
-    if (totalDebit > walletBalance) {
+    if (currentTotalDebit > walletBalance) {
       setError(
         `Insufficient wallet balance. You need ${formatCurrency(
-          totalDebit - walletBalance,
+          currentTotalDebit - walletBalance,
         )} more.`,
       )
-      return false
+      return
     }
 
-    return true
-  }
-
-  const goToReview = () => {
-    if (!validatePayoutForm()) return
     setError(null)
     setState((previous) => ({
       ...previous,
+      formData: data,
       currentStep: 'review',
     }))
   }
@@ -146,12 +104,12 @@ export function useDirectPayout() {
     setState((previous) => ({ ...previous, isLoading: true }))
 
     try {
-      const response = await directPayoutApi.sendOtp({
+      const response = await sendOtpMutation({
         beneficiaryName: state.formData.accountHolderName,
         accountNumber: state.formData.accountNumber,
         ifscCode: state.formData.ifscCode,
         bankName: state.formData.bankName,
-        mobile: user?.mobile || '',
+        mobile: state.formData.mobile,
         email: user?.email || '',
         amount: amountNumber,
         paymentMode: state.formData.paymentMode || 'IMPS',
@@ -179,12 +137,12 @@ export function useDirectPayout() {
   const resendOtp = async (): Promise<number> => {
     setError(null)
     try {
-      const response = await directPayoutApi.sendOtp({
+      const response = await sendOtpMutation({
         beneficiaryName: state.formData.accountHolderName,
         accountNumber: state.formData.accountNumber,
         ifscCode: state.formData.ifscCode,
         bankName: state.formData.bankName,
-        mobile: user?.mobile || '',
+        mobile: state.formData.mobile,
         email: user?.email || '',
         amount: amountNumber,
         paymentMode: state.formData.paymentMode || 'IMPS',
@@ -227,7 +185,7 @@ export function useDirectPayout() {
 
     try {
       // 1. Verify OTP
-      const otpResponse = await otpApi.verifyOtp({
+      const otpResponse = await verifyOtpMutation({
         email: user?.email || '',
         otp,
         moduleName: 'PAYOUT',
@@ -239,7 +197,7 @@ export function useDirectPayout() {
 
       // 2. Process Payout
       try {
-        const payoutResponse = await directPayoutApi.processDirectPayout({
+        const payoutResponse = await processDirectPayoutMutation({
           beneficiaryName: state.formData.accountHolderName,
           accountNumber: state.formData.accountNumber,
           confirmAccountNumber: state.formData.confirmAccountNumber,
@@ -249,7 +207,7 @@ export function useDirectPayout() {
           paymentMode: state.formData.paymentMode || 'IMPS',
           remarks: state.formData.remarks || '',
           email: user?.email || '',
-          mobile: user?.mobile || '',
+          mobile: state.formData.mobile,
         })
 
         if (payoutResponse.status === 'SUCCESS' || payoutResponse.status === 'PENDING') {
@@ -304,7 +262,6 @@ export function useDirectPayout() {
     amountNumber,
     totalDebit,
     charges: DIRECT_PAYOUT_CHARGES,
-    updateFormData,
     goToReview,
     goBackToForm,
     sendOtp,
@@ -312,6 +269,5 @@ export function useDirectPayout() {
     goBackToReview,
     verifyOtpAndCreatePayout,
     resetPayout,
-    setFormData: (data: DirectPayoutFormData) => setState(prev => ({...prev, formData: data}))
   }
 }

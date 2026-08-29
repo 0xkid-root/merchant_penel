@@ -78,7 +78,7 @@ export default function DirectPayoutReview({
               </h3>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
               <div>
                 <p className="text-xs font-medium text-slate-500">
                   Account Holder Name
@@ -96,6 +96,16 @@ export default function DirectPayoutReview({
 
                 <p className="mt-1 text-sm font-semibold text-slate-900">
                   XXXXXX{values.accountNumber.slice(-4)}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-slate-500">
+                  Mobile Number
+                </p>
+
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  +91 {values.mobile}
                 </p>
               </div>
             </div>
