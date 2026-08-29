@@ -2,6 +2,11 @@ import { z } from 'zod'
 
 export const directPayoutSchema = z
   .object({
+    mobile: z
+      .string()
+      .trim()
+      .regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number'),
+
     accountHolderName: z
       .string()
       .trim()
@@ -71,18 +76,6 @@ export const directPayoutSchema = z
         'Bank name cannot exceed 100 characters'
       ),
 
-    branchName: z
-      .string()
-      .trim()
-      .min(
-        1,
-        'Branch name is required'
-      )
-      .max(
-        100,
-        'Branch name cannot exceed 100 characters'
-      ),
-
     paymentMode: z.enum(
       ['IMPS', 'NEFT', 'RTGS'],
       {
@@ -114,9 +107,7 @@ export const directPayoutSchema = z
       .max(
         250,
         'Remarks cannot exceed 250 characters'
-      )
-      .optional()
-      .default(''),
+      ),
   })
 
   .refine(

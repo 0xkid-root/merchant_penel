@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDebounce } from '@/hooks/use-debounce'
 import { directPayoutApi } from '../api/directPayoutApi'
-import { DirectPayoutListResponse } from '../types/direct-payout.types'
+import { DirectPayoutListResponse, DirectPayoutStatus } from '../types/direct-payout.types'
 
 interface UseDirectPayoutListParams {
   page?: number
   size?: number
   search?: string
-  status?: string
+  status?: DirectPayoutStatus
 }
 
 export const useDirectPayoutList = ({
@@ -19,7 +19,7 @@ export const useDirectPayoutList = ({
   const debouncedSearch = useDebounce(search, 400)
 
   return useQuery<DirectPayoutListResponse, Error>({
-    queryKey: ['directPayouts', page, size, debouncedSearch, status],
+    queryKey: ['direct-payouts', page, size, debouncedSearch, status],
     queryFn: () => directPayoutApi.getDirectPayouts(page, size, debouncedSearch, status),
   })
 }

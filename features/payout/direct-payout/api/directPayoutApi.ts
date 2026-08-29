@@ -7,7 +7,8 @@ import {
   DirectPayoutSendOtpRequest,
   DirectPayoutSendOtpResponse,
   DirectPayoutRequest,
-  ProcessDirectPayoutResponse
+  ProcessDirectPayoutResponse,
+  DirectPayoutStatus
 } from '../types/direct-payout.types'
 
 export const directPayoutApi = {
@@ -18,7 +19,7 @@ export const directPayoutApi = {
     page = 0,
     size = 10,
     search?: string,
-    status?: string
+    status?: DirectPayoutStatus
   ): Promise<DirectPayoutListResponse> => {
     const response = await apiClient.get<DirectPayoutListResponse>(
       API_ENDPOINTS.PAYOUTS.DIRECT.LIST,

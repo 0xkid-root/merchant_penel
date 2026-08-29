@@ -1,11 +1,8 @@
 'use client'
 
-import { Building2, Check, Copy, Eye } from 'lucide-react'
+import { Check, Copy, Eye } from 'lucide-react'
 
-import type {
-  DirectPayoutTransaction,
-  DirectPayoutStatus,
-} from '../types/direct-payout.types'
+import type { DirectPayoutTransaction } from '../types/direct-payout.types'
 
 import {
   getPayoutStatusLabel,

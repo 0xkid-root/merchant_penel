@@ -1,46 +1,25 @@
+import type { DirectPayoutFormData } from '../schema/direct-payout.schema'
+
+export type { DirectPayoutFormData }
+
 export type DirectPayoutStep = 'form' | 'review' | 'otp' | 'result'
 
-export type DirectPayoutStatus = 'success' | 'pending' | 'failed'
+export type DirectPayoutStatus = 'SUCCESS' | 'PENDING' | 'FAILED'
 
-export interface DirectPayoutFormData {
-  accountHolderName: string
-  accountNumber: string
-  confirmAccountNumber: string
-  ifscCode: string
-  bankName: string
-  branchName: string
-  amount: string
-  remarks: string
-}
+export type DirectPayoutPaymentMode = 'IMPS' | 'NEFT' | 'RTGS'
 
 export interface DirectPayoutTransaction {
   id: number
   transactionId: string
-  utrNumber: string
-  merchantName?: string
+  utrNumber?: string | null
+  merchantName?: string | null
   beneficiaryName: string
   accountNumber: string
   ifscCode: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   payoutType: string
-  payoutStatus: string
-  createdAt: string
-}
-
-
-
-export interface DirectPayoutItem {
-  id: number
-  payoutId: string
-  accountHolderName: string
-  maskedAccountNumber: string
-  bankName: string
-  ifscCode: string
-  amount: number
-  totalDebit: number
-  remarks: string
-  status: DirectPayoutStatus
+  payoutStatus: DirectPayoutStatus
   createdAt: string
 }
 
@@ -75,13 +54,13 @@ export interface DirectPayoutListResponse {
 
 export interface DirectPayoutSendOtpRequest {
   beneficiaryName: string
+  mobile: string
   accountNumber: string
   ifscCode: string
   bankName: string
-  mobile: string
   email: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   remarks?: string
 }
 
@@ -96,21 +75,60 @@ export interface DirectPayoutSendOtpResponse {
 
 export interface DirectPayoutRequest {
   beneficiaryName: string
-  email: string
   mobile: string
+  email: string
   accountNumber: string
   confirmAccountNumber: string
   bankName: string
   ifscCode: string
   amount: number
-  paymentMode: string
+  paymentMode: DirectPayoutPaymentMode
   remarks?: string
 }
 
 export interface ProcessDirectPayoutResponse {
   id: number
   transactionId: string
-  utrNumber: string
-  status: string
+  utrNumber: string | null
+  status: DirectPayoutStatus
   message: string
+}
+
+export interface DirectPayoutResultData {
+  status: DirectPayoutStatus
+  payoutId: string
+  message: string
+  failureReason?: string
+}
+
+export interface DirectPayoutState {
+  currentStep: DirectPayoutStep
+  formData: DirectPayoutFormData
+  otp: string
+  isLoading: boolean
+  result: DirectPayoutResultData | null
+  remainingSeconds: number
+  otpExpiryTime: number | null
+}
+
+export const INITIAL_FORM_DATA: DirectPayoutFormData = {
+  mobile: '',
+  accountHolderName: '',
+  accountNumber: '',
+  confirmAccountNumber: '',
+  ifscCode: '',
+  bankName: '',
+  amount: '',
+  paymentMode: 'IMPS',
+  remarks: '',
+}
+
+export const INITIAL_STATE: DirectPayoutState = {
+  currentStep: 'form',
+  formData: INITIAL_FORM_DATA,
+  otp: '',
+  isLoading: false,
+  result: null,
+  remainingSeconds: 0,
+  otpExpiryTime: null,
 }
