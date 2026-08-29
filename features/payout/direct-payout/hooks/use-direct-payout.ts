@@ -241,34 +241,34 @@ export function useDirectPayout() {
     setError(null)
     setState((previous) => ({ ...previous, isLoading: true, otp }))
 
+    let otpResponse
     try {
-      // 1. Verify OTP
-      let otpResponse
-      try {
-        otpResponse = await verifyOtpMutation({
-          email: user.email,
-          otp,
-          moduleName: 'PAYOUT',
-        })
-      } catch (error) {
-        setState((previous) => ({
-          ...previous,
-          isLoading: false,
-        }))
-        const extracted = extractApiError(error)
-        setError(extracted)
-        throw new Error(extracted)
-      }
+      otpResponse = await verifyOtpMutation({
+        email: user.email,
+        otp,
+        moduleName: 'PAYOUT',
+      })
+    } catch (error) {
+      setState((previous) => ({
+        ...previous,
+        isLoading: false,
+      }))
+      const extracted = extractApiError(error)
+      setError(extracted)
+      throw new Error(extracted)
+    }
 
-      if (!otpResponse.success || otpResponse.data !== true) {
-        setState((previous) => ({
-          ...previous,
-          isLoading: false,
-        }))
-        const msg = otpResponse.message || 'Invalid OTP'
-        setError(msg)
-        throw new Error(msg)
-      }
+    if (!otpResponse.success || otpResponse.data !== true) {
+      setState((previous) => ({
+        ...previous,
+        isLoading: false,
+      }))
+      const msg = otpResponse.message || 'Invalid OTP'
+      setError(msg)
+      throw new Error(msg)
+    }
+
+    try {
 
       // 2. Process Payout
       const payoutResponse = await processDirectPayoutMutation({
