@@ -77,7 +77,7 @@ export const API_ENDPOINTS = {
   PAYOUTS: {
     SINGLE: {
       LIST: '/api/v1/payouts/single',
-      
+
       GET_BY_ID: (id: number) =>
         `/api/v1/payouts/single/${id}`,
       SEND_OTP: '/api/v1/payouts/send-otp',
@@ -93,12 +93,12 @@ export const API_ENDPOINTS = {
     },
 
     BULK: {
-      LIST: '/api/v1/payouts/bulk',
-      GET_BY_ID: (id: number) =>
-        `/api/v1/payouts/bulk/${id}`,
+      LIST: '/api/v1/payouts/bulk/list',
       PREVIEW: '/api/v1/payouts/bulk/preview',
-      CREATE: '/api/v1/payouts/bulk/create',
       SEND_OTP: '/api/v1/payouts/bulk/send-otp',
+      CREATE: '/api/v1/payouts/bulk/create',
+      TRANSACTIONS: '/api/v1/payouts/bulk',
+      TRANSACTION_BY_ID: (id: number) => `/api/v1/payouts/bulk/${id}`,
     },
 
     HISTORY: {
