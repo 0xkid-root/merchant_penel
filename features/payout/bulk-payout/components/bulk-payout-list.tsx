@@ -16,7 +16,7 @@ import BulkPayoutDetailsModal from './bulk-payout-details-modal'
 import PayoutWalletBalance from '../../components/payout-wallet-balance'
 import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 
-import BulkPayoutTable from './direct-payout-table'
+import BulkPayoutTable from './bulk-payout-table'
 import { BulkPayoutTableSkeleton } from './bulk-payout-table-skeleton'
 import { useBulkPayoutList } from '../hook/useBulkPayoutList'
 

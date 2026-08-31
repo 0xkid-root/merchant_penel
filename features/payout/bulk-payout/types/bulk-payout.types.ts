@@ -1,8 +1,4 @@
-export type BulkPayoutStep =
-  | 'upload'
-  | 'preview'
-  | 'otp'
-  | 'result'
+import type { BulkPayoutStep } from '../../components/bulk-payout-stepper'
 
 export type BulkPayoutStatus =
   | 'PROCESSING'

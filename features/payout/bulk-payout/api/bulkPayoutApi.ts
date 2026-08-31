@@ -51,6 +51,11 @@ export const bulkPayoutApi = {
         const response = await apiClient.post<BulkPayoutPreviewResponse>(
             API_ENDPOINTS.PAYOUTS.BULK.PREVIEW,
             formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
         )
 
         return response.data
@@ -94,6 +99,11 @@ export const bulkPayoutApi = {
         const response = await apiClient.post<ProcessBulkPayoutResponse>(
             API_ENDPOINTS.PAYOUTS.BULK.CREATE,
             formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
         )
 
         return response.data

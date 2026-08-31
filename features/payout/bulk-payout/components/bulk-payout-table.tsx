@@ -1,8 +1,6 @@
 'use client'
 import { Check, Copy, Eye, FileSpreadsheet } from 'lucide-react'
 import type { BulkPayoutSummary, BulkPayoutStatus, } from '../types/bulk-payout.types'
-import { formatCurrency } from '@/lib/utils/formatCurrency'
-
 
 interface BulkPayoutTableProps {
     batches: BulkPayoutSummary[]
@@ -14,6 +12,7 @@ interface BulkPayoutTableProps {
     ) => void
 }
 
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 function getShortBatchId(batchId: string) {
     if (batchId.length <= 12) return batchId
@@ -141,7 +140,7 @@ export default function BulkPayoutTable({
                                             </p>
 
                                             <p className="mt-0.5 text-xs text-slate-500">
-                                                {batch.createdAt}
+                                                 {batch.createdAt}
                                             </p>
                                         </div>
                                     </div>
