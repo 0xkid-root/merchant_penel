@@ -1,6 +1,4 @@
-import type { BulkPayoutBatch } from '../types/bulk-payout.types'
-
-export const BULK_PAYOUT_BATCHES: BulkPayoutBatch[] = [
+export const BULK_PAYOUT_BATCHES: any[] = [
   {
     id: 'BP-20260706-001',
     fileName: 'vendor-payout-july.csv',

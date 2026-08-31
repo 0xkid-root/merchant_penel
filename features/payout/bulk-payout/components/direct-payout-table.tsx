@@ -1,30 +1,18 @@
 'use client'
-
-import { Check, Copy, Download, Eye, FileSpreadsheet } from 'lucide-react'
-
-import type { BulkPayoutBatch, BulkPayoutStatus, } from '../types/bulk-payout.types'
-
+import { Check, Copy, Eye, FileSpreadsheet } from 'lucide-react'
+import type { BulkPayoutSummary, BulkPayoutStatus, } from '../types/bulk-payout.types'
 
 interface BulkPayoutTableProps {
-    batches: BulkPayoutBatch[]
+    batches: BulkPayoutSummary[]
     copiedBatchId: string | null
-    onViewDetails: (batch: BulkPayoutBatch) => void
+    onViewDetails: (batch: BulkPayoutSummary) => void
     onCopyBatchId: (
         event: React.MouseEvent<HTMLButtonElement>,
         batchId: string,
     ) => void
 }
 
-
-function formatIndianCurrency(amount: number) {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(amount)
-}
-
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 function getShortBatchId(batchId: string) {
     if (batchId.length <= 12) return batchId
@@ -34,16 +22,16 @@ function getShortBatchId(batchId: string) {
 
 
 function getStatusLabel(status: BulkPayoutStatus) {
-    if (status === 'COMPLETED') return 'Completed'
+    if (status === 'SUCCESS') return 'Success'
     if (status === 'PROCESSING') return 'Processing'
-    if (status === 'PARTIALLY_FAILED') return 'Partial Failed'
+    if (status === 'PENDING') return 'Pending'
     return 'Failed'
 }
 
 
 
 function getStatusStyles(status: BulkPayoutStatus) {
-    if (status === 'COMPLETED') {
+    if (status === 'SUCCESS') {
         return 'border border-emerald-200 bg-emerald-50 text-emerald-700'
     }
 
@@ -51,7 +39,7 @@ function getStatusStyles(status: BulkPayoutStatus) {
         return 'border border-amber-200 bg-amber-50 text-amber-700'
     }
 
-    if (status === 'PARTIALLY_FAILED') {
+    if (status === 'PENDING') {
         return 'border border-orange-200 bg-orange-50 text-orange-700'
     }
 
@@ -103,11 +91,11 @@ export default function BulkPayoutTable({
 
                 <tbody className="divide-y divide-slate-200 bg-white">
                     {batches.map((batch) => {
-                        const isCopied = copiedBatchId === batch.id
+                        const isCopied = copiedBatchId === batch.bulkReferenceId
 
                         return (
                             <tr
-                                key={batch.id}
+                                key={batch.bulkPayoutId}
                                 className="transition hover:bg-slate-50/80"
                             >
                                 <td className="px-5 py-4">
@@ -115,16 +103,16 @@ export default function BulkPayoutTable({
                                         <button
                                             type="button"
                                             onClick={() => onViewDetails(batch)}
-                                            title={batch.id}
+                                            title={batch.bulkReferenceId}
                                             className="text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
                                         >
-                                            {getShortBatchId(batch.id)}
+                                            {getShortBatchId(batch.bulkReferenceId)}
                                         </button>
 
                                         <button
                                             type="button"
-                                            onClick={(event) => onCopyBatchId(event, batch.id)}
-                                            aria-label={`Copy ${batch.id}`}
+                                            onClick={(event) => onCopyBatchId(event, batch.bulkReferenceId)}
+                                            aria-label={`Copy ${batch.bulkReferenceId}`}
                                             title={isCopied ? 'Copied' : 'Copy batch ID'}
                                             className="rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
                                         >
@@ -160,17 +148,13 @@ export default function BulkPayoutTable({
 
                                 <td className="px-5 py-4 text-center">
                                     <p className="text-sm font-bold text-slate-900">
-                                        {batch.totalRecords}
-                                    </p>
-
-                                    <p className="mt-1 text-xs text-slate-500">
-                                        {batch.successCount} success · {batch.failedCount} failed
+                                        {batch.totalTransactions}
                                     </p>
                                 </td>
 
                                 <td className="px-5 py-4 text-right">
                                     <p className="text-sm font-bold text-slate-900">
-                                        {formatIndianCurrency(batch.totalAmount)}
+                                        {formatCurrency(batch.totalAmount)}
                                     </p>
 
                                     <p className="mt-1 text-xs text-slate-500">
@@ -180,7 +164,7 @@ export default function BulkPayoutTable({
 
                                 <td className="px-5 py-4 text-right">
                                     <p className="text-sm font-bold text-slate-900">
-                                        {batch.totalRecords}
+                                        {batch.totalBeneficiaries}
                                     </p>
 
                                     <p className="mt-1 text-xs text-slate-500">
@@ -203,9 +187,10 @@ export default function BulkPayoutTable({
                                     <button
                                         type="button"
                                         title="View batch details"
+                                        onClick={() => onViewDetails(batch)}
                                         className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
                                     >
-                                        <Download className="h-4 w-4" />
+                                        <Eye className="h-4 w-4" />
                                     </button>
                                 </td>
                             </tr>

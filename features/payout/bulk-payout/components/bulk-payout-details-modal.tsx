@@ -12,23 +12,16 @@ import {
 
 import { SecondaryButton } from '@/components/buttons/secondary-button'
 
-import type {BulkPayoutBatch} from '../types/bulk-payout.types'
+import type { BulkPayoutSummary } from '../types/bulk-payout.types'
 
 import { getStatusConfig } from '../utils/bulk-payout-utils'
 
 interface BulkPayoutDetailsModalProps {
-  batch: BulkPayoutBatch | null
+  batch: BulkPayoutSummary | null
   onClose: () => void
 }
 
-function formatIndianCurrency(amount: number) {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
-}
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 
 
@@ -41,27 +34,9 @@ export default function BulkPayoutDetailsModal({
   const statusConfig = getStatusConfig(batch.status)
   const StatusIcon = statusConfig.icon
 
-  const processedCount = batch.successCount + batch.failedCount
-  const remainingCount = Math.max(batch.totalRecords - processedCount, 0)
-
-  const successPercentage =
-    batch.totalRecords > 0
-      ? Math.round((batch.successCount / batch.totalRecords) * 100)
-      : 0
-
-  const failedPercentage =
-    batch.totalRecords > 0
-      ? Math.round((batch.failedCount / batch.totalRecords) * 100)
-      : 0
-
-  const pendingPercentage =
-    batch.totalRecords > 0
-      ? Math.round((batch.pendingCount / batch.totalRecords) * 100)
-      : 0
-
   const handleDownloadReport = () => {
     // API download integration will be added later.
-    console.log('Download bulk payout report:', batch.id)
+    console.log('Download bulk payout report:', batch.bulkReferenceId)
   }
 
   return (
@@ -117,7 +92,7 @@ export default function BulkPayoutDetailsModal({
                   </p>
 
                   <p className="mt-1 font-mono text-xs font-medium text-slate-500">
-                    {batch.id}
+                    {batch.bulkReferenceId}
                   </p>
 
                   <p className="mt-2 text-xs text-slate-500">
@@ -146,7 +121,7 @@ export default function BulkPayoutDetailsModal({
                   </p>
 
                   <p className="mt-1 text-xl font-bold text-slate-900">
-                    {batch.totalRecords}
+                    {batch.totalTransactions}
                   </p>
                 </div>
                 
@@ -165,110 +140,14 @@ export default function BulkPayoutDetailsModal({
                   </p>
 
                   <p className="mt-1 text-xl font-bold text-slate-900">
-                    {formatIndianCurrency(batch.totalAmount)}
+                    {formatCurrency(batch.totalAmount)}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white">
-            <div className="border-b border-slate-200 px-5 py-4">
-              <h3 className="text-sm font-semibold text-slate-900">
-                Processing Summary
-              </h3>
 
-              <p className="mt-1 text-xs text-slate-500">
-                Beneficiary payout record status for this batch.
-              </p>
-            </div>
-
-            <div className="divide-y divide-slate-100 px-5">
-              <div className="flex items-center justify-between py-4">
-                <div>
-                  <p className="text-sm font-medium text-slate-700">
-                    Successful Records
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Successfully submitted payouts
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-base font-bold text-emerald-600">
-                    {batch.successCount}
-                  </p>
-
-                  <p className="mt-1 text-xs font-medium text-slate-500">
-                    {successPercentage}%
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between py-4">
-                <div>
-                  <p className="text-sm font-medium text-slate-700">
-                    Failed Records
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Records requiring review or retry
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-base font-bold text-red-600">
-                    {batch.failedCount}
-                  </p>
-
-                  <p className="mt-1 text-xs font-medium text-slate-500">
-                    {failedPercentage}%
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between py-4">
-                <div>
-                  <p className="text-sm font-medium text-slate-700">
-                    Pending Records
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Payouts still being processed
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-base font-bold text-amber-600">
-                    {batch.pendingCount}
-                  </p>
-
-                  <p className="mt-1 text-xs font-medium text-slate-500">
-                    {pendingPercentage}%
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-200 bg-slate-50 px-5 py-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-700">
-                  Processed Records
-                </span>
-
-                <span className="text-sm font-bold text-slate-900">
-                  {processedCount} / {batch.totalRecords}
-                </span>
-              </div>
-
-              {remainingCount > 0 ? (
-                <p className="mt-2 text-xs text-slate-500">
-                  {remainingCount} record{remainingCount !== 1 ? 's are' : ' is'} awaiting processing.
-                </p>
-              ) : null}
-            </div>
-          </div>
 
           <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
             <SecondaryButton onClick={onClose}>
