@@ -11,43 +11,42 @@ import {
 
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
-
-import type { BulkPayoutFormValues, BulkPayoutRecord, } from '../types/bulk-payout.types'
+import type { BulkPayoutPreviewResponse } from '../types/bulk-payout.types'
 
 interface BulkPayoutValidationProps {
-    values: BulkPayoutFormValues
+    preview: BulkPayoutPreviewResponse | null
+    walletBalance: number
     onBack: () => void
-    onContinue: (validRecords: BulkPayoutRecord[]) => void
+    onContinue: () => void
     onReupload: () => void
-}
-
-function formatIndianCurrency(amount: number) {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(amount)
+    error?: string | null
 }
 
 export default function BulkPayoutValidation({
-    values,
+    preview,
+    walletBalance,
     onBack,
     onContinue,
     onReupload,
+    error,
 }: BulkPayoutValidationProps) {
+    if (!preview) return null
 
-    const records: BulkPayoutRecord[] = values.records
-    const fileName = values.fileName
-
-    const validRecords = records.filter((record) => record.status === 'valid')
-    const invalidRecords = records.filter((record) => record.status === 'invalid')
-
-    const hasInvalidRecords = invalidRecords.length > 0
+    const isSufficientBalance = walletBalance >= preview.totalAmount
 
     return (
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl space-y-6">
+            {error ? (
+                <div className="rounded-xl border border-red-100 bg-red-50 p-4">
+                    <div className="flex gap-3">
+                        <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
+                        <p className="text-sm font-medium text-red-800">{error}</p>
+                    </div>
+                </div>
+            ) : null}
+
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                 <div className="border-b border-slate-200 px-5 py-5 sm:px-6">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -86,7 +85,7 @@ export default function BulkPayoutValidation({
                     </p>
 
                     <p className="mt-1 truncate text-sm font-semibold text-slate-900">
-                        {fileName}
+                        {preview.fileName}
                     </p>
                 </div>
 
@@ -97,35 +96,27 @@ export default function BulkPayoutValidation({
                         </p>
 
                         <p className="mt-2 text-2xl font-bold text-slate-900">
-                            {records.length}
+                            {preview.totalTransactions}
                         </p>
                     </div>
 
                     <div className="bg-white px-5 py-5 sm:px-6">
-                        <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Total Beneficiaries
+                        </p>
 
-                            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                                Valid Records
-                            </p>
-                        </div>
-
-                        <p className="mt-2 text-2xl font-bold text-emerald-600">
-                            {validRecords.length}
+                        <p className="mt-2 text-2xl font-bold text-slate-900">
+                            {preview.totalBeneficiaries}
                         </p>
                     </div>
 
                     <div className="bg-white px-5 py-5 sm:px-6">
-                        <div className="flex items-center gap-2">
-                            <AlertCircle className="h-4 w-4 text-red-600" />
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Available Balance
+                        </p>
 
-                            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                                Invalid Records
-                            </p>
-                        </div>
-
-                        <p className="mt-2 text-2xl font-bold text-red-600">
-                            {invalidRecords.length}
+                        <p className={`mt-2 text-2xl font-bold ${isSufficientBalance ? 'text-slate-900' : 'text-red-600'}`}>
+                            {formatCurrency(walletBalance)}
                         </p>
                     </div>
                 </div>
@@ -143,25 +134,24 @@ export default function BulkPayoutValidation({
                         </div>
 
                         <p className="text-xl font-bold text-slate-900">
-                            {formatIndianCurrency(values.totalAmount)}
+                            {formatCurrency(preview.totalAmount)}
                         </p>
                     </div>
 
                 </div>
 
-                {hasInvalidRecords ? (
+                {!isSufficientBalance ? (
                     <div className="border-b border-red-100 bg-red-50 px-5 py-4 sm:px-6">
                         <div className="flex gap-3">
                             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
 
                             <div>
                                 <p className="text-sm font-semibold text-red-900">
-                                    Some records need attention
+                                    Insufficient Wallet Balance
                                 </p>
 
                                 <p className="mt-1 text-sm leading-6 text-red-700">
-                                    Invalid records will not be included in the payout batch. You
-                                    can continue with valid records or upload a corrected file.
+                                    You do not have enough funds in your wallet to process this bulk payout. Please add funds to your wallet and try again.
                                 </p>
                             </div>
                         </div>
@@ -173,7 +163,7 @@ export default function BulkPayoutValidation({
 
                             <div>
                                 <p className="text-sm font-semibold text-emerald-900">
-                                    All records are valid
+                                    Sufficient Balance Available
                                 </p>
 
                                 <p className="mt-1 text-sm leading-6 text-emerald-700">
@@ -184,94 +174,6 @@ export default function BulkPayoutValidation({
                     </div>
                 )}
 
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[950px] border-collapse">
-                        <thead>
-                            <tr className="border-b border-slate-200 bg-slate-50">
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Beneficiary
-                                </th>
-
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Account Details
-                                </th>
-
-                                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Amount
-                                </th>
-
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Remarks
-                                </th>
-
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Validation Status
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody className="divide-y divide-slate-200 bg-white">
-                            {records.map((record) => {
-                                const isValid = record.status === 'valid'
-
-                                return (
-                                    <tr key={record.id} className="hover:bg-slate-50/70">
-                                        <td className="px-5 py-4">
-                                            <p className="text-sm font-semibold text-slate-900">
-                                                {record.beneficiaryName}
-                                            </p>
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            <p className="font-mono text-sm font-medium text-slate-900">
-                                                {record.accountNumber}
-                                            </p>
-
-                                            <p className="mt-1 text-xs text-slate-500">
-                                                IFSC: {record.ifscCode}
-                                            </p>
-                                        </td>
-
-                                        <td className="px-5 py-4 text-right">
-                                            <p className="text-sm font-bold text-slate-900">
-                                                {formatIndianCurrency(record.amount)}
-                                            </p>
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            <p className="max-w-[220px] truncate text-sm text-slate-600">
-                                                {record.remarks || '—'}
-                                            </p>
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            {isValid ? (
-                                                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                                                    <CheckCircle2 className="h-3.5 w-3.5" />
-                                                    Valid
-                                                </span>
-                                            ) : (
-                                                <div>
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
-                                                        <AlertCircle className="h-3.5 w-3.5" />
-                                                        Invalid
-                                                    </span>
-
-                                                    {record.errorMessage ? (
-                                                        <p className="mt-1.5 max-w-[220px] text-xs text-red-600">
-                                                            {record.errorMessage}
-                                                        </p>
-                                                    ) : null}
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-
                 <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                     <SecondaryButton onClick={onBack}>
                         <ArrowLeft className="h-4 w-4" />
@@ -279,8 +181,8 @@ export default function BulkPayoutValidation({
                     </SecondaryButton>
 
                     <PrimaryButton
-                        onClick={() => onContinue(validRecords)}
-                        disabled={validRecords.length === 0}
+                        onClick={onContinue}
+                        disabled={!isSufficientBalance}
                     >
                         Continue to Review
                         <ArrowRight className="h-4 w-4" />

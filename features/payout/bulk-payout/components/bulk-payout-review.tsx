@@ -12,38 +12,36 @@ import {
 
 import { PrimaryButton } from '@/components/buttons/primary-button'
 import { SecondaryButton } from '@/components/buttons/secondary-button'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
-import type { BulkPayoutFormValues, BulkPayoutRecord, } from '../types/bulk-payout.types'
+import type { BulkPayoutPreviewResponse } from '../types/bulk-payout.types'
 
 interface BulkPayoutReviewProps {
-    fileName: string
-    records: BulkPayoutRecord[]
+    preview: BulkPayoutPreviewResponse | null
     onBack: () => void
     onContinue: () => void
-}
-
-function formatIndianCurrency(amount: number) {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(amount)
+    error?: string | null
 }
 
 export default function BulkPayoutReview({
-    fileName,
-    records,
+    preview,
     onBack,
     onContinue,
+    error,
 }: BulkPayoutReviewProps) {
-    const totalAmount = records.reduce(
-        (total, record) => total + Number(record.amount || 0),
-        0,
-    )
+    if (!preview) return null
 
     return (
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl space-y-6">
+            {error ? (
+                <div className="rounded-xl border border-red-100 bg-red-50 p-4">
+                    <div className="flex gap-3">
+                        <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
+                        <p className="text-sm font-medium text-red-800">{error}</p>
+                    </div>
+                </div>
+            ) : null}
+
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                 <div className="border-b border-slate-200 px-5 py-5 sm:px-6">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -65,7 +63,7 @@ export default function BulkPayoutReview({
 
                         <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                            {records.length} valid records
+                            {preview.totalTransactions} valid records
                         </span>
                     </div>
                 </div>
@@ -81,10 +79,10 @@ export default function BulkPayoutReview({
                         </div>
 
                         <p
-                            title={fileName}
+                            title={preview.fileName}
                             className="mt-3 truncate text-sm font-semibold text-slate-900"
                         >
-                            {fileName}
+                            {preview.fileName}
                         </p>
                     </div>
 
@@ -98,7 +96,7 @@ export default function BulkPayoutReview({
                         </div>
 
                         <p className="mt-3 text-2xl font-bold text-slate-900">
-                            {records.length}
+                            {preview.totalBeneficiaries}
                         </p>
 
                         <p className="mt-1 text-xs text-slate-500">
@@ -116,7 +114,7 @@ export default function BulkPayoutReview({
                         </div>
 
                         <p className="mt-3 text-2xl font-bold text-slate-900">
-                            {formatIndianCurrency(totalAmount)}
+                            {formatCurrency(preview.totalAmount)}
                         </p>
 
                         <p className="mt-1 text-xs text-slate-500">
@@ -125,100 +123,7 @@ export default function BulkPayoutReview({
                     </div>
                 </div>
 
-                <div className="border-b border-slate-200 px-5 py-5 sm:px-6">
-                    <div className="flex items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-sm font-semibold text-slate-900">
-                                Beneficiary payout summary
-                            </h3>
 
-                            <p className="mt-1 text-sm text-slate-500">
-                                Review all valid payout records included in this batch.
-                            </p>
-                        </div>
-
-                        <span className="hidden text-sm font-medium text-slate-500 sm:block">
-                            {records.length} records
-                        </span>
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[950px] border-collapse">
-                        <thead>
-                            <tr className="border-b border-slate-200 bg-slate-50">
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Beneficiary
-                                </th>
-
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Account Details
-                                </th>
-
-                                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Amount
-                                </th>
-
-                                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Remarks
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody className="divide-y divide-slate-200 bg-white">
-                            {records.map((record) => (
-                                <tr key={record.id} className="transition hover:bg-slate-50/70">
-                                    <td className="px-5 py-4">
-                                        <p className="text-sm font-semibold text-slate-900">
-                                            {record.beneficiaryName}
-                                        </p>
-                                    </td>
-
-                                    <td className="px-5 py-4">
-                                        <p className="font-mono text-sm font-medium text-slate-900">
-                                            {record.accountNumber}
-                                        </p>
-
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            IFSC: {record.ifscCode}
-                                        </p>
-                                    </td>
-
-                                    <td className="px-5 py-4 text-right">
-                                        <p className="text-sm font-bold text-slate-900">
-                                            {formatIndianCurrency(record.amount)}
-                                        </p>
-                                    </td>
-
-                                    <td className="px-5 py-4">
-                                        <p className="max-w-[260px] truncate text-sm text-slate-600">
-                                            {record.remarks || '—'}
-                                        </p>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-
-                        <tfoot>
-                            <tr className="border-t border-slate-200 bg-slate-50">
-                                <td
-                                    colSpan={2}
-                                    className="px-5 py-4 text-right text-sm font-semibold text-slate-700"
-                                >
-                                    Total payout amount
-                                </td>
-
-                                <td className="px-5 py-4 text-right text-base font-bold text-indigo-700">
-                                    {formatIndianCurrency(totalAmount)}
-                                </td>
-
-                                <td className="px-5 py-4" />
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-            
 
                 <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                     <SecondaryButton onClick={onBack}>

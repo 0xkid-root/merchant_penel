@@ -4,9 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
-import PayoutStepper, {
-  type BulkPayoutStep,
-} from '../../components/bulk-payout-stepper'
+import BulkPayoutStepper from '../../components/bulk-payout-stepper'
 
 import BulkPayoutOtp from './bulk-payout-otp'
 import BulkPayoutResult from './bulk-payout-result'
@@ -14,104 +12,65 @@ import BulkPayoutReview from './bulk-payout-review'
 import BulkPayoutUpload from './bulk-payout-upload'
 import BulkPayoutValidation from './bulk-payout-validation'
 
-import type { BulkPayoutFormValues } from '../types/bulk-payout.types'
-
-const INITIAL_VALUES: BulkPayoutFormValues = {
-  batchName: '',
-  fileName: '',
-  records: [],
-  totalAmount: 0,
-  validRecords: 0,
-  invalidRecords: 0,
-}
+import { useBulkPayout } from '../hook/use-bulk-payout'
 
 export default function BulkPayoutCreatePage() {
-  const [currentStep, setCurrentStep] =
-    useState<BulkPayoutStep>('upload')
-
-  const [values, setValues] =
-    useState<BulkPayoutFormValues>(INITIAL_VALUES)
-
-  const [batchId, setBatchId] = useState('')
-
-  const handleCreateAnother = () => {
-    setValues(INITIAL_VALUES)
-    setBatchId('')
-    setCurrentStep('upload')
-  }
-
-  const handleSubmitBulkPayout = () => {
-    setBatchId(`BP-${Date.now().toString().slice(-8)}`)
-    setCurrentStep('result')
-  }
+  const bulkPayout = useBulkPayout()
+  const { state, error, walletBalance } = bulkPayout
 
   const renderStepContent = () => {
-    if (currentStep === 'upload') {
+    if (state.currentStep === 'upload') {
       return (
         <BulkPayoutUpload
-          values={values}
-          onContinue={(updatedValues) => {
-            setValues(updatedValues)
-            setCurrentStep('validation')
-          }}
+          file={state.file}
+          onContinue={bulkPayout.handleUpload}
+          error={error}
         />
       )
     }
 
-    if (currentStep === 'validation') {
+    if (state.currentStep === 'validation') {
       return (
         <BulkPayoutValidation
-          values={values}
-          onBack={() => setCurrentStep('upload')}
-          onReupload={() => setCurrentStep('upload')}
-          onContinue={(validRecords) => {
-            const updatedTotalAmount = validRecords.reduce(
-              (total, record) => total + Number(record.amount || 0),
-              0,
-            )
-
-            setValues((previousValues) => ({
-              ...previousValues,
-              records: validRecords,
-              totalAmount: updatedTotalAmount,
-              validRecords: validRecords.length,
-              invalidRecords: 0,
-            }))
-
-            setCurrentStep('review')
-          }}
+          preview={state.preview}
+          walletBalance={walletBalance}
+          onBack={bulkPayout.goBackToUpload}
+          onReupload={bulkPayout.goBackToUpload}
+          onContinue={bulkPayout.goToReview}
+          error={error}
         />
       )
     }
 
-    if (currentStep === 'review') {
+    if (state.currentStep === 'review') {
       return (
         <BulkPayoutReview
-          fileName={values.fileName}
-          records={values.records}
-          onBack={() => setCurrentStep('validation')}
-          onContinue={() => setCurrentStep('otp')}
+          preview={state.preview}
+          onBack={bulkPayout.goBackToValidation}
+          onContinue={bulkPayout.sendOtp}
+          error={error}
         />
       )
     }
 
-    if (currentStep === 'otp') {
+    if (state.currentStep === 'otp') {
       return (
         <BulkPayoutOtp
-          onBack={() => setCurrentStep('review')}
-          onVerified={handleSubmitBulkPayout}
+          onBack={bulkPayout.goBackToReview}
+          onVerify={bulkPayout.verifyOtpAndCreatePayout}
+          onResend={bulkPayout.resendOtp}
+          remainingSeconds={state.remainingSeconds}
+          error={error}
         />
       )
     }
 
-    if (currentStep === 'result') {
+    if (state.currentStep === 'result') {
       return (
         <BulkPayoutResult
-          batchId={batchId}
-          fileName={values.fileName}
-          totalRecords={values.records.length}
-          totalAmount={values.totalAmount}
-          onCreateAnother={handleCreateAnother}
+          result={state.result}
+          preview={state.preview}
+          onCreateAnother={bulkPayout.resetPayout}
           onBackToHistory={() => {
             window.location.href = '/payout/bulk'
           }}
@@ -141,7 +100,7 @@ export default function BulkPayoutCreatePage() {
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          <PayoutStepper currentStep={currentStep} />
+          <BulkPayoutStepper currentStep={state.currentStep} />
 
           <div className="px-6 py-10 lg:px-12 lg:py-12">
             {renderStepContent()}

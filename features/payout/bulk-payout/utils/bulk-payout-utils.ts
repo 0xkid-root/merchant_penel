@@ -5,9 +5,9 @@ import { BulkPayoutStatus } from '../types/bulk-payout.types'
 
 
 export function getStatusConfig(status: BulkPayoutStatus) {
-  if (status === 'COMPLETED') {
+  if (status === 'SUCCESS') {
     return {
-      label: 'Completed',
+      label: 'Success',
       icon: CheckCircle2,
       iconClass: 'text-emerald-600',
       badgeClass: 'border border-emerald-200 bg-emerald-50 text-emerald-700',
@@ -25,10 +25,10 @@ export function getStatusConfig(status: BulkPayoutStatus) {
     }
   }
 
-  if (status === 'PARTIALLY_FAILED') {
+  if (status === 'PENDING') {
     return {
-      label: 'Partial Failed',
-      icon: XCircle,
+      label: 'Pending',
+      icon: Clock3,
       iconClass: 'text-orange-600',
       badgeClass: 'border border-orange-200 bg-orange-50 text-orange-700',
       panelClass: 'border-orange-100 bg-orange-50/60',

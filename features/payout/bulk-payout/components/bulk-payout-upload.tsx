@@ -2,120 +2,50 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import {
-  ArrowRight,
-  FileSpreadsheet,
-  UploadCloud,
-} from 'lucide-react'
+import { AlertCircle, ArrowRight, FileSpreadsheet, UploadCloud } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  BulkPayoutFormValues,
-  BulkPayoutRecord,
-} from './bulk-payout-create-page'
-
 interface BulkPayoutUploadProps {
-  values: BulkPayoutFormValues
-  onContinue: (values: BulkPayoutFormValues) => void
+  file: File | null
+  onContinue: (file: File) => void
+  error?: string | null
 }
 
-const DEMO_RECORDS: BulkPayoutRecord[] = [
-  {
-    id: 1,
-    beneficiaryName: 'Amit Sharma',
-    accountNumber: 'XXXXXX1245',
-    ifscCode: 'HDFC0001234',
-    amount: 15000,
-    remarks: 'Vendor payment',
-    status: 'valid',
-  },
-  {
-    id: 2,
-    beneficiaryName: 'Priya Verma',
-    accountNumber: 'XXXXXX7821',
-    ifscCode: 'SBIN0004567',
-    amount: 22000,
-    remarks: 'Service payment',
-    status: 'valid',
-  },
-  {
-    id: 3,
-    beneficiaryName: 'Rahul Singh',
-    accountNumber: 'XXXXXX4509',
-    ifscCode: 'ICIC0000789',
-    amount: 18500,
-    remarks: 'Commission payment',
-    status: 'valid',
-  },
-  {
-    id: 4,
-    beneficiaryName: 'Neha Gupta',
-    accountNumber: 'XXXXXX9988',
-    ifscCode: 'INVALID0001',
-    amount: 12000,
-    remarks: 'Partner payment',
-    status: 'invalid',
-    errorMessage: 'Invalid IFSC code',
-  },
-]
-
 export default function BulkPayoutUpload({
-  values,
+  file,
   onContinue,
+  error,
 }: BulkPayoutUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const [batchName, setBatchName] = useState(values.batchName)
-  const [fileName, setFileName] = useState(values.fileName)
+  const [selectedFile, setSelectedFile] = useState<File | null>(file)
+
+
 
   const handleFileSelect = (file?: File) => {
     if (!file) return
 
-    const isCsv =
-      file.name.toLowerCase().endsWith('.csv') ||
-      file.type === 'text/csv'
+    const isExcel =
+      file.name.toLowerCase().endsWith('.xlsx') ||
+      file.name.toLowerCase().endsWith('.xls') ||
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      file.type === 'application/vnd.ms-excel'
 
-    if (!isCsv) {
-      toast.error('Please upload a CSV file')
+    if (!isExcel) {
+      toast.error('Please upload a valid Excel file (.xlsx or .xls)')
       return
     }
 
-    setFileName(file.name)
+    setSelectedFile(file)
     toast.success('Payout file selected successfully')
   }
 
   const handleContinue = () => {
-    if (!batchName.trim()) {
-      toast.error('Please enter a batch name')
+    if (!selectedFile) {
+      toast.error('Please upload an Excel file')
       return
     }
-
-    if (!fileName) {
-      toast.error('Please upload a CSV file')
-      return
-    }
-
-    const totalAmount = DEMO_RECORDS.reduce(
-      (total, record) => total + record.amount,
-      0,
-    )
-
-    const validRecords = DEMO_RECORDS.filter(
-      (record) => record.status === 'valid',
-    ).length
-
-    const invalidRecords = DEMO_RECORDS.filter(
-      (record) => record.status === 'invalid',
-    ).length
-
-    onContinue({
-      batchName: batchName.trim(),
-      fileName,
-      records: DEMO_RECORDS,
-      totalAmount,
-      validRecords,
-      invalidRecords,
-    })
+    onContinue(selectedFile)
   }
 
   return (
@@ -132,35 +62,32 @@ export default function BulkPayoutUpload({
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              Upload a CSV file containing beneficiary bank account payout details.
+              Upload an Excel file (.xlsx, .xls) containing beneficiary bank account payout details.
             </p>
           </div>
         </div>
       </div>
 
       <div className="space-y-6 px-5 py-6 lg:px-6">
-        <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Batch Name
-          </label>
+        {error ? (
+          <div className="rounded-xl border border-red-100 bg-red-50 p-4">
+            <div className="flex gap-3">
+              <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
+              <p className="text-sm font-medium text-red-800">{error}</p>
+            </div>
+          </div>
+        ) : null}
 
-          <input
-            value={batchName}
-            onChange={(event) => setBatchName(event.target.value)}
-            placeholder="Example: July Vendor Payout"
-            className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-          />
-        </div>
 
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
-            Payout CSV File
+            Payout Excel File
           </label>
 
           <input
             ref={inputRef}
             type="file"
-            accept=".csv,text/csv"
+            accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             className="hidden"
             onChange={(event) => handleFileSelect(event.target.files?.[0])}
           />
@@ -175,22 +102,22 @@ export default function BulkPayoutUpload({
             </div>
 
             <p className="mt-4 text-sm font-semibold text-slate-900">
-              {fileName || 'Choose CSV file'}
+              {selectedFile ? selectedFile.name : 'Choose Excel file'}
             </p>
 
             <p className="mt-1 text-xs text-slate-500">
-              CSV format only
+              Excel format (.xlsx, .xls) only
             </p>
           </button>
         </div>
 
-        {fileName ? (
+        {selectedFile ? (
           <div className="flex items-center gap-3 border-t border-slate-200 pt-5">
             <FileSpreadsheet className="h-5 w-5 text-emerald-600" />
 
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-slate-900">
-                {fileName}
+                {selectedFile.name}
               </p>
 
               <p className="mt-0.5 text-xs text-slate-500">
@@ -205,7 +132,7 @@ export default function BulkPayoutUpload({
         <button
           type="button"
           onClick={handleContinue}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
         >
           Validate File
           <ArrowRight className="h-4 w-4" />
