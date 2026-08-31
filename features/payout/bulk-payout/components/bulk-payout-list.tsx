@@ -7,30 +7,36 @@ import {
   Filter,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+
 
 import PageHeader from '@/components/layout/page-header'
 import Pagination from '@/components/common/pagination/Pagination'
 import BulkPayoutDetailsModal from './bulk-payout-details-modal'
+import PayoutWalletBalance from '../../components/payout-wallet-balance'
+import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 
 import BulkPayoutTable from './direct-payout-table'
+import { BulkPayoutTableSkeleton } from './bulk-payout-table-skeleton'
 import { useBulkPayoutList } from '../hook/useBulkPayoutList'
 
 import type { BulkPayoutSummary } from '../types/bulk-payout.types'
 
 export default function BulkPayoutList() {
+  const router = useRouter()
+
   const [page, setPage] = useState(0)
-  
+
+  const { data: balance = 0 } = useWalletBalance()
+
   const { data, isLoading, isError } = useBulkPayoutList({
     page,
     size: 10,
   })
 
-  const [selectedBatch, setSelectedBatch] =
-    useState<BulkPayoutSummary | null>(null)
+  const [selectedBatch, setSelectedBatch] = useState<BulkPayoutSummary | null>(null)
 
   const [copiedBatchId, setCopiedBatchId] = useState<string | null>(null)
-
-
 
   const handleCopyBatchId = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -54,7 +60,7 @@ export default function BulkPayoutList() {
 
   return (
     <div className="min-h-full bg-slate-50 px-4 py-5 lg:px-6">
-      <div className="mx-auto max-w-[1440px]">
+      <div className="mx-auto max-w-[1440px] space-y-6">
         <PageHeader
           title="Bulk Payout"
           subtitle="Upload, manage, and track payout batches for multiple beneficiaries."
@@ -67,6 +73,12 @@ export default function BulkPayoutList() {
               Create Bulk Payout
             </Link>
           }
+        />
+
+        <PayoutWalletBalance
+          balance={balance}
+          className="w-full"
+          onAddFunds={() => router.push('/add-funds')}
         />
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -89,9 +101,7 @@ export default function BulkPayoutList() {
           </div>
 
           {isLoading ? (
-            <div className="flex min-h-64 items-center justify-center p-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-            </div>
+            <BulkPayoutTableSkeleton />
           ) : isError ? (
             <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
               <h3 className="mt-4 text-base font-semibold text-slate-900">
@@ -120,14 +130,14 @@ export default function BulkPayoutList() {
                 onCopyBatchId={handleCopyBatchId}
               />
               <div className="border-t border-slate-200">
-                  <Pagination
-                      page={data.number}
-                      totalPages={data.totalPages}
-                      totalElements={data.totalElements}
-                      pageSize={data.size}
-                      onPageChange={setPage}
-                      itemName="batches"
-                  />
+                <Pagination
+                  page={data.number}
+                  totalPages={data.totalPages}
+                  totalElements={data.totalElements}
+                  pageSize={data.size}
+                  onPageChange={setPage}
+                  itemName="batches"
+                />
               </div>
             </>
           )}
@@ -136,8 +146,8 @@ export default function BulkPayoutList() {
         <BulkPayoutDetailsModal
           batch={selectedBatch}
           onClose={() => setSelectedBatch(null)}
-        /> 
-        
+        />
+
         {/* Modal will be connected in the next step */}
         {selectedBatch ? null : null}
       </div>
