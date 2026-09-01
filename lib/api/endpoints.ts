@@ -74,6 +74,14 @@ export const API_ENDPOINTS = {
       `/api/v1/wallet-whitelist/${id}`,
   },
 
+  DASHBOARD: {
+    SUMMARY: '/api/v1/merchant/dashboard/summary',
+    RECENT_TRANSACTIONS: '/api/v1/merchant/dashboard/recent-transactions',
+    TREND: '/api/v1/merchant/dashboard/trend',
+    PAYMENT_MODE: '/api/v1/merchant/dashboard/payment-mode',
+  },
+
+
   PAYOUTS: {
     SINGLE: {
       LIST: '/api/v1/payouts/single',

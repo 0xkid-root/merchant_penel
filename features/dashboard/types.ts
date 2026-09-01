@@ -1,41 +1,36 @@
-export interface DashboardStats {
+export interface DashboardSummary {
   walletBalance: number
-  availableBalance: number
-  todaysPayout: number
-  todaysCredit: number
-  todaysDebit: number
+  todaysPayouts: number
   successfulPayouts: number
   failedPayouts: number
   pendingPayouts: number
+  totalBeneficiaries: number
+  totalAmountPaid: number
+  monthlyAmount: number
 }
 
-export interface PayoutChartData {
+export interface DashboardRecentTransaction {
+  transactionId: string
+  beneficiaryName: string
+  amount: number
+  paymentMode: string
+  status: string
+  createdAt: string
+}
+
+export interface DashboardTrend {
   date: string
   amount: number
 }
 
-export interface RecentTransaction {
-  id: string
-  type: 'PAYOUT' | 'DEPOSIT' | 'WITHDRAWAL'
-  amount: number
-  status: 'SUCCESS' | 'FAILED' | 'PENDING'
-  date: Date
-  description: string
+export interface DashboardPaymentMode {
+  imps: number
+  neft: number
+  rtgs: number
 }
 
-export interface RecentPayout {
-  id: string
-  beneficiaryName: string
-  avatar: string
-  bankInfo: string
-  amount: number
-  mode: string
-  status: 'SUCCESS' | 'FAILED' | 'PENDING'
-}
-
-export interface DashboardData {
-  stats: DashboardStats
-  chartData: PayoutChartData[]
-  recentTransactions: RecentTransaction[]
-  recentPayouts: RecentPayout[]
+export interface ApiResponse<T> {
+  success: boolean
+  message: string
+  data: T
 }
