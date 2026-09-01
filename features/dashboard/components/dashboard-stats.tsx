@@ -1,21 +1,50 @@
 'use client'
 
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  TrendingUp,
   Wallet,
+  Calendar,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Users,
+  CreditCard,
+  CalendarDays
 } from 'lucide-react'
 
 import { StatCard } from '@/components/cards/stat-card'
+import { useDashboardSummary } from '../hook/useDashboardSummary'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 export default function DashboardStats() {
+  const { data: response, isLoading, isError } = useDashboardSummary()
+
+  const data = response?.data
+
+  if (isLoading) {
+    return (
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="h-[120px] animate-pulse rounded-2xl bg-white border border-slate-200"></div>
+        ))}
+      </div>
+    )
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
+        Failed to load dashboard summary.
+      </div>
+    )
+  }
+
   return (
     <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5">
+      {/* ROW 1 */}
       <StatCard
         label="Wallet Balance"
-        value="₹14,82,350.00"
-        change="Available Balance"
+        value={formatCurrency(data.walletBalance)}
+        change=""
         changeType="neutral"
         icon={Wallet}
         iconBg="bg-blue-50"
@@ -23,33 +52,74 @@ export default function DashboardStats() {
       />
 
       <StatCard
-        label="Today's Payout"
-        value="₹78,200.00"
-        change="12.5%"
-        changeType="up"
-        icon={ArrowUpRight}
-        iconBg="bg-green-50"
-        iconColor="text-green-600"
+        label="Today's Payouts"
+        value={String(data.todaysPayouts)}
+        change=""
+        changeType="neutral"
+        icon={Calendar}
+        iconBg="bg-violet-50"
+        iconColor="text-violet-600"
       />
 
       <StatCard
-        label="Today's Credit"
-        value="₹1,24,500.00"
-        change="8.3%"
-        changeType="up"
-        icon={ArrowDownLeft}
-        iconBg="bg-violet-50"
+        label="Successful Payouts"
+        value={String(data.successfulPayouts)}
+        change=""
+        changeType="neutral"
+        icon={CheckCircle}
+        iconBg="bg-emerald-50"
+        iconColor="text-emerald-600"
+      />
+
+      <StatCard
+        label="Pending Payouts"
+        value={String(data.pendingPayouts)}
+        change=""
+        changeType="neutral"
+        icon={Clock}
+        iconBg="bg-amber-50"
+        iconColor="text-amber-600"
+      />
+
+      {/* ROW 2 */}
+      <StatCard
+        label="Failed Payouts"
+        value={String(data.failedPayouts)}
+        change=""
+        changeType="neutral"
+        icon={XCircle}
+        iconBg="bg-red-50"
+        iconColor="text-red-600"
+      />
+
+      <StatCard
+        label="Total Beneficiaries"
+        value={String(data.totalBeneficiaries)}
+        change=""
+        changeType="neutral"
+        icon={Users}
+        iconBg="bg-indigo-50"
         iconColor="text-indigo-600"
       />
 
       <StatCard
-        label="Today's Debit"
-        value="₹45,700.00"
-        change="3.2%"
-        changeType="down"
-        icon={TrendingUp}
-        iconBg="bg-red-50"
-        iconColor="text-red-600"
+        label="Total Amount Paid"
+        value={formatCurrency(data.totalAmountPaid)}
+        change=""
+        changeType="neutral"
+        icon={CreditCard}
+        iconBg="bg-cyan-50"
+        iconColor="text-cyan-600"
+      />
+
+      <StatCard
+        label="Monthly Amount"
+        value={formatCurrency(data.monthlyAmount)}
+        change=""
+        changeType="neutral"
+        icon={CalendarDays}
+        iconBg="bg-fuchsia-50"
+        iconColor="text-fuchsia-600"
       />
     </div>
   )

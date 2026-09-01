@@ -105,7 +105,8 @@ export const API_ENDPOINTS = {
       PREVIEW: '/api/v1/payouts/bulk/preview',
       SEND_OTP: '/api/v1/payouts/bulk/send-otp',
       CREATE: '/api/v1/payouts/bulk/create',
-      TRANSACTIONS: (bulkPayoutId: number) => `/api/v1/payouts/bulk/${bulkPayoutId}/transactions`,
+      TRANSACTIONS: '/api/v1/payouts/bulk',
+      BATCH_TRANSACTIONS: (bulkPayoutId: number) => `/api/v1/payouts/bulk/${bulkPayoutId}/transactions`,
       TRANSACTION_BY_ID: (id: number) => `/api/v1/payouts/bulk/${id}`,
     },
 
