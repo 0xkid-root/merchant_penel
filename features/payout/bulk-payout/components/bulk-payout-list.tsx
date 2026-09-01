@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation'
 
 import PageHeader from '@/components/layout/page-header'
 import Pagination from '@/components/common/pagination/Pagination'
-import BulkPayoutDetailsModal from './bulk-payout-details-modal'
 import PayoutWalletBalance from '../../components/payout-wallet-balance'
 import { useWalletBalance } from '@/features/wallet/hooks/useWalletBalance'
 
@@ -33,8 +32,6 @@ export default function BulkPayoutList() {
     page,
     size: 10,
   })
-
-  const [selectedBatch, setSelectedBatch] = useState<BulkPayoutSummary | null>(null)
 
   const [copiedBatchId, setCopiedBatchId] = useState<string | null>(null)
 
@@ -126,7 +123,7 @@ export default function BulkPayoutList() {
               <BulkPayoutTable
                 batches={data.content}
                 copiedBatchId={copiedBatchId}
-                onViewDetails={setSelectedBatch}
+                onViewDetails={() => {}}
                 onCopyBatchId={handleCopyBatchId}
               />
               <div className="border-t border-slate-200">
@@ -143,13 +140,6 @@ export default function BulkPayoutList() {
           )}
         </div>
 
-        <BulkPayoutDetailsModal
-          batch={selectedBatch}
-          onClose={() => setSelectedBatch(null)}
-        />
-
-        {/* Modal will be connected in the next step */}
-        {selectedBatch ? null : null}
       </div>
     </div>
   )

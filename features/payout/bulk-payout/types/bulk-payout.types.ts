@@ -18,7 +18,8 @@ export type BulkPayoutPaymentMode =
  * GET /api/v1/payouts/bulk/list
  */
 export interface BulkPayoutSummary {
-  bulkPayoutId: number
+  id?: number
+  bulkPayoutId?: number
   bulkReferenceId: string
   fileName: string
   makerRemark?: string | null
@@ -127,6 +128,8 @@ export interface ProcessBulkPayoutResponse {
  */
 export interface BulkPayoutTransaction {
   id: number
+  bulkPayoutId: number
+  bulkReferenceId: string
   transactionId: string
   utrNumber?: string | null
   merchantName?: string | null
