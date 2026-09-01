@@ -34,7 +34,7 @@ export default function BulkPayoutTransactionsPage({ batchId }: BulkPayoutTransa
                         <ArrowLeft className="h-4 w-4" />
                         Back to Bulk Payouts
                     </button>
-                    
+
                     <PageHeader
                         title={`Batch Transactions (#${batchId})`}
                         subtitle="View all individual transactions for this bulk payout batch."
