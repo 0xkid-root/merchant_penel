@@ -1,5 +1,6 @@
 'use client'
 import { Check, Copy, Eye, FileSpreadsheet } from 'lucide-react'
+import Link from 'next/link'
 import type { BulkPayoutSummary, BulkPayoutStatus, } from '../types/bulk-payout.types'
 
 interface BulkPayoutTableProps {
@@ -13,6 +14,7 @@ interface BulkPayoutTableProps {
 }
 
 import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDate } from '@/lib/utils/dateFormatter'
 
 function getShortBatchId(batchId: string) {
     if (batchId.length <= 12) return batchId
@@ -95,7 +97,7 @@ export default function BulkPayoutTable({
 
                         return (
                             <tr
-                                key={batch.bulkPayoutId}
+                                key={batch.id || batch.bulkPayoutId}
                                 className="transition hover:bg-slate-50/80"
                             >
                                 <td className="px-5 py-4">
@@ -140,7 +142,7 @@ export default function BulkPayoutTable({
                                             </p>
 
                                             <p className="mt-0.5 text-xs text-slate-500">
-                                                 {batch.createdAt}
+                                                {formatDate(batch.createdAt)}
                                             </p>
                                         </div>
                                     </div>
@@ -184,14 +186,13 @@ export default function BulkPayoutTable({
                                 </td>
 
                                 <td className="px-5 py-4 text-right">
-                                    <button
-                                        type="button"
+                                    <Link
+                                        href={`/payout/bulk/${batch.id || batch.bulkPayoutId}`}
                                         title="View batch details"
-                                        onClick={() => onViewDetails(batch)}
                                         className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
                                     >
                                         <Eye className="h-4 w-4" />
-                                    </button>
+                                    </Link>
                                 </td>
                             </tr>
                         )

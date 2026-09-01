@@ -2,6 +2,7 @@
 import { Check, Copy, Eye, FileSpreadsheet } from 'lucide-react'
 import type { BulkPayoutSummary, BulkPayoutStatus, } from '../types/bulk-payout.types'
 import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDate } from '@/lib/utils/dateFormatter'
 
 
 interface BulkPayoutTableProps {
@@ -141,7 +142,7 @@ export default function BulkPayoutTable({
                                             </p>
 
                                             <p className="mt-0.5 text-xs text-slate-500">
-                                                {batch.createdAt}
+                                                {formatDate(batch.createdAt)}
                                             </p>
                                         </div>
                                     </div>

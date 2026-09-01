@@ -119,7 +119,30 @@ export const bulkPayoutApi = {
         size = 10,
     ): Promise<BulkPayoutTransactionListResponse> => {
         const response = await apiClient.get<BulkPayoutTransactionListResponse>(
-            API_ENDPOINTS.PAYOUTS.BULK.TRANSACTIONS,
+            API_ENDPOINTS.PAYOUTS.BULK.TRANSACTIONS as string,
+            {
+                params: {
+                    page,
+                    size,
+                },
+            },
+        )
+
+        return response.data
+    },
+
+    /**
+     * Get Individual Bulk Payout Transactions for a specific Batch
+     *
+     * GET /api/v1/payouts/bulk/{bulkPayoutId}/transactions
+     */
+    getBatchTransactions: async (
+        bulkPayoutId: number,
+        page = 0,
+        size = 10,
+    ): Promise<BulkPayoutTransactionListResponse> => {
+        const response = await apiClient.get<BulkPayoutTransactionListResponse>(
+            API_ENDPOINTS.PAYOUTS.BULK.BATCH_TRANSACTIONS(bulkPayoutId),
             {
                 params: {
                     page,
