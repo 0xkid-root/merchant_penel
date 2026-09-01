@@ -13,6 +13,7 @@ interface BulkPayoutTableProps {
 }
 
 import { formatCurrency } from '@/lib/utils/formatCurrency'
+import { formatDate } from '@/lib/utils/dateFormatter'
 
 function getShortBatchId(batchId: string) {
     if (batchId.length <= 12) return batchId
@@ -140,7 +141,7 @@ export default function BulkPayoutTable({
                                             </p>
 
                                             <p className="mt-0.5 text-xs text-slate-500">
-                                                 {batch.createdAt}
+                                                {formatDate(batch.createdAt)}
                                             </p>
                                         </div>
                                     </div>
