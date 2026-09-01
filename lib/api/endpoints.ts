@@ -74,6 +74,14 @@ export const API_ENDPOINTS = {
       `/api/v1/wallet-whitelist/${id}`,
   },
 
+  DASHBOARD: {
+    SUMMARY: '/api/v1/merchant/dashboard/summary',
+    RECENT_TRANSACTIONS: '/api/v1/merchant/dashboard/recent-transactions',
+    TREND: '/api/v1/merchant/dashboard/trend',
+    PAYMENT_MODE: '/api/v1/merchant/dashboard/payment-mode',
+  },
+
+
   PAYOUTS: {
     SINGLE: {
       LIST: '/api/v1/payouts/single',
@@ -97,8 +105,7 @@ export const API_ENDPOINTS = {
       PREVIEW: '/api/v1/payouts/bulk/preview',
       SEND_OTP: '/api/v1/payouts/bulk/send-otp',
       CREATE: '/api/v1/payouts/bulk/create',
-      TRANSACTIONS: '/api/v1/payouts/bulk',
-      BATCH_TRANSACTIONS: (bulkPayoutId: number) => `/api/v1/payouts/bulk/${bulkPayoutId}/transactions`,
+      TRANSACTIONS: (bulkPayoutId: number) => `/api/v1/payouts/bulk/${bulkPayoutId}/transactions`,
       TRANSACTION_BY_ID: (id: number) => `/api/v1/payouts/bulk/${id}`,
     },
 
