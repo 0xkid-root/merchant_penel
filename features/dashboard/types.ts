@@ -3,7 +3,7 @@ export interface DashboardSummary {
   todaysPayouts: number
   successfulPayouts: number
   failedPayouts: number
-  pendingPayouts: number
+  totalFundsAdded: number
   totalBeneficiaries: number
   totalAmountPaid: number
   monthlyAmount: number
@@ -23,10 +23,15 @@ export interface DashboardTrend {
   amount: number
 }
 
+export interface PaymentModeStats {
+  amount: number
+  count: number
+}
+
 export interface DashboardPaymentMode {
-  imps: number
-  neft: number
-  rtgs: number
+  imps: PaymentModeStats
+  neft: PaymentModeStats
+  rtgs: PaymentModeStats
 }
 
 export interface ApiResponse<T> {

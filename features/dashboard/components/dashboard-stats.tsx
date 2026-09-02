@@ -4,11 +4,11 @@ import {
   Wallet,
   Calendar,
   CheckCircle,
-  Clock,
   XCircle,
   Users,
   CreditCard,
-  CalendarDays
+  CalendarDays,
+  Landmark
 } from 'lucide-react'
 
 import { StatCard } from '@/components/cards/stat-card'
@@ -42,6 +42,16 @@ export default function DashboardStats() {
     <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:gap-5">
       {/* ROW 1 */}
       <StatCard
+        label="Total Funds Added"
+        value={formatCurrency(data.totalFundsAdded)}
+        change=""
+        changeType="neutral"
+        icon={Landmark}
+        iconBg="bg-amber-50"
+        iconColor="text-amber-600"
+      />
+
+      <StatCard
         label="Wallet Balance"
         value={formatCurrency(data.walletBalance)}
         change=""
@@ -69,16 +79,6 @@ export default function DashboardStats() {
         icon={CheckCircle}
         iconBg="bg-emerald-50"
         iconColor="text-emerald-600"
-      />
-
-      <StatCard
-        label="Pending Payouts"
-        value={String(data.pendingPayouts)}
-        change=""
-        changeType="neutral"
-        icon={Clock}
-        iconBg="bg-amber-50"
-        iconColor="text-amber-600"
       />
 
       {/* ROW 2 */}

@@ -2,12 +2,15 @@
 
 import Link from 'next/link'
 
-import { RECENT_TRANSACTIONS } from '../data/dashboard-data'
+import { useDashboardRecentTransactions } from '../hook/useDashboardRecentTransactions'
 import { getStatusBadge } from '../utils/status-badge'
 
 export default function RecentTransactions() {
+  const { data: recentTransactionsRes, isLoading, isError } = useDashboardRecentTransactions()
+  const transactions = recentTransactionsRes?.data || []
+
   return (
-    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white xl:col-span-2">
       <div className="flex items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-6">
         <div>
           <h3 className="text-xl font-semibold text-slate-900 sm:text-2xl">
@@ -54,34 +57,60 @@ export default function RecentTransactions() {
           </thead>
 
           <tbody>
-            {RECENT_TRANSACTIONS.map((tx) => (
-              <tr
-                key={tx.id}
-                className="border-b border-slate-100 transition-colors hover:bg-slate-50"
-              >
-                <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-indigo-600 sm:px-6 sm:py-5">
-                  {tx.id}
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-700 sm:px-6 sm:py-5">
-                  {tx.type}
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6 sm:py-5">
-                  {tx.amount}
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-4 sm:px-6 sm:py-5">
-                  <span className={getStatusBadge(tx.status)}>
-                    {tx.status}
-                  </span>
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500 sm:px-6 sm:py-5">
-                  {tx.date}
+            {isLoading ? (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-sm text-slate-500">
+                  Loading transactions...
                 </td>
               </tr>
-            ))}
+            ) : isError ? (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-sm text-red-500">
+                  Failed to load transactions.
+                </td>
+              </tr>
+            ) : transactions.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-sm text-slate-500">
+                  No recent transactions found.
+                </td>
+              </tr>
+            ) : (
+              transactions.map((tx) => (
+                <tr
+                  key={tx.transactionId}
+                  className="border-b border-slate-100 transition-colors hover:bg-slate-50"
+                >
+                  <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-indigo-600 sm:px-6 sm:py-5">
+                    {tx.transactionId}
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-700 sm:px-6 sm:py-5">
+                    {tx.paymentMode}
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-4 text-sm font-semibold text-slate-900 sm:px-6 sm:py-5">
+                    ₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-4 sm:px-6 sm:py-5">
+                    <span className={getStatusBadge(tx.status)}>
+                      {tx.status}
+                    </span>
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500 sm:px-6 sm:py-5">
+                    {new Intl.DateTimeFormat('en-IN', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(new Date(tx.createdAt))}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
