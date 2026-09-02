@@ -67,10 +67,10 @@ export function PayoutDistribution() {
         </button>
       </div>
 
-      <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between lg:justify-start lg:gap-8 xl:flex-col xl:items-center 2xl:flex-row 2xl:justify-around">
+      <div className="mt-4 flex flex-col items-center gap-8">
         
         {/* Chart Area */}
-        <div className="relative h-[160px] w-[160px] shrink-0">
+        <div className="relative h-[180px] w-[180px] shrink-0">
           {totalAmount > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -78,8 +78,8 @@ export function PayoutDistribution() {
                   data={chartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
+                  innerRadius={60}
+                  outerRadius={90}
                   paddingAngle={2}
                   dataKey="value"
                   stroke="none"
@@ -101,34 +101,39 @@ export function PayoutDistribution() {
             <span className="text-lg font-bold text-slate-900">
               {formatCurrency(totalAmount)}
             </span>
-            <span className="text-sm text-slate-500">Total</span>
+            <span className="text-xs text-slate-500 mt-0.5 font-medium">Total</span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex w-full flex-col gap-4 sm:w-auto xl:w-full 2xl:w-auto">
+        <div className="flex w-full flex-col gap-3 px-2 sm:px-6">
           {['imps', 'neft', 'rtgs'].map((key) => {
             const stats = data[key as keyof typeof data]
-            if (stats.amount === 0) return null // Hide zero amounts like the chart
+            if (stats.amount === 0 && stats.count === 0) return null // Hide zero amounts
 
             return (
-              <div key={key} className="flex items-center justify-between gap-6 sm:justify-start">
-                <div className="flex items-center gap-2 w-20">
+              <div key={key} className="flex items-center justify-between gap-4 border-b border-slate-50 pb-3 last:border-0 last:pb-0">
+                <div className="flex items-center gap-3">
                   <div
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="h-3 w-3 shrink-0 rounded-full"
                     style={{ backgroundColor: COLORS[key as keyof typeof COLORS] }}
                   />
-                  <span className="text-sm font-semibold text-slate-700">
-                    {LABELS[key as keyof typeof LABELS]}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-slate-700 leading-tight">
+                      {LABELS[key as keyof typeof LABELS]}
+                    </span>
+                    <span className="text-xs text-slate-500 mt-0.5">
+                      {stats.count} {stats.count === 1 ? 'txn' : 'txns'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-900">
+                <div className="flex flex-col items-end">
+                  <span className="text-sm font-semibold text-slate-900 leading-tight">
                     {formatCurrency(stats.amount)}
                   </span>
-                  <span className="text-sm text-slate-500 whitespace-nowrap">
-                    ({getPercentage(stats.amount)})
+                  <span className="text-xs font-medium text-slate-500 mt-0.5">
+                    {getPercentage(stats.amount)}
                   </span>
                 </div>
               </div>
@@ -136,7 +141,7 @@ export function PayoutDistribution() {
           })}
 
           {totalAmount === 0 && (
-            <div className="text-sm text-slate-500">No payout data available for this period.</div>
+            <div className="text-center text-sm text-slate-500 py-4">No payout data available for this period.</div>
           )}
         </div>
       </div>
