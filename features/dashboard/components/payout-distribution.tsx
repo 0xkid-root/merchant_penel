@@ -53,8 +53,8 @@ export function PayoutDistribution() {
 
   return (
     <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <h3 className="text-xl font-semibold text-slate-900 sm:text-2xl">
+      <div className="mb-6 flex items-center justify-between gap-2 sm:gap-4">
+        <h3 className="whitespace-nowrap text-xl font-semibold text-slate-900 sm:text-2xl">
           Payout Distribution
         </h3>
 
