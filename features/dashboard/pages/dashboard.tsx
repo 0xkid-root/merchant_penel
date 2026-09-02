@@ -6,7 +6,6 @@ import PageHeader from '@/components/layout/page-header'
 import DashboardStats from '../components/dashboard-stats'
 import PayoutChart from '../components/payout-chart'
 import RecentTransactions from '../components/recent-transactions'
-import RecentPayouts from '../components/recent-payouts'
 import { RecentActivity } from '../components/recent-activity'
 import { PayoutDistribution } from '../components/payout-distribution'
 

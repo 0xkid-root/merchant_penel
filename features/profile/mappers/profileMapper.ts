@@ -22,6 +22,7 @@ export function mapBusinessProfile(response: MerchantProfileResponse): BusinessD
   return {
     companyName: response.businessProfile?.businessName ?? NOT_AVAILABLE,
     businessType: response.businessProfile?.businessType ?? NOT_AVAILABLE,
+    cinNumber: response.businessProfile?.cinNumber ?? NOT_AVAILABLE,
     gstNumber: response.businessProfile?.companyGstin ?? NOT_AVAILABLE,
     panNumber: response.businessProfile?.businessPan ?? NOT_AVAILABLE,
     website: response.businessProfile?.websiteUrl ?? NOT_AVAILABLE,
@@ -31,57 +32,75 @@ export function mapBusinessProfile(response: MerchantProfileResponse): BusinessD
     city: response.address?.regAddress?.city ?? NOT_AVAILABLE,
     state: response.address?.regAddress?.state ?? NOT_AVAILABLE,
     pincode: response.address?.regAddress?.pinCode ?? NOT_AVAILABLE,
-    // TODO:
-    // Replace when backend exposes this field.
     verifiedOn: NOT_VERIFIED,
-    // TODO:
-    // Replace when backend exposes this field.
     verifiedBy: NOT_VERIFIED,
-    // TODO:
-    // Replace when backend exposes this field.
     remarks: NOT_VERIFIED,
+    businessOwners: response.businessOwners ?? [],
   }
 }
 
 export function mapBankDetails(response: MerchantProfileResponse): BankDetails {
+  const ifsc = response.bankDetails?.ifscCode || '';
+  
+  // The backend is currently returning the person's name inside the `bankName` field
+  // So we will use it for accountHolder if accountHolderName is missing.
+  const holderName = response.bankDetails?.accountHolderName || response.bankDetails?.bankName || NOT_AVAILABLE;
+
+  // Since the backend doesn't return the real bank name yet, 
+  // we will just show NOT_AVAILABLE until the backend API is updated.
+  const realBankName = NOT_AVAILABLE;
+
   return {
-    accountHolder: response.bankDetails?.accountHolderName ?? NOT_AVAILABLE,
+    accountHolder: holderName,
     companyName: response.businessProfile?.businessName ?? NOT_AVAILABLE,
     accountNumber: response.bankDetails?.accountNumber ?? NOT_AVAILABLE,
-    bankName: response.bankDetails?.bankName ?? NOT_AVAILABLE,
-    ifscCode: response.bankDetails?.ifscCode ?? NOT_AVAILABLE,
-    // TODO:
-    // Replace when backend exposes this field.
+    bankName: realBankName,
+    ifscCode: ifsc || NOT_AVAILABLE,
     branch: NOT_AVAILABLE,
-    // TODO:
-    // Replace when backend exposes this field.
     accountType: 'Current Account',
     status: mapUserStatus(response.merchantStatus?.userStatus),
-    // TODO:
-    // Replace when backend exposes this field.
     verifiedOn: NOT_VERIFIED,
-    // TODO:
-    // Replace when backend exposes this field.
     verifiedBy: NOT_VERIFIED,
-    // TODO:
-    // Replace when backend exposes this field.
     remarks: NOT_VERIFIED,
   }
 }
 
 export function mapKycDocuments(response: MerchantProfileResponse): KYCDocument[] {
-  if (!response.merchantVerifications) return [];
-  
-  return response.merchantVerifications.map((doc, index) => ({
-    id: String(index + 1),
-    name: doc?.fieldName ?? NOT_AVAILABLE,
-    description: doc?.section ?? NOT_AVAILABLE,
-    status: mapVerificationStatus(doc?.status),
-    uploadedOn: formatDate(doc?.reviewedAt),
-    icon: FileText,
-    iconBg: 'bg-blue-100',
-    iconColor: 'text-blue-600',
-  }))
+  const documents: KYCDocument[] = [];
+
+  // 1. Add Merchant Verifications (if any)
+  if (response.merchantVerifications && response.merchantVerifications.length > 0) {
+    response.merchantVerifications.forEach((doc, index) => {
+      documents.push({
+        id: `verification-${index}`,
+        name: doc?.fieldName ?? NOT_AVAILABLE,
+        description: doc?.section ?? NOT_AVAILABLE,
+        status: mapVerificationStatus(doc?.status),
+        uploadedOn: formatDate(doc?.reviewedAt),
+        icon: FileText,
+        iconBg: 'bg-blue-100',
+        iconColor: 'text-blue-600',
+      });
+    });
+  }
+
+  // 2. Add Merchant Agreements (if any) as they also act as KYC/legal documents
+  if (response.merchantAgreements && response.merchantAgreements.length > 0) {
+    response.merchantAgreements.forEach((agreement) => {
+      documents.push({
+        id: `agreement-${agreement.requestId}`,
+        name: 'Merchant Agreement',
+        description: `Request ID: ${agreement.requestId}`,
+        status: agreement.status?.toUpperCase() === 'SIGNED' || agreement.status?.toUpperCase() === 'APPROVED' ? 'Verified' : 'Pending',
+        uploadedOn: formatDate(agreement.signedAt),
+        icon: FileText,
+        iconBg: 'bg-indigo-100',
+        iconColor: 'text-indigo-600',
+      });
+    });
+  }
+
+  return documents;
 }
 
 export function mapProfileStatus(response: MerchantProfileResponse): ProfileSidebarData {

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Bell, ChevronDown, Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
+import { useProfile } from '@/features/profile/hooks/useProfile'
 import ProfileDropdown from './profile-dropdown'
 import { getPageTitle } from '@/lib/utils/get-page-title'
 
@@ -21,7 +22,12 @@ export default function AppHeader({
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
+  const { data: profileResponse } = useProfile()
   const pageTitle = getPageTitle(pathname)
+
+  const companyName = profileResponse?.businessProfile?.businessName || 'Demo Pvt. Ltd.'
+  const mid = profileResponse?.merchantId ? `M${profileResponse.merchantId}` : 'M123456'
+  const initial = companyName.charAt(0).toUpperCase()
 
   return (
     <header className="sticky top-0 z-30 flex h-[76px] shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 lg:h-[101px] lg:px-10">
@@ -71,23 +77,17 @@ export default function AppHeader({
             className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-1.5 transition hover:bg-slate-50 sm:gap-3 sm:px-3 sm:py-2"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white sm:h-11 sm:w-11 sm:text-base">
-              D
+              {initial}
             </div>
 
             <div className="hidden text-left md:block">
               <p className="text-sm font-semibold text-slate-900">
-                Demo Pvt. Ltd.
-              </p>
-
-              <p className="text-xs text-slate-500">
-                MID : M123456
+                {companyName}
               </p>
             </div>
 
             <ChevronDown
-              className={`hidden h-4 w-4 text-slate-500 transition-transform sm:block ${
-                open ? 'rotate-180' : ''
-              }`}
+              className={`hidden h-4 w-4 text-slate-500 transition-transform sm:block ${open ? 'rotate-180' : ''}`}
             />
           </button>
 
