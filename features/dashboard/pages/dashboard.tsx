@@ -8,6 +8,7 @@ import PayoutChart from '../components/payout-chart'
 import RecentTransactions from '../components/recent-transactions'
 import RecentPayouts from '../components/recent-payouts'
 import { RecentActivity } from '../components/recent-activity'
+import { PayoutDistribution } from '../components/payout-distribution'
 
 export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState('')
@@ -29,11 +30,14 @@ export default function DashboardPage() {
       <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <PayoutChart />
         <RecentActivity />
+
       </div>
 
-      <div className="grid grid-cols-1 gap-6 2xl:grid-cols-2">
+
+
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <RecentTransactions />
-        <RecentPayouts />
+        <PayoutDistribution />
       </div>
     </div>
   )
