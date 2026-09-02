@@ -58,6 +58,13 @@ export default function BusinessProfileTab({
             />
 
             <InfoRow
+                icon={Building2}
+                iconClassName="bg-pink-50 text-pink-600"
+                label="CIN Number"
+                value={data.cinNumber}
+            />
+
+            <InfoRow
                 icon={Mail}
                 iconClassName="bg-violet-50 text-violet-600"
                 label="Email Address"
@@ -124,6 +131,37 @@ export default function BusinessProfileTab({
                 </p>
             </div>
         </div>
+
+        {data.businessOwners && data.businessOwners.length > 0 && (
+            <div className="mt-8 border-t border-slate-200 pt-8">
+                <h3 className="mb-4 text-lg font-semibold text-slate-900">
+                    Business Owners
+                </h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {data.businessOwners.map((owner, index) => (
+                        <div key={index} className="flex flex-col gap-1 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                            <p className="font-semibold text-slate-900">{owner.fullName || 'Not Available'}</p>
+                            <p className="text-xs text-slate-500">{owner.designation || 'Owner'}</p>
+                            
+                            <div className="mt-2 flex flex-col gap-1 text-sm text-slate-600">
+                                {owner.emailId && (
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="h-4 w-4 text-slate-400" />
+                                        <span>{owner.emailId}</span>
+                                    </div>
+                                )}
+                                {owner.mobileNumber && (
+                                    <div className="flex items-center gap-2">
+                                        <Phone className="h-4 w-4 text-slate-400" />
+                                        <span>{owner.mobileNumber}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
     </div>
 
     )

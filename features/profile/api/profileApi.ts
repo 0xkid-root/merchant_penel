@@ -13,6 +13,7 @@ export const profileApi = {
         const response = await apiClient.get<MerchantProfileResponse>(
             API_ENDPOINTS.PROFILE.GET_PROFILE
         );
+        console.log("resposne is here:", response);
 
         return response.data;
     },

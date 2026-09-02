@@ -1,3 +1,4 @@
+import type { BusinessOwner } from './profile.types'
 
 export interface KYCDocument {
   id: string
@@ -10,10 +11,10 @@ export interface KYCDocument {
   iconColor: string
 }
 
-
 export interface BusinessData {
   companyName: string
   businessType: string
+  cinNumber: string
   gstNumber: string
   panNumber: string
   emailAddress: string
@@ -26,6 +27,7 @@ export interface BusinessData {
   verifiedOn: string
   verifiedBy: string
   remarks: string
+  businessOwners: BusinessOwner[]
 }
 
 export interface BankDetails {
